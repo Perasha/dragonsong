@@ -1,0 +1,56 @@
+extends Sprite2D
+
+@onready var dragon_node = get_parent()
+@onready var wing_node = get_node("Wings")
+
+@onready var wing_folded_sprite = preload("res://Sprites/wings_folded.png")
+@onready var wing_glide_sprite = preload("res://Sprites/wings_glide.png")
+@onready var wing_up_sprite = preload("res://Sprites/wings_up.png")
+@onready var wing_down_sprite = preload("res://Sprites/wings_down.png")
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _physics_process(delta: float) -> void:
+	wing_node.position.y = 0
+	rotation = 0.0
+	flip_v = false
+	#Rotating the sprite!
+	
+	if dragon_node.flight_direction.x < 0:
+		flip_h = false
+		if dragon_node.is_flying:
+			flip_v = true
+			flip_h = true
+	else:
+		flip_h = true
+		if dragon_node.is_flying:
+			flip_v = false
+			#flip_h = false
+	if dragon_node.is_flying:
+		rotation = dragon_node.flight_direction.angle()
+	
+	# Wing flaps!
+	
+	if flip_h: wing_node.flip_h = true
+	else: wing_node.flip_h = false
+	if flip_v: wing_node.flip_v = true
+	else: wing_node.flip_v = false
+	
+	if dragon_node.toggle_glide:
+		wing_node.texture = wing_glide_sprite
+	else:
+		wing_node.texture = wing_folded_sprite
+	
+	if Input.is_action_pressed("flap"):
+		wing_node.texture = wing_up_sprite
+	#wing_node.texture = wing_down_sprite
+	if dragon_node.just_jumped or dragon_node.on_wingbeat_cooldown:
+		wing_node.texture = wing_down_sprite
+		if flip_v:
+			wing_node.position.y = -20
+		else:
+			wing_node.position.y = 20
+	
+	

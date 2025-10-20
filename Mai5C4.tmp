@@ -1,0 +1,237 @@
+[gd_scene load_steps=16 format=3 uid="uid://cxf86gkoociqk"]
+
+[ext_resource type="PackedScene" uid="uid://drn046xbx7cku" path="res://debug_hud.tscn" id="1_l3vtc"]
+[ext_resource type="Script" path="res://scripts/dragon_controller.gd" id="2_3f2ow"]
+[ext_resource type="Script" path="res://scripts/CameraZoom.gd" id="2_5n5mo"]
+[ext_resource type="Texture2D" uid="uid://clfxcijooe3f6" path="res://Sprites/LeafThing.png" id="4_6dfqr"]
+[ext_resource type="Texture2D" uid="uid://cbj5kmqjsr7ck" path="res://Sprites/DragonWingless.png" id="4_nci6l"]
+[ext_resource type="Script" path="res://scripts/dragon_animation.gd" id="5_0hlxy"]
+[ext_resource type="Script" path="res://scripts/direction_pointer.gd" id="5_mdkmb"]
+[ext_resource type="Texture2D" uid="uid://6d5k318sfh03" path="res://Sprites/wings_folded.png" id="6_ay205"]
+[ext_resource type="Script" path="res://scripts/dragon_resources.gd" id="8_iae3b"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_0ucct"]
+friction = 0.7
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_v4tli"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ngkl2"]
+size = Vector2(20, 142.875)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gilsg"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_v2fvg"]
+friction = 0.1
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1aevc"]
+size = Vector2(6312, 104.75)
+
+[node name="Main" type="Node"]
+
+[node name="debugHUD" parent="." instance=ExtResource("1_l3vtc")]
+
+[node name="Camera2D" type="Camera2D" parent="." node_paths=PackedStringArray("player")]
+zoom = Vector2(0.5, 0.5)
+position_smoothing_enabled = true
+script = ExtResource("2_5n5mo")
+player = NodePath("../dragon")
+
+[node name="dragon" type="RigidBody2D" parent="."]
+position = Vector2(196, 295)
+physics_material_override = SubResource("PhysicsMaterial_0ucct")
+gravity_scale = 2.0
+lock_rotation = true
+script = ExtResource("2_3f2ow")
+wingbeat_strength = 100.0
+jump_strength_base = 1.5
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="dragon"]
+position = Vector2(0, 0.775)
+rotation = 1.5708
+scale = Vector2(4.13, 4.13)
+shape = SubResource("CapsuleShape2D_v4tli")
+
+[node name="Body" type="Sprite2D" parent="dragon"]
+position = Vector2(0, -22.095)
+scale = Vector2(2.685, 2.685)
+texture = ExtResource("4_nci6l")
+script = ExtResource("5_0hlxy")
+
+[node name="Wings" type="Sprite2D" parent="dragon/Body"]
+texture = ExtResource("6_ay205")
+
+[node name="FloorCheck" type="Area2D" parent="dragon"]
+position = Vector2(0, 51)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="dragon/FloorCheck"]
+position = Vector2(0, -2.715)
+scale = Vector2(2.605, 0.08)
+shape = SubResource("RectangleShape2D_ngkl2")
+
+[node name="Direction Pointer" type="Area2D" parent="dragon"]
+script = ExtResource("5_mdkmb")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="dragon/Direction Pointer"]
+shape = SubResource("RectangleShape2D_gilsg")
+
+[node name="wingbeat_clock" type="Timer" parent="dragon"]
+wait_time = 0.25
+one_shot = true
+
+[node name="Resources" type="Node" parent="dragon"]
+script = ExtResource("8_iae3b")
+
+[node name="Floor3" type="StaticBody2D" parent="."]
+position = Vector2(5567, -401)
+rotation = 1.98968
+physics_material_override = SubResource("PhysicsMaterial_v2fvg")
+
+[node name="CollisionPolygon2D" type="CollisionShape2D" parent="Floor3"]
+position = Vector2(691, -34.375)
+shape = SubResource("RectangleShape2D_1aevc")
+
+[node name="Floor2" type="StaticBody2D" parent="."]
+position = Vector2(-4340, 393)
+rotation = 0.994838
+physics_material_override = SubResource("PhysicsMaterial_v2fvg")
+
+[node name="CollisionPolygon2D" type="CollisionShape2D" parent="Floor2"]
+position = Vector2(691, -34.375)
+shape = SubResource("RectangleShape2D_1aevc")
+
+[node name="Floor4" type="StaticBody2D" parent="."]
+position = Vector2(-1066, -1344)
+physics_material_override = SubResource("PhysicsMaterial_v2fvg")
+
+[node name="CollisionPolygon2D" type="CollisionShape2D" parent="Floor4"]
+position = Vector2(691, -34.375)
+shape = SubResource("RectangleShape2D_1aevc")
+
+[node name="Object4" type="StaticBody2D" parent="."]
+position = Vector2(3933, 456)
+physics_material_override = SubResource("PhysicsMaterial_v2fvg")
+
+[node name="Thing" type="CollisionShape2D" parent="Object4"]
+position = Vector2(-945, -1048)
+scale = Vector2(-0.055, 1.9)
+shape = SubResource("RectangleShape2D_1aevc")
+
+[node name="Object3" type="StaticBody2D" parent="."]
+position = Vector2(2958, 995)
+physics_material_override = SubResource("PhysicsMaterial_v2fvg")
+
+[node name="Thing" type="CollisionShape2D" parent="Object3"]
+position = Vector2(-945, -1048)
+scale = Vector2(-0.055, 1.9)
+shape = SubResource("RectangleShape2D_1aevc")
+
+[node name="Object2" type="StaticBody2D" parent="."]
+position = Vector2(1390, 540)
+physics_material_override = SubResource("PhysicsMaterial_v2fvg")
+
+[node name="Thing" type="CollisionShape2D" parent="Object2"]
+position = Vector2(-945, -1048)
+scale = Vector2(-0.055, 1.9)
+shape = SubResource("RectangleShape2D_1aevc")
+
+[node name="Object" type="StaticBody2D" parent="."]
+position = Vector2(0, 982)
+physics_material_override = SubResource("PhysicsMaterial_v2fvg")
+
+[node name="Thing" type="CollisionShape2D" parent="Object"]
+position = Vector2(-945, -1048)
+scale = Vector2(-0.055, 1.9)
+shape = SubResource("RectangleShape2D_1aevc")
+
+[node name="Floor" type="StaticBody2D" parent="."]
+position = Vector2(0, 491)
+physics_material_override = SubResource("PhysicsMaterial_v2fvg")
+
+[node name="CollisionPolygon2D" type="CollisionShape2D" parent="Floor"]
+position = Vector2(691, -34.375)
+shape = SubResource("RectangleShape2D_1aevc")
+
+[node name="BG" type="Node2D" parent="."]
+z_index = -1
+
+[node name="Plant11" type="Sprite2D" parent="BG"]
+position = Vector2(-990, 354)
+texture = ExtResource("4_6dfqr")
+
+[node name="Plant10" type="Sprite2D" parent="BG"]
+position = Vector2(-1317, 369)
+texture = ExtResource("4_6dfqr")
+
+[node name="Plant9" type="Sprite2D" parent="BG"]
+position = Vector2(-493, 381)
+texture = ExtResource("4_6dfqr")
+
+[node name="Plant8" type="Sprite2D" parent="BG"]
+position = Vector2(1716, 360)
+texture = ExtResource("4_6dfqr")
+
+[node name="Plant7" type="Sprite2D" parent="BG"]
+position = Vector2(1063, 303)
+texture = ExtResource("4_6dfqr")
+
+[node name="Plant6" type="Sprite2D" parent="BG"]
+position = Vector2(1384, 357)
+texture = ExtResource("4_6dfqr")
+
+[node name="Plant5" type="Sprite2D" parent="BG"]
+position = Vector2(527, 369)
+texture = ExtResource("4_6dfqr")
+
+[node name="Plant4" type="Sprite2D" parent="BG"]
+position = Vector2(767, 354)
+texture = ExtResource("4_6dfqr")
+
+[node name="Plant3" type="Sprite2D" parent="BG"]
+position = Vector2(434, 339)
+texture = ExtResource("4_6dfqr")
+
+[node name="Plant2" type="Sprite2D" parent="BG"]
+position = Vector2(-219, 366)
+texture = ExtResource("4_6dfqr")
+
+[node name="Plant" type="Sprite2D" parent="BG"]
+position = Vector2(-75, 327)
+texture = ExtResource("4_6dfqr")
+
+[node name="Plant12" type="Sprite2D" parent="BG"]
+position = Vector2(-1571, 366)
+texture = ExtResource("4_6dfqr")
+
+[node name="Plant13" type="Sprite2D" parent="BG"]
+position = Vector2(-830, 336)
+texture = ExtResource("4_6dfqr")
+
+[node name="Plant14" type="Sprite2D" parent="BG"]
+position = Vector2(-1906, 330)
+texture = ExtResource("4_6dfqr")
+
+[node name="Plant19" type="Sprite2D" parent="BG"]
+position = Vector2(3151, 550)
+texture = ExtResource("4_6dfqr")
+
+[node name="Plant20" type="Sprite2D" parent="BG"]
+position = Vector2(3226, 223)
+texture = ExtResource("4_6dfqr")
+
+[node name="Plant18" type="Sprite2D" parent="BG"]
+position = Vector2(3729, 339)
+texture = ExtResource("4_6dfqr")
+
+[node name="Plant17" type="Sprite2D" parent="BG"]
+position = Vector2(2206, 324)
+texture = ExtResource("4_6dfqr")
+
+[node name="Plant16" type="Sprite2D" parent="BG"]
+position = Vector2(2780, 345)
+texture = ExtResource("4_6dfqr")
+
+[node name="Plant15" type="Sprite2D" parent="BG"]
+position = Vector2(-698, 351)
+texture = ExtResource("4_6dfqr")
+
+[connection signal="timeout" from="dragon/wingbeat_clock" to="dragon" method="_on_wingbeat_clock_timeout"]

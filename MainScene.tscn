@@ -1,0 +1,199 @@
+[gd_scene load_steps=18 format=3 uid="uid://cxf86gkoociqk"]
+
+[ext_resource type="PackedScene" uid="uid://drn046xbx7cku" path="res://debug_hud.tscn" id="1_l3vtc"]
+[ext_resource type="Script" path="res://scripts/dragon_controller.gd" id="2_3f2ow"]
+[ext_resource type="Script" path="res://scripts/CameraZoom.gd" id="2_5n5mo"]
+[ext_resource type="Texture2D" uid="uid://cbj5kmqjsr7ck" path="res://Sprites/DragonWingless.png" id="4_nci6l"]
+[ext_resource type="Script" path="res://scripts/dragon_animation.gd" id="5_0hlxy"]
+[ext_resource type="Script" path="res://scripts/direction_pointer.gd" id="5_mdkmb"]
+[ext_resource type="Texture2D" uid="uid://6d5k318sfh03" path="res://Sprites/wings_folded.png" id="6_ay205"]
+[ext_resource type="Script" path="res://scripts/dragon_resources.gd" id="8_iae3b"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_0ucct"]
+friction = 0.7
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_v4tli"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ngkl2"]
+size = Vector2(20, 17.875)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gilsg"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_v2fvg"]
+friction = 0.1
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1aevc"]
+size = Vector2(4449.25, 138.901)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_o3lxm"]
+size = Vector2(4449.25, 10.6987)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sktso"]
+size = Vector2(4449.25, 27.797)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_aywtr"]
+size = Vector2(4449.25, 17.0185)
+
+[node name="Main" type="Node"]
+
+[node name="debugHUD" parent="." instance=ExtResource("1_l3vtc")]
+
+[node name="Camera2D" type="Camera2D" parent="." node_paths=PackedStringArray("player")]
+zoom = Vector2(0.5, 0.5)
+position_smoothing_enabled = true
+script = ExtResource("2_5n5mo")
+player = NodePath("../dragon")
+
+[node name="dragon" type="RigidBody2D" parent="."]
+position = Vector2(196, 295)
+physics_material_override = SubResource("PhysicsMaterial_0ucct")
+gravity_scale = 2.0
+lock_rotation = true
+script = ExtResource("2_3f2ow")
+wingbeat_strength = 100.0
+speed = 50.0
+jump_strength_base = 3.0
+max_jump_strength = 6.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="dragon"]
+position = Vector2(0, 0.775)
+rotation = 1.5708
+scale = Vector2(4.13, 4.13)
+shape = SubResource("CapsuleShape2D_v4tli")
+
+[node name="Body" type="Sprite2D" parent="dragon"]
+position = Vector2(0, -22.095)
+scale = Vector2(2.685, 2.685)
+texture = ExtResource("4_nci6l")
+script = ExtResource("5_0hlxy")
+
+[node name="Wings" type="Sprite2D" parent="dragon/Body"]
+texture = ExtResource("6_ay205")
+
+[node name="FloorCheck" type="Area2D" parent="dragon"]
+position = Vector2(0, 51)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="dragon/FloorCheck"]
+position = Vector2(0, -7.715)
+scale = Vector2(2.605, 0.08)
+shape = SubResource("RectangleShape2D_ngkl2")
+
+[node name="Direction Pointer" type="Area2D" parent="dragon"]
+script = ExtResource("5_mdkmb")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="dragon/Direction Pointer"]
+shape = SubResource("RectangleShape2D_gilsg")
+
+[node name="wingbeat_clock" type="Timer" parent="dragon"]
+wait_time = 0.25
+one_shot = true
+
+[node name="Resources" type="Node" parent="dragon"]
+script = ExtResource("8_iae3b")
+
+[node name="Floor3" type="StaticBody2D" parent="."]
+position = Vector2(5567, -401)
+rotation = 1.98968
+physics_material_override = SubResource("PhysicsMaterial_v2fvg")
+
+[node name="CollisionPolygon2D" type="CollisionShape2D" parent="Floor3"]
+position = Vector2(691, -34.375)
+shape = SubResource("RectangleShape2D_1aevc")
+
+[node name="Floor2" type="StaticBody2D" parent="."]
+position = Vector2(-4340, 393)
+rotation = 0.994838
+physics_material_override = SubResource("PhysicsMaterial_v2fvg")
+
+[node name="CollisionPolygon2D" type="CollisionShape2D" parent="Floor2"]
+position = Vector2(691, -34.375)
+shape = SubResource("RectangleShape2D_1aevc")
+
+[node name="Floor6" type="StaticBody2D" parent="."]
+scale = Vector2(1.47623, 41.0881)
+physics_material_override = SubResource("PhysicsMaterial_v2fvg")
+
+[node name="CollisionPolygon2D" type="CollisionShape2D" parent="Floor6"]
+position = Vector2(-7204.16, -19.8111)
+shape = SubResource("RectangleShape2D_o3lxm")
+
+[node name="Floor5" type="StaticBody2D" parent="."]
+position = Vector2(-2132, -2688)
+scale = Vector2(1.215, -6.41)
+physics_material_override = SubResource("PhysicsMaterial_v2fvg")
+
+[node name="CollisionPolygon2D" type="CollisionShape2D" parent="Floor5"]
+position = Vector2(10611.5, -479.563)
+shape = SubResource("RectangleShape2D_sktso")
+
+[node name="Floor7" type="StaticBody2D" parent="."]
+position = Vector2(-2132, -2688)
+scale = Vector2(1.215, -6.41)
+physics_material_override = SubResource("PhysicsMaterial_v2fvg")
+
+[node name="CollisionPolygon2D" type="CollisionShape2D" parent="Floor7"]
+position = Vector2(5866.67, -886.187)
+shape = SubResource("RectangleShape2D_aywtr")
+
+[node name="Floor4" type="StaticBody2D" parent="."]
+position = Vector2(-1066, -1344)
+physics_material_override = SubResource("PhysicsMaterial_v2fvg")
+
+[node name="CollisionPolygon2D" type="CollisionShape2D" parent="Floor4"]
+position = Vector2(691, 32.5496)
+shape = SubResource("RectangleShape2D_1aevc")
+
+[node name="Object4" type="StaticBody2D" parent="."]
+position = Vector2(3933, 456)
+physics_material_override = SubResource("PhysicsMaterial_v2fvg")
+
+[node name="Thing" type="CollisionShape2D" parent="Object4"]
+position = Vector2(-945, -1048)
+scale = Vector2(-0.055, 1.9)
+shape = SubResource("RectangleShape2D_1aevc")
+
+[node name="Object3" type="StaticBody2D" parent="."]
+position = Vector2(2958, 995)
+physics_material_override = SubResource("PhysicsMaterial_v2fvg")
+
+[node name="Thing" type="CollisionShape2D" parent="Object3"]
+position = Vector2(-945, -1048)
+scale = Vector2(-0.055, 1.9)
+shape = SubResource("RectangleShape2D_1aevc")
+
+[node name="Object5" type="StaticBody2D" parent="."]
+position = Vector2(2958, 995)
+physics_material_override = SubResource("PhysicsMaterial_v2fvg")
+
+[node name="Thing" type="CollisionShape2D" parent="Object5"]
+position = Vector2(-3332, 988)
+scale = Vector2(-0.055, 1.9)
+shape = SubResource("RectangleShape2D_1aevc")
+
+[node name="Object2" type="StaticBody2D" parent="."]
+position = Vector2(1390, 540)
+physics_material_override = SubResource("PhysicsMaterial_v2fvg")
+
+[node name="Thing" type="CollisionShape2D" parent="Object2"]
+position = Vector2(-945, -1048)
+scale = Vector2(-0.055, 1.9)
+shape = SubResource("RectangleShape2D_1aevc")
+
+[node name="Object" type="StaticBody2D" parent="."]
+position = Vector2(0, 982)
+physics_material_override = SubResource("PhysicsMaterial_v2fvg")
+
+[node name="Thing" type="CollisionShape2D" parent="Object"]
+position = Vector2(-945, -1048)
+scale = Vector2(-0.055, 1.9)
+shape = SubResource("RectangleShape2D_1aevc")
+
+[node name="Floor" type="StaticBody2D" parent="."]
+position = Vector2(0, 491)
+physics_material_override = SubResource("PhysicsMaterial_v2fvg")
+
+[node name="CollisionPolygon2D" type="CollisionShape2D" parent="Floor"]
+position = Vector2(691, -34.375)
+shape = SubResource("RectangleShape2D_1aevc")
+
+[connection signal="timeout" from="dragon/wingbeat_clock" to="dragon" method="_on_wingbeat_clock_timeout"]

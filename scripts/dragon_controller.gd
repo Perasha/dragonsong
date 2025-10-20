@@ -1,0 +1,250 @@
+extends RigidBody2D
+
+@export var wingbeat_strength = 200.00
+@export var speed = 5.00
+#@export var jump_height = -400.00
+@export var max_walk_speed = 200.00
+@export var max_run_speed = 400.00
+@export var max_fly_speed = 1000.00
+@export var terminal_velocity = 4000.00
+
+@onready var floor_check = get_node("FloorCheck")
+@onready var sprite = get_node("Body")
+@onready var wingbeat_clock = get_node("wingbeat_clock")
+@onready var resources = get_node("Resources")
+
+#var base_gravity_scale = 2.0
+#var fly_gravity_scale = 0.3
+var distance_moved = 0.0
+var previous_position = Vector2(0.0,0.0)
+var current_position = Vector2(0.0,0.0)
+
+var just_jumped = false
+var jump_counter = 0
+@export var jump_strength_base = 2.0
+var jump_strength = 2.0
+var stored_jump = 0.0
+@export var max_jump_strength = 4.0
+#var is_running = false
+var direction_x
+var direction_y
+var is_stalling
+
+var is_flying = false
+var toggle_glide = true
+# Option to change from glide being a toggle, to being held
+var option_hold_to_glide = false
+var on_wingbeat_cooldown = false
+
+var current_speed = 0.0
+var turn_radius = 0.1
+var fd_dampen = .85
+# Multiplier for our dampen value; this is proportional to our GRAVITY constant.
+var dampen_base = .002125
+var dampen_glide = .000125
+# Default is 400
+var gravity = 150
+
+var flight_direction = Vector2(0.0,0.0)
+
+func _ready() -> void:
+	jump_strength = jump_strength_base
+
+
+func _physics_process(delta: float) -> void:
+	just_jumped = false
+	previous_position = current_position
+	current_position = position
+	
+	# Here, we take the X and Y of our Linear Velocity and combine it into a total speed value.
+	# And uh, we needed the Pythoreum Theorum for it.
+	current_speed = pow(abs(linear_velocity.x),2) + pow(abs(linear_velocity.y),2)
+	current_speed = sqrt(current_speed)
+	
+	# Now, we're constantly pushing our Flight Direction (the thing that dictates which way we go when we fly) down.
+	# That's because of gravity! Because otherwise, well, we're always adding force forward and it's
+	# not enough to cancel out the built-in gravity.
+	# Also it lets us do cool diving maneuvers.
+	
+	# So first, we set our dampening value.
+	fd_dampen = dampen_base * gravity
+	#print(gravity)
+	# First, if our glide is toggled, we lower this dampening value so we get a nice, slow descent.
+	# if the distance we moved is low enough, meaning we've slowed down, we'll disable it and start diving.
+	# If the distance moved is low and we're flying, that means... we've stalled!
+	if distance_moved < 4 and is_flying:
+		is_stalling = true
+		fd_dampen = dampen_base
+	elif distance_moved > 10 and is_flying:
+		is_stalling = false
+	if is_flying == false:
+		is_stalling = false
+	if toggle_glide and not is_stalling:
+		fd_dampen = dampen_glide * gravity
+	
+	
+	# Now here's the actual dampening.
+	# We first make sure that we are flying *and* that our flight direction isn't directly up (meaning we have enough force to fly up)
+	if is_flying and flight_direction.y < 1:
+		# We take our dampening value, and divide it by the distance moved. 
+		# We also then add our dampening value to that number so that we don't accidentally divide by zero.
+		flight_direction.y += fd_dampen / (distance_moved + fd_dampen)
+	
+	# Now we get inputs. Our wing flap, then movement axes, then our wing-fold/dive.
+	#if Input.is_action_just_pressed("flap"):
+	#	just_jumped = true
+	#	jump_counter += 1
+	
+	if Input.is_action_pressed("flap"):
+		if jump_strength <= max_jump_strength:
+			jump_strength += 0.1
+	if Input.is_action_just_released("flap"):
+		just_jumped = true
+		jump_counter += 1
+		stored_jump = jump_strength
+	
+	direction_x = Input.get_axis("ui_left", "ui_right")
+	direction_y = Input.get_axis("ui_up", "ui_down")
+	
+	#if direction_x != 0:
+	#	toggle_glide = true
+	#else:
+	#	toggle_glide = false
+	
+	#If we're stalling, we can't climb. So we specifically anchor our Y direction down.
+	if is_stalling:
+		#direction_x *= 0.25
+		direction_y = 1
+	
+	# Can we make our Direction proportional to our speed? 
+	# For example, if we're going too slow, 
+	# 
+	
+	# If option_hold_to_glide is on, then you need to hold to fold in wings. Otherwise, it's a toggle.
+	# Some players might prefer one way or the other so it's a good option to have. 
+	if Input.is_action_just_pressed("Slow"):
+		if not option_hold_to_glide:
+			if toggle_glide == true:
+				toggle_glide = false
+			else:
+				toggle_glide = true
+	if Input.is_action_pressed("Slow"):
+		if option_hold_to_glide:
+			toggle_glide = true		
+	if Input.is_action_just_released("Slow"):
+		if option_hold_to_glide:
+			toggle_glide = false
+	
+	# However, if our Stamina is 0, we can't glide.
+	if resources.stamina < 1:
+		toggle_glide = false
+		direction_y = 0
+	
+	# If our wings are out, it's a bit harder to make sharp turns. But if they're in, we can make sharp turns!
+	if toggle_glide:
+		turn_radius = 0.05
+	else:
+		turn_radius = 0.1
+	
+	# This is where we use our turning radius. We incrementally will be adding this value to
+	# our Flight Direction every tick, which will go against the gravity that constantly pushes it down.
+	flight_direction.x += direction_x * turn_radius
+	flight_direction.y += direction_y * turn_radius
+	# Oh and then we make sure that we don't actually go above 1 for either value because that would lead to ~problems~!
+	flight_direction = flight_direction.normalized()
+	
+	# This is our jump! If we flap once, it's just a jump. If we flap twice, and we're not on the ground, we start flying!
+	if jump_counter >= 1 and not floor_check.has_overlapping_bodies():
+		is_flying = true
+	else:
+		is_flying = false
+	
+	if floor_check.has_overlapping_bodies():
+		is_flying = false
+		jump_counter = 0
+	
+	if distance_moved > 12 and not floor_check.has_overlapping_bodies():
+		is_flying = true
+	
+	
+	# Flying movement.
+	if is_flying:
+		if just_jumped and current_speed <= terminal_velocity and not on_wingbeat_cooldown:
+			wingbeat()
+			#print("Continue")
+		## SUPER IMPORTANT!
+		# Here, we're actually dividing our current speed among our new directions.
+		# Remember when we evenly merged our Linear Velocity earlier?
+		# That's because we need to redivide it! Except among two NEW slightly different directions.
+		# If we were pointing up, and now we're pointing down, the same speed is now being transferred to that direction.
+		# And that's how we keep our momentum!
+		# And also, if we stall, we actually immediately drop our direction downward.
+		if current_speed >= 20:
+			apply_momentum()
+		else:
+			flight_direction.y = 1.0
+		# This is just to make sure our speed never exceeds what we determine as Terminal Velocity. Otherwise... bad things
+		linear_velocity = linear_velocity.clamp(Vector2(-terminal_velocity,-terminal_velocity),Vector2(terminal_velocity,terminal_velocity))
+	else:
+	# Grounded movement.
+		# And start moving in a direction if we move left and right. Not very fast, mind you.
+		if direction_x:
+			flight_direction.x = direction_x
+			if abs(linear_velocity.x) < max_walk_speed:
+				linear_velocity.x += direction_x * speed
+			#linear_velocity = linear_velocity.clamp(Vector2(-max_walk_speed,-terminal_velocity),Vector2(max_walk_speed,terminal_velocity))
+		
+		# Add some directly upward velocity if we flap our wings!
+		if just_jumped:
+			stored_jump *= 0.75
+			stored_jump = resources.consume_stamina(stored_jump)
+			linear_velocity.y -= wingbeat_strength * stored_jump
+			stored_jump *= 0.75
+			linear_velocity.x += direction_x * (wingbeat_strength * stored_jump)
+			#linear_velocity.y -= wingbeat_strength * jump_strength * 1.25
+		
+		# This actually more quickly slows our movement, rather than increasing our friction.
+		# Using them legs to slow down!
+		# But only if we're touching the floor.
+		if floor_check.has_overlapping_bodies():
+			linear_velocity.x *= 0.95
+		# And again, clamping our speed just to make sure nothing breaks.
+		# X axis can be our maximum walking speed, but up and down are determined by air resistance!
+		linear_velocity = linear_velocity.clamp(Vector2(-terminal_velocity,-terminal_velocity),Vector2(terminal_velocity,terminal_velocity))
+	
+	# Oh and finally, we calculate our distance moved!
+	distance_moved = previous_position.distance_to(current_position)
+	if just_jumped:
+		jump_strength = jump_strength_base
+
+
+func wingbeat():
+	wingbeat_clock.start()
+	#print("Wingbeat!")
+	#print(current_speed)
+	
+	# Now, we attempt to consume stamina.
+	# We first compare our stored_jump
+	stored_jump = resources.consume_stamina(stored_jump)
+	#if stored_jump > resources.stamina:
+	#	stored_jump = resources.stamina
+	#resources.stamina -= stored_jump
+	if resources.stamina > 0:
+		is_stalling = false
+	
+	if toggle_glide:
+		current_speed += (wingbeat_strength * stored_jump) / int((distance_moved / 20) + 1)
+	else:
+		current_speed += (wingbeat_strength * stored_jump * 1.25) / int((distance_moved / 10) + 1)
+	#print(current_speed)
+	apply_momentum()
+	on_wingbeat_cooldown = true
+	
+	#resources.consume_stamina(stored_jump)
+
+func apply_momentum():
+	linear_velocity.x = (current_speed * flight_direction.x)
+	linear_velocity.y = (current_speed * flight_direction.y)
+
+func _on_wingbeat_clock_timeout() -> void:
+	on_wingbeat_cooldown = false

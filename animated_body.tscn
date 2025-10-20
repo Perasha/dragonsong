@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://bg3tfplkses5i"]
+
+[node name="AnimatedBody" type="Node2D"]
+
+[node name="Bone2D" type="Skeleton2D" parent="."]
