@@ -1,0 +1,70 @@
+[gd_scene load_steps=11 format=3 uid="uid://b0n2m1kv2cdx1"]
+
+[ext_resource type="Script" uid="uid://cqu0w22jdjbs4" path="res://scripts/dragon_controller.gd" id="1_urtjn"]
+[ext_resource type="Texture2D" uid="uid://cbj5kmqjsr7ck" path="res://Sprites/DragonWingless.png" id="2_2w5qb"]
+[ext_resource type="Script" uid="uid://ct4lehwag4jqw" path="res://scripts/dragon_animation.gd" id="3_b1f37"]
+[ext_resource type="Texture2D" uid="uid://6d5k318sfh03" path="res://Sprites/wings_folded.png" id="4_au75c"]
+[ext_resource type="Script" uid="uid://csdttjcujdw6f" path="res://scripts/direction_pointer.gd" id="5_vgkb3"]
+[ext_resource type="Script" uid="uid://c1eborn8rg0gt" path="res://scripts/dragon_resources.gd" id="6_j86p3"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_0ucct"]
+friction = 0.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_v4tli"]
+radius = 15.477623
+height = 54.237297
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ngkl2"]
+size = Vector2(22.89043, 30.375)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gilsg"]
+
+[node name="dragon" type="RigidBody2D"]
+mass = 0.001
+physics_material_override = SubResource("PhysicsMaterial_0ucct")
+gravity_scale = 2.0
+lock_rotation = true
+script = ExtResource("1_urtjn")
+wingbeat_strength = 100.0
+speed = 50.0
+jump_strength_base = 3.0
+max_jump_strength = 6.0
+wingbeat_afterburner_base = 20.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-8, -20.999994)
+rotation = 1.5708
+scale = Vector2(4.135, 4.13)
+shape = SubResource("CapsuleShape2D_v4tli")
+
+[node name="Body" type="Sprite2D" parent="."]
+position = Vector2(0, -53.52)
+scale = Vector2(4, 4)
+texture = ExtResource("2_2w5qb")
+script = ExtResource("3_b1f37")
+
+[node name="Wings" type="Sprite2D" parent="Body"]
+texture = ExtResource("4_au75c")
+
+[node name="FloorCheck" type="Area2D" parent="."]
+position = Vector2(0, 52)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FloorCheck"]
+position = Vector2(-14.574997, -7.2149963)
+scale = Vector2(10.085, 0.08)
+shape = SubResource("RectangleShape2D_ngkl2")
+
+[node name="Direction Pointer" type="Area2D" parent="."]
+script = ExtResource("5_vgkb3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Direction Pointer"]
+shape = SubResource("RectangleShape2D_gilsg")
+
+[node name="wingbeat_clock" type="Timer" parent="."]
+wait_time = 0.25
+one_shot = true
+
+[node name="Resources" type="Node" parent="."]
+script = ExtResource("6_j86p3")
+
+[connection signal="timeout" from="wingbeat_clock" to="." method="_on_wingbeat_clock_timeout"]

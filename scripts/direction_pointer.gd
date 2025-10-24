@@ -4,6 +4,7 @@ extends Area2D
 
 #dragon_node.flight_direction
 # Called every frame. 'delta' is the elapsed time since the previous frame.
+@warning_ignore("unused_parameter")
 func _process(delta: float) -> void:
-	position = dragon_node.flight_direction * 100
+	position = dragon_node.flight_direction * 500
 	pass

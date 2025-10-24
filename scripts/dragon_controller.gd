@@ -31,10 +31,12 @@ var direction_y
 var is_stalling
 
 var is_flying = false
-var toggle_glide = true
+var toggle_glide = false
 # Option to change from glide being a toggle, to being held
 var option_hold_to_glide = false
 var on_wingbeat_cooldown = false
+@export var wingbeat_afterburner_base = 6.0
+var wingbeat_afterburner = 0.0
 
 var current_speed = 0.0
 var turn_radius = 0.1
@@ -51,6 +53,7 @@ func _ready() -> void:
 	jump_strength = jump_strength_base
 
 
+@warning_ignore("unused_parameter")
 func _physics_process(delta: float) -> void:
 	just_jumped = false
 	previous_position = current_position
@@ -172,13 +175,11 @@ func _physics_process(delta: float) -> void:
 		if just_jumped and current_speed <= terminal_velocity and not on_wingbeat_cooldown:
 			wingbeat()
 			#print("Continue")
-		## SUPER IMPORTANT!
-		# Here, we're actually dividing our current speed among our new directions.
-		# Remember when we evenly merged our Linear Velocity earlier?
-		# That's because we need to redivide it! Except among two NEW slightly different directions.
-		# If we were pointing up, and now we're pointing down, the same speed is now being transferred to that direction.
-		# And that's how we keep our momentum!
-		# And also, if we stall, we actually immediately drop our direction downward.
+		# Adding our afterburner force. This'll slowly go down long after we do the wingbeat, but it's to push us further for a bit longer.
+		if wingbeat_afterburner > 0:
+			wingbeat_afterburner -= 0.8
+			current_speed += wingbeat_afterburner
+			
 		if current_speed >= 20:
 			apply_momentum()
 		else:
@@ -220,17 +221,10 @@ func _physics_process(delta: float) -> void:
 
 func wingbeat():
 	wingbeat_clock.start()
+	# Adding an "afterburner" to continually apply force after we do a wingbeat.
+	wingbeat_afterburner = wingbeat_afterburner_base
 	#print("Wingbeat!")
 	#print(current_speed)
-	
-	# Now, we attempt to consume stamina.
-	# We first compare our stored_jump
-	stored_jump = resources.consume_stamina(stored_jump)
-	#if stored_jump > resources.stamina:
-	#	stored_jump = resources.stamina
-	#resources.stamina -= stored_jump
-	if resources.stamina > 0:
-		is_stalling = false
 	
 	if toggle_glide:
 		current_speed += (wingbeat_strength * stored_jump) / int((distance_moved / 20) + 1)
@@ -241,7 +235,14 @@ func wingbeat():
 	on_wingbeat_cooldown = true
 	
 	#resources.consume_stamina(stored_jump)
-
+	
+## SUPER IMPORTANT!
+		# Here, we're actually dividing our current speed among our new directions.
+		# Remember when we evenly merged our Linear Velocity earlier?
+		# That's because we need to redivide it! Except among two NEW slightly different directions.
+		# If we were pointing up, and now we're pointing down, the same speed is now being transferred to that direction.
+		# And that's how we keep our momentum!
+		# And also, if we stall, we actually immediately drop our direction downward.
 func apply_momentum():
 	linear_velocity.x = (current_speed * flight_direction.x)
 	linear_velocity.y = (current_speed * flight_direction.y)

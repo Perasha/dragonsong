@@ -14,6 +14,7 @@ extends CanvasLayer
 @onready var glide_label = get_node("GlideToggle")
 @onready var stalling_label = get_node("Stalling")
 @onready var jump_str_label = get_node("JumpStrength")
+@onready var afterbrn_label = get_node("Afterburner")
 
 @onready var cam_scale_label = get_node("Camera Scale")
 
@@ -37,6 +38,7 @@ func _on_update_timeout() -> void:
 	jump_str_label.text = "Jump Strength: " + str(dragon_node.jump_strength)
 	cam_scale_label.text = "Camera Scale\n" + str(camera_node.zoom)
 	stalling_label.text = "Is Stalling: " + str(dragon_node.is_stalling)
+	afterbrn_label.text = "Afterburner: " + str(dragon_node.wingbeat_afterburner)
 	
 	stamina_bar.value = dragon_resources.stamina
 	stamina_label.text = str(snapped(dragon_resources.stamina,0.01))

@@ -5,6 +5,7 @@ var stamina = stamina_max
 
 @onready var dragon_node = get_parent()
 
+@warning_ignore("unused_parameter")
 func _process(delta: float) -> void:
 	if stamina < stamina_max:
 		if dragon_node.is_flying:

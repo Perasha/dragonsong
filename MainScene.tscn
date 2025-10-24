@@ -1,23 +1,8 @@
-[gd_scene load_steps=18 format=3 uid="uid://cxf86gkoociqk"]
+[gd_scene load_steps=9 format=3 uid="uid://cxf86gkoociqk"]
 
 [ext_resource type="PackedScene" uid="uid://drn046xbx7cku" path="res://debug_hud.tscn" id="1_l3vtc"]
-[ext_resource type="Script" path="res://scripts/dragon_controller.gd" id="2_3f2ow"]
-[ext_resource type="Script" path="res://scripts/CameraZoom.gd" id="2_5n5mo"]
-[ext_resource type="Texture2D" uid="uid://cbj5kmqjsr7ck" path="res://Sprites/DragonWingless.png" id="4_nci6l"]
-[ext_resource type="Script" path="res://scripts/dragon_animation.gd" id="5_0hlxy"]
-[ext_resource type="Script" path="res://scripts/direction_pointer.gd" id="5_mdkmb"]
-[ext_resource type="Texture2D" uid="uid://6d5k318sfh03" path="res://Sprites/wings_folded.png" id="6_ay205"]
-[ext_resource type="Script" path="res://scripts/dragon_resources.gd" id="8_iae3b"]
-
-[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_0ucct"]
-friction = 0.7
-
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_v4tli"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ngkl2"]
-size = Vector2(20, 17.875)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_gilsg"]
+[ext_resource type="Script" uid="uid://2absxauv5538" path="res://scripts/CameraZoom.gd" id="2_5n5mo"]
+[ext_resource type="PackedScene" uid="uid://b0n2m1kv2cdx1" path="res://dragon_player.tscn" id="3_4mcvd"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_v2fvg"]
 friction = 0.1
@@ -44,52 +29,8 @@ position_smoothing_enabled = true
 script = ExtResource("2_5n5mo")
 player = NodePath("../dragon")
 
-[node name="dragon" type="RigidBody2D" parent="."]
-position = Vector2(196, 295)
-physics_material_override = SubResource("PhysicsMaterial_0ucct")
-gravity_scale = 2.0
-lock_rotation = true
-script = ExtResource("2_3f2ow")
-wingbeat_strength = 100.0
-speed = 50.0
-jump_strength_base = 3.0
-max_jump_strength = 6.0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="dragon"]
-position = Vector2(0, 0.775)
-rotation = 1.5708
-scale = Vector2(4.13, 4.13)
-shape = SubResource("CapsuleShape2D_v4tli")
-
-[node name="Body" type="Sprite2D" parent="dragon"]
-position = Vector2(0, -22.095)
-scale = Vector2(2.685, 2.685)
-texture = ExtResource("4_nci6l")
-script = ExtResource("5_0hlxy")
-
-[node name="Wings" type="Sprite2D" parent="dragon/Body"]
-texture = ExtResource("6_ay205")
-
-[node name="FloorCheck" type="Area2D" parent="dragon"]
-position = Vector2(0, 51)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="dragon/FloorCheck"]
-position = Vector2(0, -7.715)
-scale = Vector2(2.605, 0.08)
-shape = SubResource("RectangleShape2D_ngkl2")
-
-[node name="Direction Pointer" type="Area2D" parent="dragon"]
-script = ExtResource("5_mdkmb")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="dragon/Direction Pointer"]
-shape = SubResource("RectangleShape2D_gilsg")
-
-[node name="wingbeat_clock" type="Timer" parent="dragon"]
-wait_time = 0.25
-one_shot = true
-
-[node name="Resources" type="Node" parent="dragon"]
-script = ExtResource("8_iae3b")
+[node name="dragon" parent="." instance=ExtResource("3_4mcvd")]
+scale = Vector2(2, 2)
 
 [node name="Floor3" type="StaticBody2D" parent="."]
 position = Vector2(5567, -401)
@@ -195,5 +136,3 @@ physics_material_override = SubResource("PhysicsMaterial_v2fvg")
 [node name="CollisionPolygon2D" type="CollisionShape2D" parent="Floor"]
 position = Vector2(691, -34.375)
 shape = SubResource("RectangleShape2D_1aevc")
-
-[connection signal="timeout" from="dragon/wingbeat_clock" to="dragon" method="_on_wingbeat_clock_timeout"]
