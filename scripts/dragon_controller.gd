@@ -47,6 +47,8 @@ var dampen_glide = .000125
 # Default is 400
 var gravity = 150
 
+var grav_scale_default = 2.0
+
 var flight_direction = Vector2(0.0,0.0)
 
 func _ready() -> void:
@@ -99,9 +101,11 @@ func _physics_process(delta: float) -> void:
 	#	jump_counter += 1
 	
 	if Input.is_action_pressed("flap"):
+		toggle_glide = true
 		if jump_strength <= max_jump_strength:
 			jump_strength += 0.1
 	if Input.is_action_just_released("flap"):
+		toggle_glide = false
 		just_jumped = true
 		jump_counter += 1
 		stored_jump = jump_strength
@@ -139,22 +143,26 @@ func _physics_process(delta: float) -> void:
 			toggle_glide = false
 	
 	# However, if our Stamina is 0, we can't glide.
-	if resources.stamina < 1:
-		toggle_glide = false
-		direction_y = 0
+	#if resources.stamina < 1:
+	#	toggle_glide = false
+	#	direction_y = 0
 	
 	# If our wings are out, it's a bit harder to make sharp turns. But if they're in, we can make sharp turns!
 	if toggle_glide:
-		turn_radius = 0.05
+		turn_radius = 0.06
+		gravity_scale = grav_scale_default
 	else:
-		turn_radius = 0.1
-	
+		turn_radius = 0.08
+		gravity_scale = 2.5
+		
+		
 	# This is where we use our turning radius. We incrementally will be adding this value to
 	# our Flight Direction every tick, which will go against the gravity that constantly pushes it down.
 	flight_direction.x += direction_x * turn_radius
 	flight_direction.y += direction_y * turn_radius
 	# Oh and then we make sure that we don't actually go above 1 for either value because that would lead to ~problems~!
 	flight_direction = flight_direction.normalized()
+	
 	
 	# This is our jump! If we flap once, it's just a jump. If we flap twice, and we're not on the ground, we start flying!
 	if jump_counter >= 1 and not floor_check.has_overlapping_bodies():
@@ -222,7 +230,7 @@ func _physics_process(delta: float) -> void:
 func wingbeat():
 	wingbeat_clock.start()
 	# Adding an "afterburner" to continually apply force after we do a wingbeat.
-	wingbeat_afterburner = wingbeat_afterburner_base
+	wingbeat_afterburner = (stored_jump * 3)
 	#print("Wingbeat!")
 	#print(current_speed)
 	
