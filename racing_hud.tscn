@@ -1,0 +1,45 @@
+[gd_scene load_steps=2 format=3 uid="uid://dfyoa5lhbtakr"]
+
+[ext_resource type="Script" uid="uid://bpvlikbnwgemu" path="res://scripts/racing_hud.gd" id="1_k8nps"]
+
+[node name="RacingHud" type="CanvasLayer"]
+script = ExtResource("1_k8nps")
+
+[node name="Current_Time" type="Label" parent="."]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -35.5
+offset_right = 35.5
+offset_bottom = 87.0
+grow_horizontal = 2
+size_flags_horizontal = 0
+theme_override_font_sizes/font_size = 30
+text = "Time
+0.00"
+
+[node name="Scoreboard" type="Label" parent="."]
+visible = false
+offset_right = 71.0
+offset_bottom = 87.0
+size_flags_horizontal = 0
+theme_override_font_sizes/font_size = 15
+text = "Best Time
+0.00"
+
+[node name="Reset" type="Button" parent="."]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -25.5
+offset_top = -72.0
+offset_right = 25.5
+offset_bottom = -41.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Reset"
+icon_alignment = 1
+
+[connection signal="button_up" from="Reset" to="." method="_on_reset_button_up"]

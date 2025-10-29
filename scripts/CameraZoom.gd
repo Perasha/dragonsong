@@ -7,7 +7,8 @@ extends Camera2D
 @export_category("Follow_Character")
 var zoomSpeed = 1.2
 
-@export var player : RigidBody2D
+@export var follow_target : Node2D
+@onready var player = get_parent().get_node("dragon")
 
 @export_category("Camera Smoothing")
 @export var smoothing_enabled : bool
@@ -31,7 +32,7 @@ var weight : float
 
 func _ready():
 	current_zoom_level = GROUND
-	weight = float(smoothing_distance) / 500
+	weight = float(smoothing_distance) / 5000
 	for node in get_children():
 		if node.get_class() == "Area2D":
 			#print(node.name)
@@ -47,9 +48,38 @@ func _input(event):
 			if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 				zoom /= Vector2(zoomSpeed,zoomSpeed)
 
+var direction = Vector2()
+var anticipated_direction = Vector2(0.0,0.0)
+var held_count = Vector2()
+var max_hold = 50.0
+var max_hold_y = max_hold / 1.5
+
 @warning_ignore("unused_parameter")
 func _physics_process(delta):
 	if player != null:
+		max_hold = player.distance_moved * 1.5
+		#Here, we're getting our direction inputs again.
+		# We use this to add to a hold_count value, 
+		# and essentially slowly push our camera in that direction if it's held there.
+		direction.x = Input.get_axis("ui_left", "ui_right")
+		direction.y = Input.get_axis("ui_up", "ui_down")
+		
+		#held_count += direction
+		held_count += (direction) * 5
+		held_count -= held_count.direction_to(Vector2(0,0))
+		
+		if abs(held_count.y) > max_hold_y:
+			if held_count.y < 0: held_count.y = -max_hold_y
+			else: held_count.y = max_hold_y
+		if abs(held_count.x) > max_hold:
+			if held_count.x < 0: held_count.x = -max_hold
+			else: held_count.x = max_hold
+		
+		#print(held_count)
+		#print("Held Count:", held_count)
+		#anticipated_direction = Vector2(1.0,1.0) * (direction * direction)
+		#print(direction)
+		#print(anticipated_direction)
 		##ZOOM CHANGING
 		var new_zoom = Vector2(zoom_levels[current_zoom_level],zoom_levels[current_zoom_level])
 		#print(zoom_levels[current_zoom_level])
@@ -61,16 +91,35 @@ func _physics_process(delta):
 		var camera_position : Vector2
 		var camera_target : Vector2
 		
+		
+		
+		
 		if player.is_flying:
+			if player.flight_direction.x > 0.5:	
+				anticipated_direction.x = 1
+			elif player.flight_direction.x < -0.5:	
+				anticipated_direction.x = -1
+			else:	anticipated_direction.x = 0
+			
+			if player.flight_direction.y > 0.5:	
+				anticipated_direction.y = 1
+			elif player.flight_direction.y < -0.5:	
+				anticipated_direction.y = -1
+			else:	
+				anticipated_direction.y = 0
+			anticipated_direction = anticipated_direction.normalized()
 			#camera_target = mouse_pos + player.global_position
-			camera_target = player.global_position
+			#camera_target = player.global_position + (held_count * 20)
+			#print(anticipated_direction)
+			camera_target = player.global_position + (anticipated_direction * 1000)
+			#camera_position = lerp(global_position, camera_target, 0.01)
+			#print(held_count)
 			pass
 		else:
 			camera_target = player.global_position
 		
 		if smoothing_enabled:
-			camera_position = lerp(global_position, camera_target, weight)
-			#camera_position = lerp(global_position, player.global_position + camera_target_beyond, weight)
+			camera_position = lerp(global_position, camera_target, 0.05)
 		else:
 			camera_position = camera_target
 		
@@ -78,7 +127,7 @@ func _physics_process(delta):
 
 
 func _on_check_zoom_timeout() -> void:
-	print('Timeout!')
+	#print('Timeout!')
 	var i = -1
 	for node in zoom_dist_nodes:
 		i += 1
@@ -88,5 +137,5 @@ func _on_check_zoom_timeout() -> void:
 			break
 		else:
 			current_zoom_level = MAX
-	print("Level: ", i, ",", current_zoom_level)
+	#print("Level: ", i, ",", current_zoom_level)
 	pass # Replace with function body.

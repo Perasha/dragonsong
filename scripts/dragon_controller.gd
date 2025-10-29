@@ -5,8 +5,8 @@ extends RigidBody2D
 #@export var jump_height = -400.00
 @export var max_walk_speed = 200.00
 @export var max_run_speed = 400.00
-@export var max_fly_speed = 1000.00
-@export var terminal_velocity = 4000.00
+@export var max_fly_speed = 1250.00
+@export var terminal_velocity = 2000.00
 
 @onready var floor_check = get_node("FloorCheck")
 @onready var sprite = get_node("Body")
@@ -101,11 +101,11 @@ func _physics_process(delta: float) -> void:
 	#	jump_counter += 1
 	
 	if Input.is_action_pressed("flap"):
-		toggle_glide = true
+		#toggle_glide = true
 		if jump_strength <= max_jump_strength:
 			jump_strength += 0.1
 	if Input.is_action_just_released("flap"):
-		toggle_glide = false
+		#toggle_glide = false
 		just_jumped = true
 		jump_counter += 1
 		stored_jump = jump_strength
@@ -206,7 +206,7 @@ func _physics_process(delta: float) -> void:
 		# Add some directly upward velocity if we flap our wings!
 		if just_jumped:
 			stored_jump *= 0.75
-			stored_jump = resources.consume_stamina(stored_jump)
+ 			#stored_jump = resources.consume_stamina(stored_jump)
 			linear_velocity.y -= wingbeat_strength * stored_jump
 			stored_jump *= 0.75
 			linear_velocity.x += direction_x * (wingbeat_strength * stored_jump)
@@ -226,20 +226,30 @@ func _physics_process(delta: float) -> void:
 	if just_jumped:
 		jump_strength = jump_strength_base
 
+@onready var reset_pos = global_position
+var reset = false
+
+func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
+	if reset:
+		state.transform.origin = reset_pos
+		# Call reset_physics_interpolation() at the end of the frame once the physics engine has been updated
+		reset_physics_interpolation.call_deferred()
+		reset = false
 
 func wingbeat():
 	wingbeat_clock.start()
-	# Adding an "afterburner" to continually apply force after we do a wingbeat.
-	wingbeat_afterburner = (stored_jump * 3)
-	#print("Wingbeat!")
-	#print(current_speed)
-	
-	if toggle_glide:
-		current_speed += (wingbeat_strength * stored_jump) / int((distance_moved / 20) + 1)
-	else:
-		current_speed += (wingbeat_strength * stored_jump * 1.25) / int((distance_moved / 10) + 1)
-	#print(current_speed)
-	apply_momentum()
+	if current_speed <= max_fly_speed:
+		# Adding an "afterburner" to continually apply force after we do a wingbeat.
+		wingbeat_afterburner = (stored_jump * 3)
+		#print("Wingbeat!")
+		#print(current_speed)
+		
+		if toggle_glide:
+			current_speed += (wingbeat_strength * stored_jump) / int((distance_moved / 20) + 1)
+		else:
+			current_speed += (wingbeat_strength * stored_jump * 1.25) / int((distance_moved / 10) + 1)
+		#print(current_speed)
+		apply_momentum()
 	on_wingbeat_cooldown = true
 	
 	#resources.consume_stamina(stored_jump)

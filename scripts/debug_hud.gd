@@ -18,15 +18,22 @@ extends CanvasLayer
 
 @onready var cam_scale_label = get_node("Camera Scale")
 
-@onready var stamina_bar = get_node("Stamina")
-@onready var stamina_label = get_node("Stamina/Label")
+#@onready var stamina_bar = get_node("Stamina")
+#@onready var stamina_label = get_node("Stamina/Label")
 
 func _ready() -> void:
-	stamina_bar.max_value = dragon_resources.stamina_max
+	pass
+	#stamina_bar.max_value = dragon_resources.stamina_max
 
 #@onready var current_gravity = get_node("HSlider/CurrentGravity")
 #@onready var grav_slider = get_node("HSlider")
 #Position
+func _process(delta: float) -> void:
+	if Input.is_action_just_pressed("show_debug_hud"):
+		if visible:
+			hide()
+		else:
+			show()
 
 func _on_update_timeout() -> void:
 	speedLabel.text = "Speed: " + str(int(dragon_node.current_speed))
@@ -40,8 +47,8 @@ func _on_update_timeout() -> void:
 	stalling_label.text = "Is Stalling: " + str(dragon_node.is_stalling)
 	afterbrn_label.text = "Afterburner: " + str(dragon_node.wingbeat_afterburner)
 	
-	stamina_bar.value = dragon_resources.stamina
-	stamina_label.text = str(snapped(dragon_resources.stamina,0.01))
+	#stamina_bar.value = dragon_resources.stamina
+	#stamina_label.text = str(snapped(dragon_resources.stamina,0.01))
 	
 	# Set Gravity
 	#PhysicsServer2D.area_set_param(get_viewport().find_world_2d().space,PhysicsServer2D.AREA_PARAM_GRAVITY,grav_slider.value)
@@ -56,6 +63,6 @@ func _on_check_box_toggled(toggled_on: bool) -> void:
 	pass # Replace with function body.
 
 
-func _on_button_button_up() -> void:
-	dragon_resources.rest()
-	pass # Replace with function body.
+#func _on_button_button_up() -> void:
+	#dragon_resources.rest()
+	#pass # Replace with function body.
