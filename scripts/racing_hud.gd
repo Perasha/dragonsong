@@ -14,7 +14,8 @@ func _process(delta: float) -> void:
 
 func _on_reset_button_up() -> void:
 	var dragon_node = get_node("/root/Main/dragon")
+	var camera_node = get_node("/root/Main/Camera2D")
 	dragon_node.reset = true
 	dragon_node.linear_velocity = Vector2(0,0)
 	race_node.reset()
-	pass # Replace with function body.
+	camera_node.global_position = dragon_node.global_position

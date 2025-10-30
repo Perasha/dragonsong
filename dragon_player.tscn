@@ -11,8 +11,8 @@
 friction = 0.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_v4tli"]
-radius = 15.477623
-height = 54.237297
+radius = 10.399032
+height = 35.835346
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ngkl2"]
 size = Vector2(22.89043, 30.375)
@@ -32,7 +32,7 @@ max_jump_strength = 6.0
 wingbeat_afterburner_base = 20.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-8, -20.999994)
+position = Vector2(-19, -1)
 rotation = 1.5708
 scale = Vector2(4.135, 4.13)
 shape = SubResource("CapsuleShape2D_v4tli")

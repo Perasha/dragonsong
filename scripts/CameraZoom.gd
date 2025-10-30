@@ -22,7 +22,7 @@ var maxHeight = 10000
 
 # Zoom levels 0 - 2
 enum {GROUND, NEAR, FAR, MAX}
-var zoom_levels = [defaultZoomLevel,defaultZoomLevel / 1.5,defaultZoomLevel / 3,defaultZoomLevel / 4]
+var zoom_levels = [defaultZoomLevel,defaultZoomLevel / 1.7,defaultZoomLevel / 3,defaultZoomLevel / 6]
 var zoom_dist_nodes = []
 var current_zoom_level = GROUND
 
@@ -55,8 +55,9 @@ var max_hold = 50.0
 var max_hold_y = max_hold / 1.5
 
 @warning_ignore("unused_parameter")
-func _physics_process(delta):
+func _process(delta):
 	if player != null:
+		check_zoom()
 		max_hold = player.distance_moved * 1.5
 		#Here, we're getting our direction inputs again.
 		# We use this to add to a hold_count value, 
@@ -91,42 +92,21 @@ func _physics_process(delta):
 		var camera_position : Vector2
 		var camera_target : Vector2
 		
-		
-		
-		
-		if player.is_flying:
-			if player.flight_direction.x > 0.5:	
-				anticipated_direction.x = 1
-			elif player.flight_direction.x < -0.5:	
-				anticipated_direction.x = -1
-			else:	anticipated_direction.x = 0
-			
-			if player.flight_direction.y > 0.5:	
-				anticipated_direction.y = 1
-			elif player.flight_direction.y < -0.5:	
-				anticipated_direction.y = -1
-			else:	
-				anticipated_direction.y = 0
-			anticipated_direction = anticipated_direction.normalized()
-			#camera_target = mouse_pos + player.global_position
-			#camera_target = player.global_position + (held_count * 20)
-			#print(anticipated_direction)
-			camera_target = player.global_position + (anticipated_direction * 1000)
-			#camera_position = lerp(global_position, camera_target, 0.01)
-			#print(held_count)
-			pass
-		else:
-			camera_target = player.global_position
+		camera_target = follow_target.global_position
 		
 		if smoothing_enabled:
-			camera_position = lerp(global_position, camera_target, 0.05)
+			var weight = pow(log(1.2),2)
+			#position = lerp(position, new_position, pow(-weight*delta,3))
+			#print("Weight: ", weight)
+			#print("Calculated Weight: ", pow(-weight*delta,2))
+			camera_position = lerp(global_position, camera_target, weight)
 		else:
 			camera_position = camera_target
 		
 		global_position = camera_position
 
 
-func _on_check_zoom_timeout() -> void:
+func check_zoom() -> void:
 	#print('Timeout!')
 	var i = -1
 	for node in zoom_dist_nodes:
