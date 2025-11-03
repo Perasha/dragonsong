@@ -10,7 +10,7 @@ var timestamp_start = 0.0
 @onready var hud = get_node("RacingHud")
 @onready var hud_pointer = get_node("End/Direction_Indicator")
 
-@onready var timer = get_node("Timer")
+#@onready var timer = get_node("Timer")
 @onready var start_node = get_node("Start")
 @onready var end_node = get_node("End")
 

@@ -18,18 +18,17 @@ func _physics_process(delta: float) -> void:
 	rotation = 0.0
 	flip_v = false
 	#Rotating the sprite!
-	
 	if dragon_node.flight_direction.x < 0:
 		flip_h = false
-		if dragon_node.is_flying:
+		if dragon_node.is_flying and not dragon_node.is_hovering:
 			flip_v = true
 			flip_h = true
 	else:
 		flip_h = true
-		if dragon_node.is_flying:
+		if dragon_node.is_flying and not dragon_node.is_hovering:
 			flip_v = false
 			#flip_h = false
-	if dragon_node.is_flying:
+	if dragon_node.is_flying and not dragon_node.is_hovering:
 		rotation = dragon_node.flight_direction.angle()
 	
 	# Wing flaps!

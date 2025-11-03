@@ -67,7 +67,8 @@ func _process(delta):
 		
 		#held_count += direction
 		held_count += (direction) * 5
-		held_count -= held_count.direction_to(Vector2(0,0))
+		held_count += held_count.direction_to(Vector2(0,0))
+		print(held_count)
 		
 		if abs(held_count.y) > max_hold_y:
 			if held_count.y < 0: held_count.y = -max_hold_y

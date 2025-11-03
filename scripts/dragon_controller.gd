@@ -31,11 +31,14 @@ var direction_y
 var is_stalling
 
 var is_flying = false
+var is_hovering = false
 var toggle_glide = false
 # Option to change from glide being a toggle, to being held
 var option_hold_to_glide = false
+var option_hold_to_hover = false
+
 var on_wingbeat_cooldown = false
-@export var wingbeat_afterburner_base = 6.0
+#@export var wingbeat_afterburner_base = 6.0
 var wingbeat_afterburner = 0.0
 
 var current_speed = 0.0
@@ -60,6 +63,7 @@ func _physics_process(delta: float) -> void:
 	just_jumped = false
 	previous_position = current_position
 	current_position = position
+	gravity_scale = grav_scale_default
 	
 	# Here, we take the X and Y of our Linear Velocity and combine it into a total speed value.
 	# And uh, we needed the Pythoreum Theorum for it.
@@ -77,23 +81,23 @@ func _physics_process(delta: float) -> void:
 	# First, if our glide is toggled, we lower this dampening value so we get a nice, slow descent.
 	# if the distance we moved is low enough, meaning we've slowed down, we'll disable it and start diving.
 	# If the distance moved is low and we're flying, that means... we've stalled!
-	if distance_moved < 4 and is_flying:
-		is_stalling = true
-		fd_dampen = dampen_base
-	elif distance_moved > 10 and is_flying:
-		is_stalling = false
-	if is_flying == false:
-		is_stalling = false
-	if toggle_glide and not is_stalling:
-		fd_dampen = dampen_glide * gravity
-	
-	
-	# Now here's the actual dampening.
-	# We first make sure that we are flying *and* that our flight direction isn't directly up (meaning we have enough force to fly up)
-	if is_flying and flight_direction.y < 1:
-		# We take our dampening value, and divide it by the distance moved. 
-		# We also then add our dampening value to that number so that we don't accidentally divide by zero.
-		flight_direction.y += fd_dampen / (distance_moved + fd_dampen)
+	# Also if we're hovering, skip this ENTIRE thing.
+	if not is_hovering:
+		if distance_moved < 4 and is_flying:
+			is_stalling = true
+			fd_dampen = dampen_base
+		elif distance_moved > 10 and is_flying:
+			is_stalling = false
+		if is_flying == false:
+			is_stalling = false
+		if toggle_glide and not is_stalling:
+			fd_dampen = dampen_glide * gravity
+		# Now here's the actual dampening.
+		# We first make sure that we are flying *and* that our flight direction isn't directly up (meaning we have enough force to fly up)
+		if is_flying and flight_direction.y < 1:
+			# We take our dampening value, and divide it by the distance moved. 
+			# We also then add our dampening value to that number so that we don't accidentally divide by zero.
+			flight_direction.y += fd_dampen / (distance_moved + fd_dampen)
 	
 	# Now we get inputs. Our wing flap, then movement axes, then our wing-fold/dive.
 	#if Input.is_action_just_pressed("flap"):
@@ -106,18 +110,14 @@ func _physics_process(delta: float) -> void:
 			jump_strength += 0.1
 	if Input.is_action_just_released("flap"):
 		#toggle_glide = false
+		is_hovering = false
 		just_jumped = true
 		jump_counter += 1
 		stored_jump = jump_strength
 	
 	direction_x = Input.get_axis("ui_left", "ui_right")
 	direction_y = Input.get_axis("ui_up", "ui_down")
-	
-	#if direction_x != 0:
-	#	toggle_glide = true
-	#else:
-	#	toggle_glide = false
-	
+		
 	#If we're stalling, we can't climb. So we specifically anchor our Y direction down.
 	if is_stalling:
 		#direction_x *= 0.25
@@ -125,7 +125,7 @@ func _physics_process(delta: float) -> void:
 	
 	# Can we make our Direction proportional to our speed? 
 	# For example, if we're going too slow, 
-	# 
+	
 	
 	# If option_hold_to_glide is on, then you need to hold to fold in wings. Otherwise, it's a toggle.
 	# Some players might prefer one way or the other so it's a good option to have. 
@@ -142,6 +142,20 @@ func _physics_process(delta: float) -> void:
 		if option_hold_to_glide:
 			toggle_glide = false
 	
+	# And here's the same thing for Hovering
+	if Input.is_action_just_pressed("Hover"):
+		if not option_hold_to_hover:
+			if is_hovering == true:
+				is_hovering = false
+			else:
+				is_hovering = true
+	if Input.is_action_pressed("Hover"):
+		if option_hold_to_hover:
+			is_hovering = true		
+	if Input.is_action_just_released("Hover"):
+		if option_hold_to_hover:
+			is_hovering = false
+	
 	# However, if our Stamina is 0, we can't glide.
 	#if resources.stamina < 1:
 	#	toggle_glide = false
@@ -151,6 +165,8 @@ func _physics_process(delta: float) -> void:
 	if toggle_glide:
 		turn_radius = 0.06
 		gravity_scale = grav_scale_default
+	elif is_hovering:
+		turn_radius = 0.2
 	else:
 		turn_radius = 0.08
 		gravity_scale = 2.5
@@ -158,8 +174,7 @@ func _physics_process(delta: float) -> void:
 		
 	# This is where we use our turning radius. We incrementally will be adding this value to
 	# our Flight Direction every tick, which will go against the gravity that constantly pushes it down.
-	flight_direction.x += direction_x * turn_radius
-	flight_direction.y += direction_y * turn_radius
+	flight_direction += Vector2(direction_x,direction_y) * turn_radius
 	# Oh and then we make sure that we don't actually go above 1 for either value because that would lead to ~problems~!
 	flight_direction = flight_direction.normalized()
 	
@@ -177,9 +192,11 @@ func _physics_process(delta: float) -> void:
 	if distance_moved > 12 and not floor_check.has_overlapping_bodies():
 		is_flying = true
 	
-	
+	if not is_flying:
+		is_hovering = false
 	# Flying movement.
-	if is_flying:
+	
+	if is_flying and not is_hovering:
 		if just_jumped and current_speed <= terminal_velocity and not on_wingbeat_cooldown:
 			wingbeat()
 			#print("Continue")
@@ -192,10 +209,23 @@ func _physics_process(delta: float) -> void:
 			apply_momentum()
 		else:
 			flight_direction.y = 1.0
-		# This is just to make sure our speed never exceeds what we determine as Terminal Velocity. Otherwise... bad things
-		linear_velocity = linear_velocity.clamp(Vector2(-terminal_velocity,-terminal_velocity),Vector2(terminal_velocity,terminal_velocity))
-	else:
+	# Hovering Movement
+	elif is_hovering:
+		gravity_scale = 0.0
+		#flight_direction = Vector2(direction_x,direction_y)
+		if current_speed <= max_fly_speed:
+			var hover_speed = 15
+			var hover_direction = Vector2(direction_x,direction_y).normalized() * hover_speed
+			linear_velocity += hover_direction
+			if linear_velocity.y < 0:
+				linear_velocity.y /= 1.005
+			#linear_velocity = linear_velocity.normalized()
+		#print(linear_velocity.direction_to(Vector2(0,0)))
+		if direction_x == 0 and direction_y == 0:
+			linear_velocity /= 1.015
+		linear_velocity += linear_velocity.direction_to(Vector2(0,0)) * 10
 	# Grounded movement.
+	else:
 		# And start moving in a direction if we move left and right. Not very fast, mind you.
 		if direction_x:
 			flight_direction.x = direction_x
@@ -210,8 +240,7 @@ func _physics_process(delta: float) -> void:
 			linear_velocity.y -= wingbeat_strength * stored_jump
 			stored_jump *= 0.75
 			linear_velocity.x += direction_x * (wingbeat_strength * stored_jump)
-			#linear_velocity.y -= wingbeat_strength * jump_strength * 1.25
-		
+			#linear_velocity.y -= wingbeat_strength * jump_strength * 1.25		
 		# This actually more quickly slows our movement, rather than increasing our friction.
 		# Using them legs to slow down!
 		# But only if we're touching the floor.
@@ -219,12 +248,18 @@ func _physics_process(delta: float) -> void:
 			linear_velocity.x *= 0.95
 		# And again, clamping our speed just to make sure nothing breaks.
 		# X axis can be our maximum walking speed, but up and down are determined by air resistance!
+		#linear_velocity = linear_velocity.clamp(Vector2(-terminal_velocity,-terminal_velocity),Vector2(terminal_velocity,terminal_velocity))
+	if is_flying or is_hovering:
+		# This is just to make sure our speed never exceeds what we determine as Terminal Velocity. Otherwise... bad things
 		linear_velocity = linear_velocity.clamp(Vector2(-terminal_velocity,-terminal_velocity),Vector2(terminal_velocity,terminal_velocity))
-	
 	# Oh and finally, we calculate our distance moved!
 	distance_moved = previous_position.distance_to(current_position)
 	if just_jumped:
 		jump_strength = jump_strength_base
+		
+		#linear_velocity -= linear_velocity.direction_to(Vector2(0,0)) * 50
+	
+# END PHYSICS_PROCESS------------------------------------------------
 
 @onready var reset_pos = global_position
 var reset = false
