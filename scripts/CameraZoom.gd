@@ -56,6 +56,7 @@ var max_hold_y = max_hold / 1.5
 
 @warning_ignore("unused_parameter")
 func _process(delta):
+	#print("Screen size: ", get_viewport().get_visible_rect().size)
 	if player != null:
 		check_zoom()
 		max_hold = player.distance_moved * 1.5
@@ -68,7 +69,7 @@ func _process(delta):
 		#held_count += direction
 		held_count += (direction) * 5
 		held_count += held_count.direction_to(Vector2(0,0))
-		print(held_count)
+		#print(held_count)
 		
 		if abs(held_count.y) > max_hold_y:
 			if held_count.y < 0: held_count.y = -max_hold_y
@@ -87,7 +88,7 @@ func _process(delta):
 		#print(zoom_levels[current_zoom_level])
 		#new_zoom.x = zoom_levels[current_zoom_level]
 		#new_zoom.y = new_zoom.x
-		zoom = lerp(zoom, new_zoom, 0.01)
+		zoom = lerp(zoom, new_zoom, 0.005)
 		#print(zoom)
 		
 		var camera_position : Vector2

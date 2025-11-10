@@ -34,7 +34,7 @@ func _process(delta: float) -> void:
 
 
 func _on_start_body_entered(body: Node2D) -> void:
-	print("STARTING!")
+	#print("STARTING!")
 	if has_started == false:
 		current_time = 0.00
 		has_started = true
@@ -45,11 +45,12 @@ func _on_start_body_entered(body: Node2D) -> void:
 
 
 func _on_end_body_entered(body: Node2D) -> void:
-	print("FINISHED!")
+	#print("FINISHED!")
 	if has_finished == false and has_started == true:
 		has_finished = true
 		has_started = false
 		hud_pointer.hide()
+	hud.set_high_score()
 
 func reset():
 	has_finished = false
@@ -58,12 +59,12 @@ func reset():
 
 # When the End point is Visible to the screen
 func _on_visible_on_screen_notifier_2d_screen_entered() -> void:
-	print("Visible!")
+	#print("Visible!")
 	end_visible = true
 	pass # Replace with function body.
 
 # When the End point is NOT Visible to the screen
 func _on_visible_on_screen_notifier_2d_screen_exited() -> void:
-	print("Hidden!")
+	#print("Hidden!")
 	end_visible = false
 	pass # Replace with function body.

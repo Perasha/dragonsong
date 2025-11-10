@@ -29,6 +29,7 @@ wingbeat_strength = 100.0
 speed = 50.0
 jump_strength_base = 3.0
 max_jump_strength = 6.0
+hover_speed = 20
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-19, -1)
@@ -50,7 +51,7 @@ position = Vector2(0, 52)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="FloorCheck"]
 position = Vector2(-14.574997, -7.2149963)
-scale = Vector2(10.085, 0.08)
+scale = Vector2(5.885, 0.08)
 shape = SubResource("RectangleShape2D_ngkl2")
 
 [node name="Direction Pointer" type="Area2D" parent="."]

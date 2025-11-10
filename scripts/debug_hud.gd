@@ -33,8 +33,10 @@ func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("show_debug_hud"):
 		if visible:
 			hide()
+			get_parent().get_node("Controls").show()
 		else:
 			show()
+			get_parent().get_node("Controls").hide()
 
 func _on_update_timeout() -> void:
 	speedLabel.text = "Speed: " + str(int(dragon_node.current_speed))
@@ -58,9 +60,9 @@ func _on_update_timeout() -> void:
 	
 
 func _on_check_box_toggled(toggled_on: bool) -> void:
-	print(toggled_on)
+	#print(toggled_on)
 	dragon_node.option_hold_to_glide = toggled_on
-	print(dragon_node.option_hold_to_glide)
+	#print(dragon_node.option_hold_to_glide)
 	dragon_node.toggle_glide = false
 	pass # Replace with function body.
 

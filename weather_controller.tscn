@@ -1,0 +1,22 @@
+[gd_scene load_steps=2 format=3 uid="uid://cteksmarrap1w"]
+
+[ext_resource type="Script" uid="uid://c5xffeudfeyf" path="res://scripts/weather_controller.gd" id="1_s5umo"]
+
+[node name="WeatherController" type="CanvasLayer"]
+script = ExtResource("1_s5umo")
+
+[node name="WeatherTimer" type="Timer" parent="."]
+wait_time = 10.0
+
+[node name="CurrentWeather" type="Label" parent="."]
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 44.0
+offset_top = -11.5
+offset_right = 203.0
+offset_bottom = 11.5
+grow_vertical = 2
+text = "Weather"
+
+[connection signal="timeout" from="WeatherTimer" to="." method="_on_weather_timer_timeout"]

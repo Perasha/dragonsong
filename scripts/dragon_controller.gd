@@ -41,6 +41,8 @@ var on_wingbeat_cooldown = false
 #@export var wingbeat_afterburner_base = 6.0
 var wingbeat_afterburner = 0.0
 
+@export var hover_speed = 15
+
 var current_speed = 0.0
 var turn_radius = 0.1
 var fd_dampen = .85
@@ -69,7 +71,6 @@ func _physics_process(delta: float) -> void:
 	# And uh, we needed the Pythoreum Theorum for it.
 	current_speed = pow(abs(linear_velocity.x),2) + pow(abs(linear_velocity.y),2)
 	current_speed = sqrt(current_speed)
-	
 	# Now, we're constantly pushing our Flight Direction (the thing that dictates which way we go when we fly) down.
 	# That's because of gravity! Because otherwise, well, we're always adding force forward and it's
 	# not enough to cancel out the built-in gravity.
@@ -94,10 +95,15 @@ func _physics_process(delta: float) -> void:
 			fd_dampen = dampen_glide * gravity
 		# Now here's the actual dampening.
 		# We first make sure that we are flying *and* that our flight direction isn't directly up (meaning we have enough force to fly up)
-		if is_flying and flight_direction.y < 1:
+		if flight_direction.y < 1:
 			# We take our dampening value, and divide it by the distance moved. 
 			# We also then add our dampening value to that number so that we don't accidentally divide by zero.
 			flight_direction.y += fd_dampen / (distance_moved + fd_dampen)
+		elif not is_flying:
+			flight_direction.y = 1
+	# If we ARE hovering
+	else:
+		is_stalling = false
 	
 	# Now we get inputs. Our wing flap, then movement axes, then our wing-fold/dive.
 	#if Input.is_action_just_pressed("flap"):
@@ -182,7 +188,8 @@ func _physics_process(delta: float) -> void:
 	# This is our jump! If we flap once, it's just a jump. If we flap twice, and we're not on the ground, we start flying!
 	if jump_counter >= 1 and not floor_check.has_overlapping_bodies():
 		is_flying = true
-	else:
+		#is_hovering = true
+	elif floor_check.has_overlapping_bodies():
 		is_flying = false
 	
 	if floor_check.has_overlapping_bodies():
@@ -190,6 +197,9 @@ func _physics_process(delta: float) -> void:
 		jump_counter = 0
 	
 	if distance_moved > 12 and not floor_check.has_overlapping_bodies():
+		is_flying = true
+	
+	if is_hovering and not floor_check.has_overlapping_bodies():
 		is_flying = true
 	
 	if not is_flying:
@@ -214,15 +224,17 @@ func _physics_process(delta: float) -> void:
 		gravity_scale = 0.0
 		#flight_direction = Vector2(direction_x,direction_y)
 		if current_speed <= max_fly_speed:
-			var hover_speed = 15
 			var hover_direction = Vector2(direction_x,direction_y).normalized() * hover_speed
-			linear_velocity += hover_direction
-			if linear_velocity.y < 0:
-				linear_velocity.y /= 1.005
+			linear_velocity.x += hover_direction.x
+			if linear_velocity.y > -900:
+				linear_velocity.y += hover_direction.y
+			#if linear_velocity.y < 0:
+			#	linear_velocity.y /= 1.005
 			#linear_velocity = linear_velocity.normalized()
 		#print(linear_velocity.direction_to(Vector2(0,0)))
+		# Stopping much more abruptly if we aren't trying to move
 		if direction_x == 0 and direction_y == 0:
-			linear_velocity /= 1.015
+			linear_velocity /= 1.02
 		linear_velocity += linear_velocity.direction_to(Vector2(0,0)) * 10
 	# Grounded movement.
 	else:

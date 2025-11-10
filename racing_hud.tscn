@@ -19,9 +19,10 @@ text = "Time
 0.00"
 
 [node name="Scoreboard" type="Label" parent="."]
-visible = false
-offset_right = 71.0
-offset_bottom = 87.0
+offset_left = 20.0
+offset_top = 16.0
+offset_right = 92.0
+offset_bottom = 103.0
 size_flags_horizontal = 0
 theme_override_font_sizes/font_size = 15
 text = "Best Time

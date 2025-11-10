@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://bit6a7xv2yg6r"]
+
+[ext_resource type="Texture2D" uid="uid://dsmvv637nwyss" path="res://reference_imgs/dragon_pixel.png" id="1_ao7a3"]
+
+[node name="Animated_Sprite" type="Node2D"]
+
+[node name="Chest" type="Node2D" parent="."]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="DragonPixel" type="Sprite2D" parent="."]
+position = Vector2(44, -64)
+scale = Vector2(0.28000152, 0.28000152)
+texture = ExtResource("1_ao7a3")

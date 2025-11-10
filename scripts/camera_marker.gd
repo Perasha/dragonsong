@@ -2,9 +2,12 @@ extends Node2D
 
 @onready var dragon_node = get_parent()
 @onready var dragon_resources = get_parent().get_node("Resources")
+@onready var camera_node = get_parent().get_parent().get_node("Camera2D")
 var lag_threshold = 2000
 var duration_step = 2.0
 var new_position = Vector2(0,0)
+
+enum {GROUND, NEAR, FAR, MAX}
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -26,6 +29,13 @@ func _process(delta: float) -> void:
 		#var weight = pow(log(2.0),2)
 		#position = lerp(position, new_position, pow(-weight*delta,3))
 		#position = lerp(position, new_position, 0.05)
+		
+		if camera_node.current_zoom_level == MAX:
+			var viewport_dimensions: Vector2 = get_viewport().get_visible_rect().size
+			#print(viewport_dimensions)
+			new_position += Vector2(0,viewport_dimensions.y * 1.5)
+			weight *= 0.5
+		
 		position = lerp(position, new_position, weight)
 	else:
 		position = Vector2(0,0)
