@@ -113,7 +113,7 @@ func check_zoom() -> void:
 	var i = -1
 	for node in zoom_dist_nodes:
 		i += 1
-		#print(node.get_overlapping_bodies().size())
+		#print(node.get_overlapping_bodies())
 		if node.get_overlapping_bodies().size() > 1:
 			current_zoom_level = i
 			break

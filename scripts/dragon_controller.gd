@@ -4,7 +4,7 @@ extends RigidBody2D
 @export var speed = 5.00
 #@export var jump_height = -400.00
 @export var max_walk_speed = 200.00
-@export var max_run_speed = 400.00
+#@export var max_run_speed = 400.00
 @export var max_fly_speed = 1250.00
 @export var terminal_velocity = 2000.00
 
@@ -202,7 +202,7 @@ func _physics_process(delta: float) -> void:
 	if is_hovering and not floor_check.has_overlapping_bodies():
 		is_flying = true
 	
-	if not is_flying:
+	if not is_flying or hover_speed == 0:
 		is_hovering = false
 	# Flying movement.
 	
@@ -221,12 +221,14 @@ func _physics_process(delta: float) -> void:
 			flight_direction.y = 1.0
 	# Hovering Movement
 	elif is_hovering:
+		print("Hovering: ", max_fly_speed)
 		gravity_scale = 0.0
 		#flight_direction = Vector2(direction_x,direction_y)
 		if current_speed <= max_fly_speed:
+			print("Hovering: ", max_fly_speed)
 			var hover_direction = Vector2(direction_x,direction_y).normalized() * hover_speed
 			linear_velocity.x += hover_direction.x
-			if linear_velocity.y > -900:
+			if linear_velocity.y > -(max_fly_speed * 0.72):
 				linear_velocity.y += hover_direction.y
 			#if linear_velocity.y < 0:
 			#	linear_velocity.y /= 1.005
@@ -311,6 +313,42 @@ func wingbeat():
 func apply_momentum():
 	linear_velocity.x = (current_speed * flight_direction.x)
 	linear_velocity.y = (current_speed * flight_direction.y)
+	
 
 func _on_wingbeat_clock_timeout() -> void:
 	on_wingbeat_cooldown = false
+
+@onready var initial_speed = {
+	"max_jump_strength" : max_jump_strength,
+	"max_fly_speed" : max_fly_speed,
+	"hover_speed" : hover_speed
+}
+var injury_multiplier = 1.0
+# Hypothetically this should slow us down the more injured we are.
+func _on_injure_button_up() -> void:
+	health_update(-1)
+
+func _on_heal_button_up() -> void:
+	health_update(1)
+
+
+func health_update(value):
+	resources.health += value
+	hover_speed = initial_speed["hover_speed"]
+	if resources.health > resources.max_health:
+		resources.health = resources.max_health
+	
+	if resources.health > 0:
+		injury_multiplier = resources.health / resources.max_health
+		#wingbeat_strength *= resources.health / resources.max_health
+		#speed *= resources.health / resources.max_health
+		#jump_strength_base *= resources.health / resources.max_health
+		#max_jump_strength *= resources.health / resources.max_health
+		#hover_speed = injury_multiplier * initial_speed["hover_speed"]
+		max_fly_speed = injury_multiplier * initial_speed["max_fly_speed"]
+		max_jump_strength = (injury_multiplier * (initial_speed["max_jump_strength"] - jump_strength_base)) + jump_strength_base
+		print("INJURY: ", max_fly_speed)
+	else:
+		max_jump_strength = 3
+		hover_speed = 0
+		resources.health = 0
