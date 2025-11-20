@@ -93,9 +93,15 @@ func _physics_process(delta: float) -> void:
 			is_stalling = false
 		if toggle_glide and not is_stalling:
 			fd_dampen = dampen_glide * gravity
+		
+		if toggle_glide:
+			if flight_direction.y < 0.04:
+				flight_direction.y += fd_dampen / (distance_moved + fd_dampen)
+			#elif flight_direction.y > 0.04:
+			#	flight_direction.y -= fd_dampen / (distance_moved + fd_dampen)
 		# Now here's the actual dampening.
 		# We first make sure that we are flying *and* that our flight direction isn't directly up (meaning we have enough force to fly up)
-		if flight_direction.y < 1:
+		elif flight_direction.y < 0.95:
 			# We take our dampening value, and divide it by the distance moved. 
 			# We also then add our dampening value to that number so that we don't accidentally divide by zero.
 			flight_direction.y += fd_dampen / (distance_moved + fd_dampen)
@@ -109,7 +115,6 @@ func _physics_process(delta: float) -> void:
 	#if Input.is_action_just_pressed("flap"):
 	#	just_jumped = true
 	#	jump_counter += 1
-	
 	if Input.is_action_pressed("flap"):
 		#toggle_glide = true
 		if jump_strength <= max_jump_strength:
@@ -118,7 +123,8 @@ func _physics_process(delta: float) -> void:
 		#toggle_glide = false
 		is_hovering = false
 		just_jumped = true
-		jump_counter += 1
+		if jump_counter < 2:
+			jump_counter += 1
 		stored_jump = jump_strength
 	
 	direction_x = Input.get_axis("ui_left", "ui_right")
@@ -168,15 +174,15 @@ func _physics_process(delta: float) -> void:
 	#	direction_y = 0
 	
 	# If our wings are out, it's a bit harder to make sharp turns. But if they're in, we can make sharp turns!
-	if toggle_glide:
-		turn_radius = 0.06
-		gravity_scale = grav_scale_default
-	elif is_hovering:
+	if is_hovering:
 		turn_radius = 0.2
+	elif toggle_glide:
+		turn_radius = 0.04
+		gravity_scale = grav_scale_default
 	else:
-		turn_radius = 0.08
+		turn_radius = 0.07
 		gravity_scale = 2.5
-		
+	#print(turn_radius)
 		
 	# This is where we use our turning radius. We incrementally will be adding this value to
 	# our Flight Direction every tick, which will go against the gravity that constantly pushes it down.
@@ -186,9 +192,14 @@ func _physics_process(delta: float) -> void:
 	
 	
 	# This is our jump! If we flap once, it's just a jump. If we flap twice, and we're not on the ground, we start flying!
-	if jump_counter >= 1 and not floor_check.has_overlapping_bodies():
+	if jump_counter == 1 and not floor_check.has_overlapping_bodies():
+		# OPTIONT TO DISABLE HOVER
+		if flight_direction.y > 0:
+			flight_direction.y *= -1
+		wingbeat()
 		is_flying = true
 		#is_hovering = true
+		jump_counter += 1
 	elif floor_check.has_overlapping_bodies():
 		is_flying = false
 	
@@ -198,6 +209,8 @@ func _physics_process(delta: float) -> void:
 	
 	if distance_moved > 12 and not floor_check.has_overlapping_bodies():
 		is_flying = true
+		if jump_counter == 0:
+			jump_counter += 2
 	
 	if is_hovering and not floor_check.has_overlapping_bodies():
 		is_flying = true
@@ -221,11 +234,11 @@ func _physics_process(delta: float) -> void:
 			flight_direction.y = 1.0
 	# Hovering Movement
 	elif is_hovering:
-		print("Hovering: ", max_fly_speed)
+		#print("Hovering: ", max_fly_speed)
 		gravity_scale = 0.0
 		#flight_direction = Vector2(direction_x,direction_y)
 		if current_speed <= max_fly_speed:
-			print("Hovering: ", max_fly_speed)
+			#print("Hovering: ", max_fly_speed)
 			var hover_direction = Vector2(direction_x,direction_y).normalized() * hover_speed
 			linear_velocity.x += hover_direction.x
 			if linear_velocity.y > -(max_fly_speed * 0.72):
@@ -273,6 +286,8 @@ func _physics_process(delta: float) -> void:
 		
 		#linear_velocity -= linear_velocity.direction_to(Vector2(0,0)) * 50
 	
+	if resources.health == 0:
+		toggle_glide = false
 # END PHYSICS_PROCESS------------------------------------------------
 
 @onready var reset_pos = global_position
@@ -287,12 +302,16 @@ func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 
 func wingbeat():
 	wingbeat_clock.start()
+	#flight_direction.y -= 0.1
+	#if toggle_glide:
+	#	flight_direction.y = lerp(flight_direction.y, -1.0, 0.15)
+	#else:
+	#	flight_direction.y = -0.45
 	if current_speed <= max_fly_speed:
 		# Adding an "afterburner" to continually apply force after we do a wingbeat.
 		wingbeat_afterburner = (stored_jump * 3)
 		#print("Wingbeat!")
 		#print(current_speed)
-		
 		if toggle_glide:
 			current_speed += (wingbeat_strength * stored_jump) / int((distance_moved / 20) + 1)
 		else:
@@ -313,6 +332,10 @@ func wingbeat():
 func apply_momentum():
 	linear_velocity.x = (current_speed * flight_direction.x)
 	linear_velocity.y = (current_speed * flight_direction.y)
+	if flight_direction.y < 0:
+		gravity_scale = grav_scale_default / 1.5
+	else:
+		gravity_scale = grav_scale_default * 2.0
 	
 
 func _on_wingbeat_clock_timeout() -> void:

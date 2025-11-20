@@ -20,6 +20,7 @@ size = Vector2(22.89043, 30.375)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gilsg"]
 
 [node name="dragon" type="RigidBody2D"]
+collision_layer = 2
 mass = 0.001
 physics_material_override = SubResource("PhysicsMaterial_0ucct")
 gravity_scale = 2.0
@@ -48,6 +49,7 @@ texture = ExtResource("4_au75c")
 
 [node name="FloorCheck" type="Area2D" parent="."]
 position = Vector2(0, 52)
+collision_layer = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="FloorCheck"]
 position = Vector2(-14.574997, -7.2149963)

@@ -1,0 +1,39 @@
+[gd_scene load_steps=6 format=3 uid="uid://1xaa5h1d2iiw"]
+
+[ext_resource type="Script" uid="uid://dpvl2ifne5a0i" path="res://scripts/entity_base.gd" id="1_86l0o"]
+[ext_resource type="Texture2D" uid="uid://dsmvv637nwyss" path="res://reference_imgs/dragon_pixel.png" id="2_f3uon"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_h1in3"]
+friction = 0.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hyc5p"]
+radius = 11.0
+height = 76.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1clwq"]
+size = Vector2(100.00061, 2.3076172)
+
+[node name="Human" type="RigidBody2D"]
+collision_layer = 0
+physics_material_override = SubResource("PhysicsMaterial_h1in3")
+gravity_scale = 2.0
+lock_rotation = true
+script = ExtResource("1_86l0o")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_hyc5p")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+scale = Vector2(0.26, 0.26)
+texture = ExtResource("2_f3uon")
+region_enabled = true
+region_rect = Rect2(1760.2728, 1046.1699, 97.55786, 309.02026)
+
+[node name="Area2D" type="Area2D" parent="."]
+scale = Vector2(0.26, 0.26)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(0, 156.53833)
+shape = SubResource("RectangleShape2D_1clwq")
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
