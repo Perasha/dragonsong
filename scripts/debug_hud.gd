@@ -33,10 +33,10 @@ func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("show_debug_hud"):
 		if visible:
 			hide()
-			get_parent().get_node("Controls").show()
+			#get_parent().get_node("Controls").show()
 		else:
 			show()
-			get_parent().get_node("Controls").hide()
+			#get_parent().get_node("Controls").hide()
 
 func _on_update_timeout() -> void:
 	speedLabel.text = "Speed: " + str(int(dragon_node.current_speed))
@@ -44,7 +44,7 @@ func _on_update_timeout() -> void:
 	flight_dir_Label.text = "Flight Direction: " + str(snapped(dragon_node.flight_direction.x, 0.01)) + ", " + str(snapped(dragon_node.flight_direction.y, 0.01))
 	pos_label.text = str(int(dragon_node.position.x)) + ", " + str(int(dragon_node.position.y))	
 	dist_mov_label.text = str(int(dragon_node.distance_moved))
-	glide_label.text = "Glide Toggle: " + str(dragon_node.toggle_glide)
+	glide_label.text = "Glide Toggle: " + str(dragon_node.is_gliding)
 	jump_str_label.text = "Jump Strength: " + str(dragon_node.jump_strength)
 	cam_scale_label.text = "Camera Scale\n" + str(camera_node.zoom)
 	stalling_label.text = "Is Stalling: " + str(dragon_node.is_stalling)
@@ -63,7 +63,7 @@ func _on_check_box_toggled(toggled_on: bool) -> void:
 	#print(toggled_on)
 	dragon_node.option_hold_to_glide = toggled_on
 	#print(dragon_node.option_hold_to_glide)
-	dragon_node.toggle_glide = false
+	dragon_node.is_gliding = false
 	pass # Replace with function body.
 
 

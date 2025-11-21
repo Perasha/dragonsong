@@ -14,6 +14,8 @@ func _ready() -> void:
 var hover_clock = 0
 var hover_reset = 20
 var wing_switch = false
+enum {LEFT, RIGHT}
+var facing = LEFT
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 @warning_ignore("unused_parameter")
@@ -41,14 +43,13 @@ func _physics_process(delta: float) -> void:
 	
 	
 	# Wing flaps!
-	
 	if flip_h: wing_node.flip_h = true
 	else: wing_node.flip_h = false
 	if flip_v: wing_node.flip_v = true
 	else: wing_node.flip_v = false
 	
 	if not dragon_node.is_hovering:
-		if dragon_node.toggle_glide:
+		if dragon_node.is_gliding:
 			wing_node.texture = wing_glide_sprite
 		else:
 			wing_node.texture = wing_folded_sprite
@@ -85,3 +86,9 @@ func _physics_process(delta: float) -> void:
 					wing_node.position.y = -20
 				else:
 					wing_node.position.y = 20
+	if flip_h:
+		facing = LEFT
+	else:
+		facing = RIGHT
+	
+	# Mouth Placement

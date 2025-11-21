@@ -12,6 +12,8 @@ extends RigidBody2D
 @onready var sprite = get_node("Body")
 @onready var wingbeat_clock = get_node("wingbeat_clock")
 @onready var resources = get_node("Resources")
+@onready var mouth = get_node("Mouth")
+@onready var global_data = get_parent()
 
 #var base_gravity_scale = 2.0
 #var fly_gravity_scale = 0.3
@@ -32,10 +34,10 @@ var is_stalling
 
 var is_flying = false
 var is_hovering = false
-var toggle_glide = false
+var is_gliding = false
 # Option to change from glide being a toggle, to being held
-var option_hold_to_glide = false
-var option_hold_to_hover = false
+#var option_hold_to_glide = false
+#var option_hold_to_hover = false
 
 var on_wingbeat_cooldown = false
 #@export var wingbeat_afterburner_base = 6.0
@@ -45,16 +47,16 @@ var wingbeat_afterburner = 0.0
 
 var current_speed = 0.0
 var turn_radius = 0.1
-var fd_dampen = .85
+var fd_dampen = 0.85
 # Multiplier for our dampen value; this is proportional to our GRAVITY constant.
-var dampen_base = .002125
-var dampen_glide = .000125
-# Default is 400
-var gravity = 150
+var dampen_base = 0.3 
+var dampen_glide = 0.05 
+#var gravity = 150
 
 var grav_scale_default = 2.0
 
 var flight_direction = Vector2(0.0,0.0)
+var max_glide_height = 0.0
 
 func _ready() -> void:
 	jump_strength = jump_strength_base
@@ -77,7 +79,7 @@ func _physics_process(delta: float) -> void:
 	# Also it lets us do cool diving maneuvers.
 	
 	# So first, we set our dampening value.
-	fd_dampen = dampen_base * gravity
+	fd_dampen = dampen_base
 	#print(gravity)
 	# First, if our glide is toggled, we lower this dampening value so we get a nice, slow descent.
 	# if the distance we moved is low enough, meaning we've slowed down, we'll disable it and start diving.
@@ -91,10 +93,10 @@ func _physics_process(delta: float) -> void:
 			is_stalling = false
 		if is_flying == false:
 			is_stalling = false
-		if toggle_glide and not is_stalling:
-			fd_dampen = dampen_glide * gravity
+		if is_gliding and not is_stalling:
+			fd_dampen = dampen_glide
 		
-		if toggle_glide:
+		if is_gliding:
 			if flight_direction.y < 0.04:
 				flight_direction.y += fd_dampen / (distance_moved + fd_dampen)
 			#elif flight_direction.y > 0.04:
@@ -116,11 +118,11 @@ func _physics_process(delta: float) -> void:
 	#	just_jumped = true
 	#	jump_counter += 1
 	if Input.is_action_pressed("flap"):
-		#toggle_glide = true
+		#is_gliding = true
 		if jump_strength <= max_jump_strength:
 			jump_strength += 0.1
 	if Input.is_action_just_released("flap"):
-		#toggle_glide = false
+		#is_gliding = false
 		is_hovering = false
 		just_jumped = true
 		if jump_counter < 2:
@@ -140,48 +142,55 @@ func _physics_process(delta: float) -> void:
 	
 	
 	# If option_hold_to_glide is on, then you need to hold to fold in wings. Otherwise, it's a toggle.
-	# Some players might prefer one way or the other so it's a good option to have. 
-	if Input.is_action_just_pressed("Slow"):
-		if not option_hold_to_glide:
-			if toggle_glide == true:
-				toggle_glide = false
-			else:
-				toggle_glide = true
-	if Input.is_action_pressed("Slow"):
-		if option_hold_to_glide:
-			toggle_glide = true		
-	if Input.is_action_just_released("Slow"):
-		if option_hold_to_glide:
-			toggle_glide = false
-	
-	# And here's the same thing for Hovering
-	if Input.is_action_just_pressed("Hover"):
-		if not option_hold_to_hover:
-			if is_hovering == true:
+	# Some players might prefer one way or the other so it's a good option to have.
+	if is_flying:
+		if Input.is_action_just_pressed("Glide"):
+			if not global_data.option_hold_to_glide:
+				if is_gliding == true:
+					is_gliding = false
+				else:
+					is_gliding = true
+					is_hovering = false
+		if Input.is_action_pressed("Glide"):
+			if global_data.option_hold_to_glide:
+				is_gliding = true
 				is_hovering = false
-			else:
+		if Input.is_action_just_released("Glide"):
+			if global_data.option_hold_to_glide:
+				is_gliding = false
+		
+		# And here's the same thing for Hovering
+		if Input.is_action_just_pressed("Hover"):
+			if not global_data.option_hold_to_hover:
+				if is_hovering == true:
+					is_hovering = false
+				else:
+					is_hovering = true
+					is_gliding = false
+		if Input.is_action_pressed("Hover"):
+			if global_data.option_hold_to_hover:
 				is_hovering = true
-	if Input.is_action_pressed("Hover"):
-		if option_hold_to_hover:
-			is_hovering = true		
-	if Input.is_action_just_released("Hover"):
-		if option_hold_to_hover:
-			is_hovering = false
-	
+				is_gliding = false
+		if Input.is_action_just_released("Hover"):
+			if global_data.option_hold_to_hover:
+				is_hovering = false
+	else:
+		is_hovering = false
+		is_gliding = false
 	# However, if our Stamina is 0, we can't glide.
 	#if resources.stamina < 1:
-	#	toggle_glide = false
+	#	is_gliding = false
 	#	direction_y = 0
 	
 	# If our wings are out, it's a bit harder to make sharp turns. But if they're in, we can make sharp turns!
 	if is_hovering:
-		turn_radius = 0.2
-	elif toggle_glide:
-		turn_radius = 0.04
-		gravity_scale = grav_scale_default
+		turn_radius = 0.4
+	elif is_gliding:
+		turn_radius = 0.03
+		#gravity_scale = grav_scale_default
 	else:
-		turn_radius = 0.07
-		gravity_scale = 2.5
+		turn_radius = 0.06
+		#gravity_scale = 2.5
 	#print(turn_radius)
 		
 	# This is where we use our turning radius. We incrementally will be adding this value to
@@ -198,8 +207,11 @@ func _physics_process(delta: float) -> void:
 			flight_direction.y *= -1
 		wingbeat()
 		is_flying = true
-		#is_hovering = true
+		if global_data.option_hover_leave:
+			is_hovering = true
 		jump_counter += 1
+		# SET OUR MAX GLIDE HEIGHT. This'll be used to slow us down as we approach the highest point we lept off from.
+		max_glide_height = position.y
 	elif floor_check.has_overlapping_bodies():
 		is_flying = false
 	
@@ -287,7 +299,7 @@ func _physics_process(delta: float) -> void:
 		#linear_velocity -= linear_velocity.direction_to(Vector2(0,0)) * 50
 	
 	if resources.health == 0:
-		toggle_glide = false
+		is_gliding = false
 # END PHYSICS_PROCESS------------------------------------------------
 
 @onready var reset_pos = global_position
@@ -303,7 +315,7 @@ func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 func wingbeat():
 	wingbeat_clock.start()
 	#flight_direction.y -= 0.1
-	#if toggle_glide:
+	#if is_gliding:
 	#	flight_direction.y = lerp(flight_direction.y, -1.0, 0.15)
 	#else:
 	#	flight_direction.y = -0.45
@@ -312,7 +324,7 @@ func wingbeat():
 		wingbeat_afterburner = (stored_jump * 3)
 		#print("Wingbeat!")
 		#print(current_speed)
-		if toggle_glide:
+		if is_gliding:
 			current_speed += (wingbeat_strength * stored_jump) / int((distance_moved / 20) + 1)
 		else:
 			current_speed += (wingbeat_strength * stored_jump * 1.25) / int((distance_moved / 10) + 1)
@@ -335,8 +347,19 @@ func apply_momentum():
 	if flight_direction.y < 0:
 		gravity_scale = grav_scale_default / 1.5
 	else:
-		gravity_scale = grav_scale_default * 2.0
-	
+		gravity_scale = grav_scale_default * 1.5
+
+func _input(event: InputEvent) -> void:
+	if Input.is_action_just_pressed("Eat"):
+		print(mouth.get_overlapping_bodies())
+		for body in mouth.get_overlapping_bodies():
+			if body.entity:
+				health_update(0.1)
+				body.queue_free()
+				print("OMNOMNOM")
+				break
+		#for body in mouth.get_overlapping_bodies():
+		#	print(body)
 
 func _on_wingbeat_clock_timeout() -> void:
 	on_wingbeat_cooldown = false

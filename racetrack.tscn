@@ -1,0 +1,58 @@
+[gd_scene load_steps=7 format=3 uid="uid://d0o8k7jsrojx5"]
+
+[ext_resource type="Script" uid="uid://btnj607vwhicr" path="res://scripts/racetrack.gd" id="1_x8enw"]
+[ext_resource type="PackedScene" uid="uid://dfyoa5lhbtakr" path="res://racing_hud.tscn" id="2_f2e7r"]
+[ext_resource type="Texture2D" uid="uid://15xnvgkwl8qa" path="res://Sprites/tile_sheet.png" id="3_3wvnl"]
+[ext_resource type="Texture2D" uid="uid://d1uetj46vhuft" path="res://Sprites/arrow.png" id="4_8v5i7"]
+[ext_resource type="Script" uid="uid://d014shdocisan" path="res://scripts/direction_indicator.gd" id="5_qmdih"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_pejub"]
+radius = 10.75
+height = 45.0
+
+[node name="Racetrack" type="Node"]
+script = ExtResource("1_x8enw")
+
+[node name="RacingHud" parent="." instance=ExtResource("2_f2e7r")]
+visible = false
+
+[node name="Start" type="Area2D" parent="."]
+position = Vector2(-3180, -3235)
+scale = Vector2(4, 4)
+
+[node name="Sprite" type="Sprite2D" parent="Start"]
+modulate = Color(1, 0.79607844, 0.14901961, 1)
+texture = ExtResource("3_3wvnl")
+region_enabled = true
+region_rect = Rect2(25, 0, 25, 50)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Start"]
+shape = SubResource("CapsuleShape2D_pejub")
+
+[node name="End" type="Area2D" parent="."]
+position = Vector2(18990, -4101)
+scale = Vector2(4, 4)
+
+[node name="Sprite" type="Sprite2D" parent="End"]
+modulate = Color(1, 0.79607844, 0.14901961, 1)
+texture = ExtResource("3_3wvnl")
+region_enabled = true
+region_rect = Rect2(25, 0, 25, 50)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="End"]
+shape = SubResource("CapsuleShape2D_pejub")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="End"]
+
+[node name="Direction_Indicator" type="Sprite2D" parent="End"]
+position = Vector2(3, -68.25)
+rotation = 1.5707964
+texture = ExtResource("4_8v5i7")
+script = ExtResource("5_qmdih")
+screen_margin = 85.0
+smoothing_speed = 50.0
+
+[connection signal="body_entered" from="Start" to="." method="_on_start_body_entered"]
+[connection signal="body_entered" from="End" to="." method="_on_end_body_entered"]
+[connection signal="screen_entered" from="End/VisibleOnScreenNotifier2D" to="." method="_on_visible_on_screen_notifier_2d_screen_entered"]
+[connection signal="screen_exited" from="End/VisibleOnScreenNotifier2D" to="." method="_on_visible_on_screen_notifier_2d_screen_exited"]
