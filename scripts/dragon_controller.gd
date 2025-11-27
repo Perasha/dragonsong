@@ -4,7 +4,7 @@ extends RigidBody2D
 @export var speed = 5.00
 #@export var jump_height = -400.00
 @export var max_walk_speed = 200.00
-#@export var max_run_speed = 400.00
+@export var max_run_speed = 400.00
 @export var max_fly_speed = 1250.00
 @export var terminal_velocity = 2000.00
 
@@ -12,8 +12,9 @@ extends RigidBody2D
 @onready var sprite = get_node("Body")
 @onready var wingbeat_clock = get_node("wingbeat_clock")
 @onready var resources = get_node("Resources")
-@onready var mouth = get_node("Mouth")
+@onready var interact_field = get_node("InteractArea")
 @onready var global_data = get_parent()
+@onready var dive_toggler = get_node("DiveToggler")
 
 #var base_gravity_scale = 2.0
 #var fly_gravity_scale = 0.3
@@ -35,6 +36,7 @@ var is_stalling
 var is_flying = false
 var is_hovering = false
 var is_gliding = false
+var is_running = false
 # Option to change from glide being a toggle, to being held
 #var option_hold_to_glide = false
 #var option_hold_to_hover = false
@@ -43,7 +45,7 @@ var on_wingbeat_cooldown = false
 #@export var wingbeat_afterburner_base = 6.0
 var wingbeat_afterburner = 0.0
 
-@export var hover_speed = 15
+@export var hover_speed = 20.0
 
 var current_speed = 0.0
 var turn_radius = 0.1
@@ -65,6 +67,7 @@ func _ready() -> void:
 @warning_ignore("unused_parameter")
 func _physics_process(delta: float) -> void:
 	just_jumped = false
+	is_running = false
 	previous_position = current_position
 	current_position = position
 	gravity_scale = grav_scale_default
@@ -158,29 +161,30 @@ func _physics_process(delta: float) -> void:
 		if Input.is_action_just_released("Glide"):
 			if global_data.option_hold_to_glide:
 				is_gliding = false
-		
-		# And here's the same thing for Hovering
-		if Input.is_action_just_pressed("Hover"):
-			if not global_data.option_hold_to_hover:
-				if is_hovering == true:
-					is_hovering = false
-				else:
-					is_hovering = true
-					is_gliding = false
-		if Input.is_action_pressed("Hover"):
-			if global_data.option_hold_to_hover:
-				is_hovering = true
-				is_gliding = false
-		if Input.is_action_just_released("Hover"):
-			if global_data.option_hold_to_hover:
-				is_hovering = false
 	else:
 		is_hovering = false
 		is_gliding = false
-	# However, if our Stamina is 0, we can't glide.
-	#if resources.stamina < 1:
-	#	is_gliding = false
-	#	direction_y = 0
+		if Input.is_action_pressed("Glide"):
+			is_running = true
+	# And here's the same thing for Hovering
+	if Input.is_action_just_pressed("Hover"):
+		if not global_data.option_hold_to_hover:
+			if is_hovering == true:
+				is_hovering = false
+			else:
+				is_hovering = true
+				is_gliding = false
+	if Input.is_action_pressed("Hover"):
+		if global_data.option_hold_to_hover:
+			is_hovering = true
+			is_gliding = false
+	if Input.is_action_just_released("Hover"):
+		if global_data.option_hold_to_hover:
+			is_hovering = false
+	
+	if is_hovering and not floor_check.has_overlapping_bodies():
+		is_flying = true
+		#print("We are now Hovering and Flying")
 	
 	# If our wings are out, it's a bit harder to make sharp turns. But if they're in, we can make sharp turns!
 	if is_hovering:
@@ -200,9 +204,8 @@ func _physics_process(delta: float) -> void:
 	flight_direction = flight_direction.normalized()
 	
 	
-	# This is our jump! If we flap once, it's just a jump. If we flap twice, and we're not on the ground, we start flying!
+	# This is our jump! If we flap once, it's just a jump. If we flap twice, and we're not on the ground, we start flying!	
 	if jump_counter == 1 and not floor_check.has_overlapping_bodies():
-		# OPTIONT TO DISABLE HOVER
 		if flight_direction.y > 0:
 			flight_direction.y *= -1
 		wingbeat()
@@ -210,8 +213,6 @@ func _physics_process(delta: float) -> void:
 		if global_data.option_hover_leave:
 			is_hovering = true
 		jump_counter += 1
-		# SET OUR MAX GLIDE HEIGHT. This'll be used to slow us down as we approach the highest point we lept off from.
-		max_glide_height = position.y
 	elif floor_check.has_overlapping_bodies():
 		is_flying = false
 	
@@ -219,13 +220,19 @@ func _physics_process(delta: float) -> void:
 		is_flying = false
 		jump_counter = 0
 	
-	if distance_moved > 12 and not floor_check.has_overlapping_bodies():
+	if not dive_toggler.has_overlapping_bodies():
 		is_flying = true
 		if jump_counter == 0:
 			jump_counter += 2
 	
-	if is_hovering and not floor_check.has_overlapping_bodies():
-		is_flying = true
+	# If we're on the ground, add some directly upward velocity if we flap our wings!
+	if just_jumped and not is_flying:
+		#stored_jump *= 0.75
+		linear_velocity.x += direction_x * (wingbeat_strength * stored_jump)
+		#stored_jump *= 1.25
+ 		#stored_jump = resources.consume_stamina(stored_jump)
+		linear_velocity.y -= wingbeat_strength * stored_jump
+		#linear_velocity.y -= wingbeat_strength * jump_strength * 1.25		
 	
 	if not is_flying or hover_speed == 0:
 		is_hovering = false
@@ -261,25 +268,17 @@ func _physics_process(delta: float) -> void:
 		#print(linear_velocity.direction_to(Vector2(0,0)))
 		# Stopping much more abruptly if we aren't trying to move
 		if direction_x == 0 and direction_y == 0:
-			linear_velocity /= 1.02
+			linear_velocity /= 1 + (hover_speed / 1000.0)
 		linear_velocity += linear_velocity.direction_to(Vector2(0,0)) * 10
 	# Grounded movement.
 	else:
 		# And start moving in a direction if we move left and right. Not very fast, mind you.
+		var speed_limit = max_walk_speed
+		if is_running: speed_limit = max_run_speed
 		if direction_x:
 			flight_direction.x = direction_x
-			if abs(linear_velocity.x) < max_walk_speed:
+			if abs(linear_velocity.x) < speed_limit:
 				linear_velocity.x += direction_x * speed
-			#linear_velocity = linear_velocity.clamp(Vector2(-max_walk_speed,-terminal_velocity),Vector2(max_walk_speed,terminal_velocity))
-		
-		# Add some directly upward velocity if we flap our wings!
-		if just_jumped:
-			stored_jump *= 0.75
- 			#stored_jump = resources.consume_stamina(stored_jump)
-			linear_velocity.y -= wingbeat_strength * stored_jump
-			stored_jump *= 0.75
-			linear_velocity.x += direction_x * (wingbeat_strength * stored_jump)
-			#linear_velocity.y -= wingbeat_strength * jump_strength * 1.25		
 		# This actually more quickly slows our movement, rather than increasing our friction.
 		# Using them legs to slow down!
 		# But only if we're touching the floor.
@@ -293,6 +292,7 @@ func _physics_process(delta: float) -> void:
 		linear_velocity = linear_velocity.clamp(Vector2(-terminal_velocity,-terminal_velocity),Vector2(terminal_velocity,terminal_velocity))
 	# Oh and finally, we calculate our distance moved!
 	distance_moved = previous_position.distance_to(current_position)
+	#print(current_position - previous_position)
 	if just_jumped:
 		jump_strength = jump_strength_base
 		
@@ -349,16 +349,27 @@ func apply_momentum():
 	else:
 		gravity_scale = grav_scale_default * 1.5
 
+var is_grabbing = false
+var grabbed_entity : RigidBody2D
+
 func _input(event: InputEvent) -> void:
-	if Input.is_action_just_pressed("Eat"):
-		print(mouth.get_overlapping_bodies())
-		for body in mouth.get_overlapping_bodies():
-			if body.entity:
-				health_update(0.1)
-				body.queue_free()
-				print("OMNOMNOM")
-				break
-		#for body in mouth.get_overlapping_bodies():
+	if Input.is_action_just_pressed("Interact"):
+		print(interact_field.get_overlapping_bodies())
+		if not is_grabbing:
+			for body in interact_field.get_overlapping_bodies():
+				if body.entity and body.can_be_grabbed:
+					body.is_grabbed = true
+					body.grabbing_entity = self
+					is_grabbing = true
+					grabbed_entity = body
+					break
+		elif is_grabbing:
+			#print(grabbed_entity)
+			grabbed_entity.release_grab()
+			is_grabbing = false
+			grabbed_entity = null
+			print("RELEASE!")
+		#for body in interact_field.get_overlapping_bodies():
 		#	print(body)
 
 func _on_wingbeat_clock_timeout() -> void:
@@ -398,3 +409,10 @@ func health_update(value):
 		max_jump_strength = 3
 		hover_speed = 0
 		resources.health = 0
+
+
+func _on_body_entered(body: Node) -> void:
+	print(distance_moved)
+	if distance_moved > 20:
+		health_update(snappedf(-distance_moved / 200,0.01))
+	pass # Replace with function body.

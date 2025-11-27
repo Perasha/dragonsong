@@ -2,6 +2,8 @@ extends RigidBody2D
 
 var is_grounded = false
 var entity = true
+var can_be_grabbed = true
+var grabbing_entity : RigidBody2D
 
 @onready var nav_node = get_parent().get_parent().get_node("NavNodes")
 @onready var floor_check = get_node("FloorCheck")
@@ -10,9 +12,10 @@ var nav_timeout = 400
 var nav_timeout_min = 200
 var nav_timeout_max = 600
 var max_speed = 100
-var max_run_speed = max_speed * 4
+var max_run_speed = max_speed * 2
 
-var is_running
+var is_running = false
+var is_grabbed = false
 
 var destination = Vector2(0,0)
 # Called when the node enters the scene tree for the first time.
@@ -25,33 +28,33 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	is_running = false
-	
-	if floor_check.has_overlapping_bodies():
-		is_grounded = true
-	else:
-		is_grounded = false
-		#linear_velocity.y += 2
-	
-	if active_threat != null:
-		is_running = true
-		#print("active threat position: ", active_threat.position)
-		#print("Position: ", position)
-		# If there's a threat, run in the opposite direction
-		destination = position + -(Vector2(position.direction_to(active_threat.position).x,0) * 1000)
-		#print("destination")
-	if position.distance_to(destination) > 30:
-		#print(position.distance_to(destination))
-		move_to(destination)
-	else:
-		linear_velocity = Vector2(0,0)
-	if nav_timer < nav_timeout and active_threat == null:
-		nav_timer += 1
-	else:
-		nav_timer = 0
-		#print(nav_node.locations)
-		destination = get_destination()
-		nav_timeout = randi_range(nav_timeout_min,position.distance_to(destination))
-		#print(destination)
+	if not is_grabbed:
+		if floor_check.has_overlapping_bodies():
+			is_grounded = true
+		else:
+			is_grounded = false
+			#linear_velocity.y += 2
+		
+		if active_threat != null:
+			is_running = true
+			#print("active threat position: ", active_threat.position)
+			#print("Position: ", position)
+			# If there's a threat, run in the opposite direction
+			destination = position + -(Vector2(position.direction_to(active_threat.position).x,0) * 1000)
+			#print("destination")
+		if position.distance_to(destination) > 30:
+			#print(position.distance_to(destination))
+			move_to(destination)
+		else:
+			linear_velocity = Vector2(0,0)
+		if nav_timer < nav_timeout and active_threat == null:
+			nav_timer += 1
+		else:
+			nav_timer = 0
+			#print(nav_node.locations)
+			destination = get_destination()
+			nav_timeout = randi_range(nav_timeout_min,position.distance_to(destination))
+			#print(destination)
 
 func move_to(destination):
 	var direction = position.direction_to(destination)
@@ -83,3 +86,16 @@ func _on_area_2d_area_exited(area: Area2D) -> void:
 		#print("Safe")
 		active_threat = null
 	pass # Replace with function body.
+
+# When we need to teleport the entity.
+func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
+	if is_grabbed:
+		#print("Is grabbed!")
+		state.transform.origin = grabbing_entity.position
+			# Call reset_physics_interpolation() at the end of the frame once the physics engine has been updated
+		reset_physics_interpolation.call_deferred()
+
+func release_grab():
+	is_grabbed = false
+	grabbing_entity = null
+	pass

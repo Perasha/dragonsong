@@ -136,6 +136,7 @@ texture = ExtResource("4_g5blt")
 [node name="dragon" parent="." instance=ExtResource("5_qac8v")]
 position = Vector2(8824, -7581)
 collision_layer = 0
+hover_speed = 30.0
 
 [node name="Camera_Marker" type="Node2D" parent="dragon"]
 script = ExtResource("6_nomda")
@@ -600,7 +601,7 @@ offset_right = -28.0
 offset_bottom = -43.0
 grow_horizontal = 0
 grow_vertical = 0
-step = 1.0
+step = 0.1
 show_percentage = false
 script = ExtResource("15_fvboq")
 

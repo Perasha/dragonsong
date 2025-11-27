@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://b0n2m1kv2cdx1"]
+[gd_scene load_steps=14 format=3 uid="uid://b0n2m1kv2cdx1"]
 
 [ext_resource type="Script" uid="uid://cqu0w22jdjbs4" path="res://scripts/dragon_controller.gd" id="1_urtjn"]
 [ext_resource type="Texture2D" uid="uid://cbj5kmqjsr7ck" path="res://Sprites/DragonWingless.png" id="2_2w5qb"]
@@ -23,7 +23,10 @@ size = Vector2(22.89043, 30.375)
 radius = 1046.0077
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vx2fw"]
-size = Vector2(43.0625, 56.375)
+size = Vector2(84, 90)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_to7sl"]
+size = Vector2(314, 426)
 
 [node name="dragon" type="RigidBody2D"]
 collision_layer = 2
@@ -31,12 +34,13 @@ mass = 0.001
 physics_material_override = SubResource("PhysicsMaterial_0ucct")
 gravity_scale = 2.0
 lock_rotation = true
+contact_monitor = true
+max_contacts_reported = 1
 script = ExtResource("1_urtjn")
 wingbeat_strength = 100.0
 speed = 50.0
 jump_strength_base = 3.0
 max_jump_strength = 6.0
-hover_speed = 20
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-19, -1)
@@ -83,14 +87,22 @@ script = ExtResource("6_j86p3")
 shape = SubResource("CircleShape2D_vx2fw")
 debug_color = Color(0.991985, 0.08715325, 1.92523e-07, 0.41960785)
 
-[node name="Mouth" type="Area2D" parent="."]
+[node name="InteractArea" type="Area2D" parent="."]
+position = Vector2(-72, 0)
 collision_layer = 0
 collision_mask = 4
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Mouth"]
-position = Vector2(-105, 15)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractArea"]
 shape = SubResource("RectangleShape2D_vx2fw")
 debug_color = Color(0.53309363, 0.41185114, 1, 0.41960785)
 
+[node name="DiveToggler" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DiveToggler"]
+position = Vector2(0, 259)
+shape = SubResource("RectangleShape2D_to7sl")
+debug_color = Color(0.58431375, 0.91764706, 1, 0.16862746)
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_entered" from="Direction Pointer" to="." method="_on_direction_pointer_body_entered"]
 [connection signal="timeout" from="wingbeat_clock" to="." method="_on_wingbeat_clock_timeout"]
