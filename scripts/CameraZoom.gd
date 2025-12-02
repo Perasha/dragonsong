@@ -13,7 +13,7 @@ var zoomSpeed = 1.2
 @export_category("Camera Smoothing")
 @export var smoothing_enabled : bool
 @export_range(1,100) var smoothing_distance : int = 8
-@export var defaultZoomLevel = 0.65
+@export var defaultZoomLevel = 0.6 #0.65
 @export var default_zoom_factor = 3000
 var zoom_factor = 3000
 var minZoom = 0.05
@@ -22,7 +22,7 @@ var maxHeight = 10000
 
 # Zoom levels 0 - 2
 enum {GROUND, NEAR, FAR, MAX}
-var zoom_levels = [defaultZoomLevel,defaultZoomLevel / 1.7,defaultZoomLevel / 3,defaultZoomLevel / 6]
+var zoom_levels = [defaultZoomLevel,defaultZoomLevel / 1.5,defaultZoomLevel / 3,defaultZoomLevel / 5]
 var zoom_dist_nodes = []
 var current_zoom_level = GROUND
 
@@ -40,13 +40,13 @@ func _ready():
 	#print(zoom_dist_nodes)
 	#print(zoom_levels[GROUND])
 
-func _input(event):	
-	if event is InputEventMouseButton:
-		if event.is_pressed():
-			if event.button_index == MOUSE_BUTTON_WHEEL_UP:
-				zoom *= Vector2(zoomSpeed,zoomSpeed)
-			if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-				zoom /= Vector2(zoomSpeed,zoomSpeed)
+#func _input(event):	
+	#if event is InputEventMouseButton:
+	#	if event.is_pressed():
+	#		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+	#			zoom *= Vector2(zoomSpeed,zoomSpeed)
+	#		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+	#			zoom /= Vector2(zoomSpeed,zoomSpeed)
 
 var direction = Vector2()
 var anticipated_direction = Vector2(0.0,0.0)
@@ -110,6 +110,9 @@ func _process(delta):
 
 func check_zoom() -> void:
 	#print('Timeout!')
+	defaultZoomLevel = get_viewport().get_visible_rect().size.x / 2800
+	zoom_levels = [defaultZoomLevel,defaultZoomLevel / 1.7,defaultZoomLevel / 3,defaultZoomLevel / 6]
+	#print(defaultZoomLevel)
 	var i = -1
 	for node in zoom_dist_nodes:
 		i += 1

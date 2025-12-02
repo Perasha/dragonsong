@@ -36,6 +36,12 @@ func _process(delta: float) -> void:
 			new_position += Vector2(0,viewport_dimensions.y * 1.5)
 			weight *= 0.5
 		
+		#print(dragon_node.distance_moved)
+		#if dragon_node.distance_moved < 1:
+			#print("Relocate")
+		#	new_position = Vector2(0,0)
+		#	weight = 0.01
+		
 		position = lerp(position, new_position, weight)
 	else:
 		position = Vector2(0,0)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://b0n2m1kv2cdx1"]
+[gd_scene load_steps=20 format=3 uid="uid://b0n2m1kv2cdx1"]
 
 [ext_resource type="Script" uid="uid://cqu0w22jdjbs4" path="res://scripts/dragon_controller.gd" id="1_urtjn"]
 [ext_resource type="Texture2D" uid="uid://cbj5kmqjsr7ck" path="res://Sprites/DragonWingless.png" id="2_2w5qb"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://6d5k318sfh03" path="res://Sprites/wings_folded.png" id="4_au75c"]
 [ext_resource type="Script" uid="uid://csdttjcujdw6f" path="res://scripts/direction_pointer.gd" id="5_vgkb3"]
 [ext_resource type="Script" uid="uid://c1eborn8rg0gt" path="res://scripts/dragon_resources.gd" id="6_j86p3"]
+[ext_resource type="Texture2D" uid="uid://dus3vnh373g2c" path="res://Sprites/circle01.png" id="7_to7sl"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_0ucct"]
 friction = 0.0
@@ -20,13 +21,53 @@ size = Vector2(22.89043, 30.375)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gilsg"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_vx2fw"]
-radius = 1046.0077
+radius = 600.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vx2fw"]
-size = Vector2(84, 90)
+size = Vector2(93, 90)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_to7sl"]
-size = Vector2(314, 426)
+[sub_resource type="AtlasTexture" id="AtlasTexture_ju2y0"]
+atlas = ExtResource("7_to7sl")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5i4j3"]
+atlas = ExtResource("7_to7sl")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1tael"]
+atlas = ExtResource("7_to7sl")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cvsob"]
+atlas = ExtResource("7_to7sl")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p6rrk"]
+atlas = ExtResource("7_to7sl")
+region = Rect2(64, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_xso8i"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ju2y0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5i4j3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1tael")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cvsob")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p6rrk")
+}],
+"loop": false,
+"name": &"default",
+"speed": 20.0
+}]
 
 [node name="dragon" type="RigidBody2D"]
 collision_layer = 2
@@ -78,10 +119,8 @@ shape = SubResource("RectangleShape2D_gilsg")
 wait_time = 0.25
 one_shot = true
 
-[node name="Resources" type="Node" parent="."]
-script = ExtResource("6_j86p3")
-
 [node name="Presence" type="Area2D" parent="."]
+collision_mask = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Presence"]
 shape = SubResource("CircleShape2D_vx2fw")
@@ -93,16 +132,23 @@ collision_layer = 0
 collision_mask = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="InteractArea"]
+position = Vector2(-30.5, 0)
 shape = SubResource("RectangleShape2D_vx2fw")
 debug_color = Color(0.53309363, 0.41185114, 1, 0.41960785)
 
-[node name="DiveToggler" type="Area2D" parent="."]
+[node name="Bite" type="AnimatedSprite2D" parent="."]
+visible = false
+position = Vector2(-111, 0)
+rotation = -1.5707964
+scale = Vector2(4, 4)
+sprite_frames = SubResource("SpriteFrames_xso8i")
+frame = 4
+frame_progress = 1.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="DiveToggler"]
-position = Vector2(0, 259)
-shape = SubResource("RectangleShape2D_to7sl")
-debug_color = Color(0.58431375, 0.91764706, 1, 0.16862746)
+[node name="Resources" type="Node" parent="."]
+script = ExtResource("6_j86p3")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_entered" from="Direction Pointer" to="." method="_on_direction_pointer_body_entered"]
 [connection signal="timeout" from="wingbeat_clock" to="." method="_on_wingbeat_clock_timeout"]
+[connection signal="animation_finished" from="Bite" to="Body" method="_on_bite_animation_finished"]

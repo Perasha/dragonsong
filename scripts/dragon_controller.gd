@@ -6,15 +6,15 @@ extends RigidBody2D
 @export var max_walk_speed = 200.00
 @export var max_run_speed = 400.00
 @export var max_fly_speed = 1250.00
-@export var terminal_velocity = 2000.00
+var terminal_velocity = 2000.00
 
 @onready var floor_check = get_node("FloorCheck")
-@onready var sprite = get_node("Body")
+@onready var sprite = get_node("Body") #Animator
 @onready var wingbeat_clock = get_node("wingbeat_clock")
 @onready var resources = get_node("Resources")
 @onready var interact_field = get_node("InteractArea")
 @onready var global_data = get_parent()
-@onready var dive_toggler = get_node("DiveToggler")
+#@onready var dive_toggler = get_node("DiveToggler")
 
 #var base_gravity_scale = 2.0
 #var fly_gravity_scale = 0.3
@@ -62,9 +62,9 @@ var max_glide_height = 0.0
 
 func _ready() -> void:
 	jump_strength = jump_strength_base
+	terminal_velocity = global_data.terminal_velocity + 500.0
 
 
-@warning_ignore("unused_parameter")
 func _physics_process(delta: float) -> void:
 	just_jumped = false
 	is_running = false
@@ -220,10 +220,17 @@ func _physics_process(delta: float) -> void:
 		is_flying = false
 		jump_counter = 0
 	
-	if not dive_toggler.has_overlapping_bodies():
+	#if not floor_check.has_overlapping_bodies():
+	
+	if distance_moved > 18 and not is_flying:
 		is_flying = true
-		if jump_counter == 0:
-			jump_counter += 2
+		jump_counter += 2
+		
+	
+	#if not dive_toggler.has_overlapping_bodies():
+	#	is_flying = true
+	#	if jump_counter == 0:
+	#		jump_counter += 2
 	
 	# If we're on the ground, add some directly upward velocity if we flap our wings!
 	if just_jumped and not is_flying:
@@ -243,8 +250,8 @@ func _physics_process(delta: float) -> void:
 			wingbeat()
 			#print("Continue")
 		# Adding our afterburner force. This'll slowly go down long after we do the wingbeat, but it's to push us further for a bit longer.
-		if wingbeat_afterburner > 0:
-			wingbeat_afterburner -= 0.8
+		if wingbeat_afterburner > 1:
+			wingbeat_afterburner /= 1.04
 			current_speed += wingbeat_afterburner
 			
 		if current_speed >= 20:
@@ -353,24 +360,34 @@ var is_grabbing = false
 var grabbed_entity : RigidBody2D
 
 func _input(event: InputEvent) -> void:
+	## INTERACT
 	if Input.is_action_just_pressed("Interact"):
-		print(interact_field.get_overlapping_bodies())
-		if not is_grabbing:
+		#print(interact_field.get_overlapping_bodies())
+		if not is_grabbing and grabbed_entity == null:
 			for body in interact_field.get_overlapping_bodies():
-				if body.entity and body.can_be_grabbed:
+				if body.can_be_grabbed:
 					body.is_grabbed = true
 					body.grabbing_entity = self
 					is_grabbing = true
 					grabbed_entity = body
+					body.linear_velocity.y -= 1
 					break
 		elif is_grabbing:
 			#print(grabbed_entity)
-			grabbed_entity.release_grab()
+			grabbed_entity.just_released = true
 			is_grabbing = false
+			#grabbed_entity.grabbing_entity = null
 			grabbed_entity = null
-			print("RELEASE!")
+			#print("RELEASE!")
 		#for body in interact_field.get_overlapping_bodies():
 		#	print(body)
+	## BITE
+	if Input.is_action_just_pressed("bite"):
+		print("Dragon script: ", global_data.ambrette_town)
+		sprite.play_bite_animation()
+		for body in interact_field.get_overlapping_bodies():
+			if body.entity:
+				body.damage(0.5)
 
 func _on_wingbeat_clock_timeout() -> void:
 	on_wingbeat_cooldown = false
@@ -404,7 +421,7 @@ func health_update(value):
 		#hover_speed = injury_multiplier * initial_speed["hover_speed"]
 		max_fly_speed = injury_multiplier * initial_speed["max_fly_speed"]
 		max_jump_strength = (injury_multiplier * (initial_speed["max_jump_strength"] - jump_strength_base)) + jump_strength_base
-		print("INJURY: ", max_fly_speed)
+		#print("INJURY: ", max_fly_speed)
 	else:
 		max_jump_strength = 3
 		hover_speed = 0
@@ -412,7 +429,7 @@ func health_update(value):
 
 
 func _on_body_entered(body: Node) -> void:
-	print(distance_moved)
+	#print(distance_moved)
 	if distance_moved > 20:
 		health_update(snappedf(-distance_moved / 200,0.01))
 	pass # Replace with function body.

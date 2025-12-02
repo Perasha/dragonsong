@@ -3,6 +3,7 @@ extends Sprite2D
 @onready var dragon_node = get_parent()
 @onready var wing_node = get_node("Wings")
 @onready var InteractNode = get_parent().get_node("InteractArea")
+@onready var BiteAnimNode = get_parent().get_node("Bite")
 
 @onready var wing_folded_sprite = preload("res://Sprites/wings_folded.png")
 @onready var wing_glide_sprite = preload("res://Sprites/wings_glide.png")
@@ -91,8 +92,20 @@ func _physics_process(delta: float) -> void:
 	if dragon_node.flight_direction.x < 0:
 		facing = LEFT
 		InteractNode.position.x = -72
+		BiteAnimNode.position.x = -112
+		BiteAnimNode.flip_v = false
 	else:
 		facing = RIGHT
 		InteractNode.position.x = 72
+		BiteAnimNode.position.x = 112
+		BiteAnimNode.flip_v = true
 	
 	# Mouth Placement
+func play_bite_animation():
+	BiteAnimNode.show()
+	BiteAnimNode.play()
+	pass
+
+func _on_bite_animation_finished() -> void:
+	BiteAnimNode.hide()
+	pass # Replace with function body.
