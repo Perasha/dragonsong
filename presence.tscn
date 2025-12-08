@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://v3g8grpgtqyr"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_vx2fw"]
+radius = 600.0
+
+[node name="Presence" type="Area2D"]
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_vx2fw")
+debug_color = Color(0.991985, 0.08715325, 1.92523e-07, 0.41960785)

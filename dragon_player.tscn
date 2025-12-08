@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://6d5k318sfh03" path="res://Sprites/wings_folded.png" id="4_au75c"]
 [ext_resource type="Script" uid="uid://csdttjcujdw6f" path="res://scripts/direction_pointer.gd" id="5_vgkb3"]
 [ext_resource type="Script" uid="uid://c1eborn8rg0gt" path="res://scripts/dragon_resources.gd" id="6_j86p3"]
+[ext_resource type="PackedScene" uid="uid://v3g8grpgtqyr" path="res://presence.tscn" id="6_ju2y0"]
 [ext_resource type="Texture2D" uid="uid://dus3vnh373g2c" path="res://Sprites/circle01.png" id="7_to7sl"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_0ucct"]
@@ -19,9 +20,6 @@ height = 35.835346
 size = Vector2(22.89043, 30.375)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gilsg"]
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_vx2fw"]
-radius = 600.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vx2fw"]
 size = Vector2(93, 90)
@@ -110,6 +108,7 @@ shape = SubResource("RectangleShape2D_ngkl2")
 [node name="Direction Pointer" type="Area2D" parent="."]
 visible = false
 monitorable = false
+priority = -2
 script = ExtResource("5_vgkb3")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Direction Pointer"]
@@ -119,12 +118,7 @@ shape = SubResource("RectangleShape2D_gilsg")
 wait_time = 0.25
 one_shot = true
 
-[node name="Presence" type="Area2D" parent="."]
-collision_mask = 4
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Presence"]
-shape = SubResource("CircleShape2D_vx2fw")
-debug_color = Color(0.991985, 0.08715325, 1.92523e-07, 0.41960785)
+[node name="Presence" parent="." instance=ExtResource("6_ju2y0")]
 
 [node name="InteractArea" type="Area2D" parent="."]
 position = Vector2(-72, 0)

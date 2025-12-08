@@ -1,0 +1,46 @@
+[gd_scene load_steps=7 format=3 uid="uid://1xaa5h1d2iiw"]
+
+[ext_resource type="Script" uid="uid://dpvl2ifne5a0i" path="res://scripts/entity_base.gd" id="1_86l0o"]
+[ext_resource type="Texture2D" uid="uid://wtxah1ya6wgc" path="res://Sprites/Human.png" id="2_86l0o"]
+[ext_resource type="Script" uid="uid://jdhnfnvdh20x" path="res://behavior_human.gd" id="2_f3uon"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_h1in3"]
+friction = 0.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hyc5p"]
+radius = 19.0
+height = 64.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1clwq"]
+size = Vector2(76.92308, 2.3076172)
+
+[node name="Human" type="RigidBody2D" groups=["entity", "human"]]
+collision_layer = 4
+physics_material_override = SubResource("PhysicsMaterial_h1in3")
+gravity_scale = 2.0
+lock_rotation = true
+contact_monitor = true
+max_contacts_reported = 1
+script = ExtResource("1_86l0o")
+
+[node name="Behavior" type="Node" parent="."]
+script = ExtResource("2_f3uon")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_hyc5p")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+scale = Vector2(4, 4)
+texture = ExtResource("2_86l0o")
+region_rect = Rect2(1760.2728, 1046.1699, 97.55786, 309.02026)
+
+[node name="FloorCheck" type="Area2D" parent="."]
+scale = Vector2(0.26, 0.26)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FloorCheck"]
+position = Vector2(0, 126.92308)
+shape = SubResource("RectangleShape2D_1clwq")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="area_entered" from="FloorCheck" to="Behavior" method="_on_floor_check_area_entered"]
+[connection signal="area_exited" from="FloorCheck" to="Behavior" method="_on_floor_check_area_exited"]

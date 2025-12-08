@@ -269,14 +269,19 @@ func _physics_process(delta: float) -> void:
 			linear_velocity.x += hover_direction.x
 			if linear_velocity.y > -(max_fly_speed * 0.72):
 				linear_velocity.y += hover_direction.y
-			#if linear_velocity.y < 0:
-			#	linear_velocity.y /= 1.005
-			#linear_velocity = linear_velocity.normalized()
-		#print(linear_velocity.direction_to(Vector2(0,0)))
-		# Stopping much more abruptly if we aren't trying to move
+				
+		# Stopping much more abruptly if we aren't trying to move,
+		# OR if one of the directions is directly opposite of another.
 		if direction_x == 0 and direction_y == 0:
-			linear_velocity /= 1 + (hover_speed / 1000.0)
-		linear_velocity += linear_velocity.direction_to(Vector2(0,0)) * 10
+			linear_velocity /= 1 + (hover_speed / 750.0)
+		else:
+			if (-direction_x > 0 and linear_velocity.x > 0) or (-direction_x < 0 and linear_velocity.x < 0):
+				linear_velocity.x /= 1 + (hover_speed / 750.0)
+			if (-direction_y > 0 and linear_velocity.y > 0) or (-direction_y < 0 and linear_velocity.y < 0):
+				linear_velocity.y /= 1 + (hover_speed / 750.0)
+		
+		# Steering Radius
+		linear_velocity += linear_velocity.direction_to(Vector2(0,0)) * 15
 	# Grounded movement.
 	else:
 		# And start moving in a direction if we move left and right. Not very fast, mind you.
@@ -365,13 +370,14 @@ func _input(event: InputEvent) -> void:
 		#print(interact_field.get_overlapping_bodies())
 		if not is_grabbing and grabbed_entity == null:
 			for body in interact_field.get_overlapping_bodies():
-				if body.can_be_grabbed:
-					body.is_grabbed = true
-					body.grabbing_entity = self
-					is_grabbing = true
-					grabbed_entity = body
-					body.linear_velocity.y -= 1
-					break
+				if not body.is_in_group("player"):
+					if body.can_be_grabbed:
+						body.is_grabbed = true
+						body.grabbing_entity = self
+						is_grabbing = true
+						grabbed_entity = body
+						body.linear_velocity.y -= 1
+						break
 		elif is_grabbing:
 			#print(grabbed_entity)
 			grabbed_entity.just_released = true
@@ -386,7 +392,7 @@ func _input(event: InputEvent) -> void:
 		print("Dragon script: ", global_data.ambrette_town)
 		sprite.play_bite_animation()
 		for body in interact_field.get_overlapping_bodies():
-			if body.entity:
+			if body.is_in_group("entity"):
 				body.damage(0.5)
 
 func _on_wingbeat_clock_timeout() -> void:

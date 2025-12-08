@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=4 uid="uid://bp7xuvfhq526c"]
+[gd_scene load_steps=23 format=4 uid="uid://bp7xuvfhq526c"]
 
 [ext_resource type="Script" uid="uid://nfo0rk7t8o4k" path="res://scripts/global_data.gd" id="1_l4eni"]
 [ext_resource type="PackedScene" uid="uid://drn046xbx7cku" path="res://debug_hud.tscn" id="2_08hk4"]
@@ -6,9 +6,10 @@
 [ext_resource type="Texture2D" uid="uid://d2u53w20vu7g2" path="res://parallax_bg/bg_06.png" id="4_g5blt"]
 [ext_resource type="PackedScene" uid="uid://b0n2m1kv2cdx1" path="res://dragon_player.tscn" id="5_qac8v"]
 [ext_resource type="Script" uid="uid://djpubhctp6wmu" path="res://scripts/camera_marker.gd" id="6_nomda"]
-[ext_resource type="PackedScene" uid="uid://1xaa5h1d2iiw" path="res://human.tscn" id="7_fdsiv"]
+[ext_resource type="PackedScene" uid="uid://1xaa5h1d2iiw" path="res://entities/human.tscn" id="7_fdsiv"]
 [ext_resource type="Script" uid="uid://dpjekgt6af1ve" path="res://scripts/nav_node_database.gd" id="8_fp442"]
 [ext_resource type="Script" uid="uid://brufnblmdv265" path="res://scripts/object_base.gd" id="8_mmgqr"]
+[ext_resource type="PackedScene" uid="uid://chgwl0ktgntek" path="res://entities/giant.tscn" id="9_08hk4"]
 [ext_resource type="Texture2D" uid="uid://clfxcijooe3f6" path="res://Sprites/LeafThing.png" id="9_d6yqq"]
 [ext_resource type="Texture2D" uid="uid://bh2vujetisv3k" path="res://Sprites/egg.png" id="9_tyhah"]
 [ext_resource type="Texture2D" uid="uid://15xnvgkwl8qa" path="res://Sprites/tile_sheet.png" id="10_muh55"]
@@ -19,6 +20,10 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_pejub"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_l4eni"]
+radius = 40.0
+height = 110.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_tyhah"]
 radius = 40.0
 height = 110.0
 
@@ -142,9 +147,9 @@ visible = false
 scale = Vector2(8, 8)
 texture = ExtResource("4_g5blt")
 
-[node name="dragon" parent="." instance=ExtResource("5_qac8v")]
+[node name="dragon" parent="." groups=["player"] instance=ExtResource("5_qac8v")]
 position = Vector2(2125, 272)
-collision_layer = 0
+collision_layer = 4
 hover_speed = 30.0
 
 [node name="Camera_Marker" type="Node2D" parent="dragon"]
@@ -536,6 +541,9 @@ position = Vector2(-866, 1263)
 [node name="Human128" parent="Entities" instance=ExtResource("7_fdsiv")]
 position = Vector2(-866, 1263)
 
+[node name="Giant" parent="Entities" groups=["monster"] instance=ExtResource("9_08hk4")]
+position = Vector2(314, 1395)
+
 [node name="Objects" type="Node" parent="."]
 
 [node name="NavNodes" type="Node" parent="."]
@@ -593,15 +601,24 @@ drop_point = NodePath("DropPoint")
 [node name="Egg" type="RigidBody2D" parent="Quests/The_Egg"]
 position = Vector2(13526, -15862)
 collision_layer = 4
+gravity_scale = 2.0
 lock_rotation = true
 script = ExtResource("8_mmgqr")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Quests/The_Egg/Egg"]
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Quests/The_Egg/Egg"]
 shape = SubResource("CapsuleShape2D_l4eni")
 
 [node name="Sprite2D" type="Sprite2D" parent="Quests/The_Egg/Egg"]
 scale = Vector2(4, 4)
 texture = ExtResource("9_tyhah")
+
+[node name="DamageArea" type="Area2D" parent="Quests/The_Egg/Egg"]
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Quests/The_Egg/Egg/DamageArea"]
+shape = SubResource("CapsuleShape2D_tyhah")
+debug_color = Color(0.8776611, 0, 0.3516308, 0.41960785)
 
 [node name="DropPoint" type="Area2D" parent="Quests/The_Egg"]
 position = Vector2(10795, -10262)
@@ -689,6 +706,13 @@ text = "Heal"
 
 [node name="PauseMenu" parent="." instance=ExtResource("16_w3fyi")]
 
+[node name="TickTimer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 0.1
+autostart = true
+
+[connection signal="body_entered" from="Quests/The_Egg/Egg/DamageArea" to="Quests/The_Egg/Egg" method="_on_area_2d_body_entered"]
 [connection signal="body_entered" from="Quests/The_Egg/DropPoint" to="Quests/The_Egg" method="_on_drop_point_body_entered"]
 [connection signal="button_up" from="HUD/Injure" to="dragon" method="_on_injure_button_up"]
 [connection signal="button_up" from="HUD/Heal" to="dragon" method="_on_heal_button_up"]
+[connection signal="timeout" from="TickTimer" to="." method="_on_tick_timer_timeout"]
