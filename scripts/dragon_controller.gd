@@ -13,7 +13,7 @@ var terminal_velocity = 2000.00
 @onready var wingbeat_clock = get_node("wingbeat_clock")
 @onready var resources = get_node("Resources")
 @onready var interact_field = get_node("InteractArea")
-@onready var global_data = get_parent()
+@onready var GlobalData = get_parent()
 #@onready var dive_toggler = get_node("DiveToggler")
 
 #var base_gravity_scale = 2.0
@@ -62,7 +62,7 @@ var max_glide_height = 0.0
 
 func _ready() -> void:
 	jump_strength = jump_strength_base
-	terminal_velocity = global_data.terminal_velocity + 500.0
+	terminal_velocity = GlobalData.terminal_velocity + 500.0
 
 
 func _physics_process(delta: float) -> void:
@@ -148,18 +148,18 @@ func _physics_process(delta: float) -> void:
 	# Some players might prefer one way or the other so it's a good option to have.
 	if is_flying:
 		if Input.is_action_just_pressed("Glide"):
-			if not global_data.option_hold_to_glide:
+			if not GlobalData.option_hold_to_glide:
 				if is_gliding == true:
 					is_gliding = false
 				else:
 					is_gliding = true
 					is_hovering = false
 		if Input.is_action_pressed("Glide"):
-			if global_data.option_hold_to_glide:
+			if GlobalData.option_hold_to_glide:
 				is_gliding = true
 				is_hovering = false
 		if Input.is_action_just_released("Glide"):
-			if global_data.option_hold_to_glide:
+			if GlobalData.option_hold_to_glide:
 				is_gliding = false
 	else:
 		is_hovering = false
@@ -168,18 +168,18 @@ func _physics_process(delta: float) -> void:
 			is_running = true
 	# And here's the same thing for Hovering
 	if Input.is_action_just_pressed("Hover"):
-		if not global_data.option_hold_to_hover:
+		if not GlobalData.option_hold_to_hover:
 			if is_hovering == true:
 				is_hovering = false
 			else:
 				is_hovering = true
 				is_gliding = false
 	if Input.is_action_pressed("Hover"):
-		if global_data.option_hold_to_hover:
+		if GlobalData.option_hold_to_hover:
 			is_hovering = true
 			is_gliding = false
 	if Input.is_action_just_released("Hover"):
-		if global_data.option_hold_to_hover:
+		if GlobalData.option_hold_to_hover:
 			is_hovering = false
 	
 	if is_hovering and not floor_check.has_overlapping_bodies():
@@ -210,7 +210,7 @@ func _physics_process(delta: float) -> void:
 			flight_direction.y *= -1
 		wingbeat()
 		is_flying = true
-		if global_data.option_hover_leave:
+		if GlobalData.option_hover_leave:
 			is_hovering = true
 		jump_counter += 1
 	elif floor_check.has_overlapping_bodies():
@@ -389,7 +389,7 @@ func _input(event: InputEvent) -> void:
 		#	print(body)
 	## BITE
 	if Input.is_action_just_pressed("bite"):
-		print("Dragon script: ", global_data.ambrette_town)
+		print("Dragon script: ", GlobalData.ambrette_town)
 		sprite.play_bite_animation()
 		for body in interact_field.get_overlapping_bodies():
 			if body.is_in_group("entity"):

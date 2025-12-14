@@ -8,7 +8,7 @@ extends Node
 
 @onready var entity = get_parent()
 @onready var entity_floorcheck = get_parent().get_node("FloorCheck")
-@onready var global_data = get_node("/root/Main")
+@onready var GlobalData = get_node("/root/Main")
 @onready var tick_timer = get_node("/root/Main/TickTimer")
 @onready var dragon_node = get_node("/root/Main/dragon")
 

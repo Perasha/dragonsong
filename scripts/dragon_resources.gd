@@ -7,7 +7,7 @@ var health = max_health
 
 @onready var dragon_node = get_parent()
 @onready var presence_node = get_parent().get_node("Presence")
-@onready var global_data = get_node("/root/Main")
+@onready var GlobalData = get_node("/root/Main")
 #@onready var initial_speeds = {
 #	"wingbeat_strength" : dragon_node.wingbeat_strength,
 #	"speed" : dragon_node.speed,
@@ -24,9 +24,13 @@ func _ready() -> void:
 
 func _input(event: InputEvent) -> void:
 	pass
-	#print(global_data.ambrette_town)
+	#print(GlobalData.ambrette_town)
 	## INTERACT
-	#if Input.is_action_just_pressed("Interact"):
+	if Input.is_action_just_pressed("Interact"):
+		if dragon_node.grabbed_entity != null:
+			if dragon_node.grabbed_entity.is_in_group("quest_item"):
+				pass
+			pass
 	#	pass
 	## BITE - Lowering Opinion
 	#if Input.is_action_just_released("bite"):
@@ -42,7 +46,7 @@ func _input(event: InputEvent) -> void:
 					#living_humans.append(body)
 	#				human_count += 1
 	#	if human_count > 1:
-	#		global_data.ambrette_town["player_opinion"] -= human_count
+	#		GlobalData.ambrette_town["player_opinion"] -= human_count
 		
 		#for human in living_humans:
 		#	human.get_node("Behavior").check_opinion()

@@ -1,0 +1,60 @@
+[gd_scene load_steps=2 format=3 uid="uid://b8rmpllse0o47"]
+
+[ext_resource type="Script" uid="uid://tooqaujnehgb" path="res://scripts/quest_menu.gd" id="1_h8cyd"]
+
+[node name="QuestMenu" type="CanvasLayer"]
+script = ExtResource("1_h8cyd")
+
+[node name="MenuButton" type="Button" parent="."]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -112.0
+offset_top = 15.0
+offset_right = -16.0
+offset_bottom = 46.0
+grow_horizontal = 0
+text = "Quests"
+
+[node name="TabContainer" type="TabContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -137.0
+offset_top = -180.0
+offset_right = 137.0
+offset_bottom = 180.0
+grow_horizontal = 2
+grow_vertical = 2
+current_tab = 0
+
+[node name="1" type="Button" parent="TabContainer"]
+layout_mode = 2
+text = "Hello there."
+metadata/_tab_index = 0
+
+[node name="2" type="Button" parent="TabContainer"]
+visible = false
+layout_mode = 2
+text = "Hello there."
+metadata/_tab_index = 1
+
+[node name="3" type="Button" parent="TabContainer"]
+visible = false
+layout_mode = 2
+text = "Hello there."
+metadata/_tab_index = 2
+
+[node name="4" type="Button" parent="TabContainer"]
+visible = false
+layout_mode = 2
+text = "Hello there."
+metadata/_tab_index = 3
+
+[node name="5" type="Button" parent="TabContainer"]
+visible = false
+layout_mode = 2
+text = "Hello there."
+metadata/_tab_index = 4

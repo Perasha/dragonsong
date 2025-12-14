@@ -15,12 +15,17 @@ run/main_scene="uid://dtiywd80fsyrn"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+GlobalData="*res://scripts/global_data.gd"
+
 [global_group]
 
 entity=""
 human=""
 player=""
 monster=""
+quest_item=""
 
 [input]
 

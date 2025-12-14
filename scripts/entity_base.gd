@@ -13,7 +13,7 @@ const DeathAura = preload("res://death_aura.tscn")
 @onready var village_nav_node = get_parent().get_parent().get_node("NavNodes")
 @onready var floor_check = get_node("FloorCheck")
 @onready var sprite = get_node("Sprite")
-#global_data.terminal_velocity
+#GlobalData.terminal_velocity
 var default_speed = 100
 var max_speed = 100
 var max_run_speed = max_speed * 2

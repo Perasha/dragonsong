@@ -2,7 +2,7 @@ extends Node
 
 @onready var entity = get_parent()
 #@onready var entity_floorcheck = get_parent().get_node("FloorCheck")
-@onready var global_data = get_node("/root/Main")
+@onready var GlobalData = get_node("/root/Main")
 @onready var tick_timer = get_node("/root/Main/TickTimer")
 @onready var dragon_node = get_node("/root/Main/dragon")
 #@onready var village_nav_node = get_parent().get_parent().get_node("NavNodes")
@@ -52,11 +52,11 @@ func _on_tick_timer_timeout():
 	#check_memory()
 
 func check_memory(body):
-	for threat in global_data.ambrette_town["threats"]:
+	for threat in GlobalData.ambrette_town["threats"]:
 		pass
 		#print(body)
 		#print(threat)
-	#if global_data.ambrette_town["player_opinion"] < 0:
+	#if GlobalData.ambrette_town["player_opinion"] < 0:
 	#	entity.active_threat = dragon_node
 	#else:
 	#	entity.active_threat = null
@@ -68,8 +68,8 @@ func _on_floor_check_area_entered(area: Area2D) -> void:
 	#	for area_found in entity.floor_check.get_overlapping_areas():
 	#		var body = area_found.get_parent()
 	#		if body.is_in_group("player"):
-	#			global_data.ambrette_town["player_opinion"] -= 10
-	#			global_data.ambrette_town["threats"].append(body)
+	#			GlobalData.ambrette_town["player_opinion"] -= 10
+	#			GlobalData.ambrette_town["threats"].append(body)
 	#		elif body.is_in_group("monster"):
 	#			entity.active_threat = body
 	#	pass

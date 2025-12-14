@@ -14,6 +14,7 @@ var ambrette_town = {
 	"threats" : []
 }
 
+var Active_Quests = []
 
 func _on_tick_timer_timeout() -> void:
 	#print(ambrette_town)

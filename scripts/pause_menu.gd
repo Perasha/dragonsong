@@ -1,7 +1,5 @@
 extends CanvasLayer
 
-@onready var global_data = get_parent()
-
 @onready var menu_button = get_node("MenuButton")
 @onready var options_menu = get_node("OptionsMenu")
 @onready var main_menu = get_node("MainMenu")
@@ -28,12 +26,12 @@ func _on_resume_pressed() -> void:
 	menu_button.show()
 
 func _on_hold_hover_toggled(toggled_on: bool) -> void:
-	global_data.option_hold_to_hover = toggled_on
+	GlobalData.option_hold_to_hover = toggled_on
 
 func _on_hold_glide_toggled(toggled_on: bool) -> void:
 	#print(toggled_on)
-	#print(global_data.option_hold_to_glide)
-	global_data.option_hold_to_glide = toggled_on
+	#print(GlobalData.option_hold_to_glide)
+	GlobalData.option_hold_to_glide = toggled_on
 
 
 func _on_options_pressed() -> void:
@@ -54,7 +52,7 @@ func _on_exit_pressed() -> void:
 	pass # Replace with function body.
 
 func _on_hover_leave_toggled(toggled_on: bool) -> void:
-	global_data.option_hover_leave = toggled_on
+	GlobalData.option_hover_leave = toggled_on
 	pass # Replace with function body.
 
 

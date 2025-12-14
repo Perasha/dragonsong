@@ -8,16 +8,6 @@ extends Node
 var quest_started = false
 var quest_completed = false
 
-
-func _ready() -> void:
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
-
-
 func _on_drop_point_body_entered(body: Node2D) -> void:
 	if body == package:
 		print("Quest complete!")

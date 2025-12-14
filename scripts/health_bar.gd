@@ -1,7 +1,7 @@
 extends ProgressBar
 
 @onready var label = get_node("Label")
-@onready var dragon_node = get_parent().get_parent().get_node("dragon")
+@onready var dragon_node = get_node("/root/Main/dragon")
 @onready var dragon_resources = dragon_node.get_node("Resources")
 
 func _ready():
