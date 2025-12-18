@@ -74,6 +74,11 @@ text = "Hold to Glide"
 layout_mode = 2
 text = "Hold to Hover"
 
+[node name="HoldLook" type="CheckButton" parent="OptionsMenu"]
+layout_mode = 2
+button_pressed = true
+text = "Hold to Look"
+
 [node name="HoverLeave" type="CheckButton" parent="OptionsMenu"]
 layout_mode = 2
 button_pressed = true
@@ -187,5 +192,6 @@ Spacebar: Jump"
 [connection signal="pressed" from="OptionsMenu/Back" to="." method="_on_back_pressed"]
 [connection signal="toggled" from="OptionsMenu/HoldGlide" to="." method="_on_hold_glide_toggled"]
 [connection signal="toggled" from="OptionsMenu/HoldHover" to="." method="_on_hold_hover_toggled"]
+[connection signal="toggled" from="OptionsMenu/HoldLook" to="." method="_on_hold_look_toggled"]
 [connection signal="toggled" from="OptionsMenu/HoverLeave" to="." method="_on_hover_leave_toggled"]
 [connection signal="pressed" from="ControlsMenu/Back2" to="." method="_on_back_pressed"]

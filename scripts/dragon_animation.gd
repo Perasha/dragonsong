@@ -4,6 +4,7 @@ extends Sprite2D
 @onready var wing_node = get_node("Wings")
 @onready var InteractNode = get_parent().get_node("InteractArea")
 @onready var BiteAnimNode = get_parent().get_node("Bite")
+@onready var ClimbDetector = get_parent().get_node("ClimbDetector")
 
 @onready var wing_folded_sprite = preload("res://Sprites/wings_folded.png")
 @onready var wing_glide_sprite = preload("res://Sprites/wings_glide.png")
@@ -92,11 +93,15 @@ func _physics_process(delta: float) -> void:
 	if dragon_node.flight_direction.x < 0:
 		facing = LEFT
 		InteractNode.position.x = -72
+		ClimbDetector.position.x = -42
+		ClimbDetector.target_position.x = -65
 		BiteAnimNode.position.x = -112
 		BiteAnimNode.flip_v = false
 	else:
 		facing = RIGHT
 		InteractNode.position.x = 72
+		ClimbDetector.position.x = 42
+		ClimbDetector.target_position.x = 65
 		BiteAnimNode.position.x = 112
 		BiteAnimNode.flip_v = true
 	

@@ -67,3 +67,8 @@ func _on_menu_button_pressed() -> void:
 	get_tree().paused = true
 	main_menu.show()
 	menu_button.hide()
+
+
+func _on_hold_look_toggled(toggled_on: bool) -> void:
+	GlobalData.option_hold_to_look = toggled_on
+	pass # Replace with function body.

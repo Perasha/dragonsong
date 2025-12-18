@@ -15,7 +15,7 @@ height = 132.0
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1clwq"]
 size = Vector2(76.92308, 2.3076172)
 
-[node name="Giant" type="RigidBody2D" groups=["entity", "serpent"]]
+[node name="Giant" type="RigidBody2D" groups=["entity", "monster"]]
 collision_layer = 4
 physics_material_override = SubResource("PhysicsMaterial_h1in3")
 gravity_scale = 2.0

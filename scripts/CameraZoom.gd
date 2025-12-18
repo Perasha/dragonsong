@@ -7,12 +7,12 @@ extends Camera2D
 @export_category("Follow_Character")
 var zoomSpeed = 1.2
 
-@export var follow_target : Node2D
+@export var cam_marker : Node2D
 @onready var player = get_parent().get_node("dragon")
 
 @export_category("Camera Smoothing")
 @export var smoothing_enabled : bool
-@export_range(1,100) var smoothing_distance : int = 8
+#@export_range(1,100) var smoothing_distance : int = 8
 @export var defaultZoomLevel = 0.6 #0.65
 @export var default_zoom_factor = 3000
 var zoom_factor = 3000
@@ -28,25 +28,40 @@ var current_zoom_level = GROUND
 
 var maxZoom_fly = 0.7
 
-var weight : float
+var default_weight = 0.005
+var weight = default_weight
 
 func _ready():
 	current_zoom_level = GROUND
-	weight = float(smoothing_distance) / 5000
-	for node in get_children():
-		if node.get_class() == "Area2D":
+	#weight = float(smoothing_distance) / 5000
+	for node in player.get_children():
+		if node.is_in_group("cam_zoom_lvl"):
 			#print(node.name)
 			zoom_dist_nodes.append(node)
 	#print(zoom_dist_nodes)
 	#print(zoom_levels[GROUND])
 
+## Dynamic Zoom, but only if we're looking
 #func _input(event):	
-	#if event is InputEventMouseButton:
-	#	if event.is_pressed():
-	#		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
-	#			zoom *= Vector2(zoomSpeed,zoomSpeed)
-	#		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-	#			zoom /= Vector2(zoomSpeed,zoomSpeed)
+	#if event is InputEventMouseButton and cam_marker.is_looking:
+		##weight = 1.0
+		#print("--------------------START----------------")
+		#print("Before calc: ", zoom)
+		#print("Factor: ", zoomSpeed)
+		#if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			#print("ZOOM IN!")
+			#zoom *= Vector2(zoomSpeed,zoomSpeed)
+			#print("After calc: ", zoom)
+			#print("Max Zoom we can't go below: ", zoom_levels[GROUND])
+			#if zoom.x > zoom_levels[GROUND]:
+				#zoom = set_zoom_level(zoom_levels[GROUND])
+		#if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			#print("ZOOM OUT!")
+			#zoom /= Vector2(zoomSpeed,zoomSpeed)
+			#print("After calc: ", zoom)
+			#if zoom.x < zoom_levels[MAX]:
+				#zoom = set_zoom_level(zoom_levels[MAX])
+		#print("Final Zoom: ", zoom)
 
 var direction = Vector2()
 var anticipated_direction = Vector2(0.0,0.0)
@@ -54,11 +69,12 @@ var held_count = Vector2()
 var max_hold = 50.0
 var max_hold_y = max_hold / 1.5
 
+var new_zoom : Vector2
 @warning_ignore("unused_parameter")
 func _process(delta):
 	#print("Screen size: ", get_viewport().get_visible_rect().size)
 	if player != null:
-		check_zoom()
+		#check_zoom()
 		max_hold = player.distance_moved * 1.5
 		#Here, we're getting our direction inputs again.
 		# We use this to add to a hold_count value, 
@@ -84,43 +100,49 @@ func _process(delta):
 		#print(direction)
 		#print(anticipated_direction)
 		##ZOOM CHANGING
-		var new_zoom = Vector2(zoom_levels[current_zoom_level],zoom_levels[current_zoom_level])
+		#new_zoom = set_zoom_level(zoom_levels[current_zoom_level])
 		#print(zoom_levels[current_zoom_level])
 		#new_zoom.x = zoom_levels[current_zoom_level]
 		#new_zoom.y = new_zoom.x
-		zoom = lerp(zoom, new_zoom, 0.005)
+		if not cam_marker.is_looking:
+			#print("Resetting Zoom!")
+			zoom = lerp(zoom, new_zoom, weight)
 		#print(zoom)
 		
 		var camera_position : Vector2
 		var camera_target : Vector2
 		
-		camera_target = follow_target.global_position
+		camera_target = cam_marker.global_position
 		
 		if smoothing_enabled:
-			var weight = pow(log(1.2),2)
+			var smoothing_weight = pow(log(1.2),2)
 			#position = lerp(position, new_position, pow(-weight*delta,3))
 			#print("Weight: ", weight)
 			#print("Calculated Weight: ", pow(-weight*delta,2))
-			camera_position = lerp(global_position, camera_target, weight)
+			camera_position = lerp(global_position, camera_target, smoothing_weight)
 		else:
 			camera_position = camera_target
 		
 		global_position = camera_position
+		check_zoom()
 
+func set_zoom_level(level):
+	return Vector2(level,level)
 
 func check_zoom() -> void:
-	#print('Timeout!')
-	defaultZoomLevel = get_viewport().get_visible_rect().size.x / 2800
-	zoom_levels = [defaultZoomLevel * 1.5,defaultZoomLevel / 1.7,defaultZoomLevel / 3,defaultZoomLevel / 6]
-	#print(defaultZoomLevel)
-	var i = -1
-	for node in zoom_dist_nodes:
-		i += 1
-		#print(node.get_overlapping_bodies())
-		if node.get_overlapping_bodies().size() > 0:
-			current_zoom_level = i
-			break
-		else:
-			current_zoom_level = MAX
-	#print("Level: ", i, ",", current_zoom_level)
-	pass # Replace with function body.
+	if not cam_marker.is_looking:
+		#print("Resetting Zoom!")
+		defaultZoomLevel = get_viewport().get_visible_rect().size.x / 2800
+		zoom_levels = [defaultZoomLevel * 1.5,defaultZoomLevel / 1.7,defaultZoomLevel / 3,defaultZoomLevel / 6]
+		#print(defaultZoomLevel)
+		var i = -1
+		for node in zoom_dist_nodes:
+			i += 1
+			#print(node.get_overlapping_bodies())
+			if node.get_overlapping_bodies().size() > 0:
+				current_zoom_level = i
+				break
+			else:
+				current_zoom_level = MAX
+		##ZOOM CHANGING
+		new_zoom = set_zoom_level(zoom_levels[current_zoom_level])

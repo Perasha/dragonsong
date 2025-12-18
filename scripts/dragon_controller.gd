@@ -6,6 +6,7 @@ extends RigidBody2D
 @export var max_walk_speed = 200.00
 @export var max_run_speed = 400.00
 @export var max_fly_speed = 1250.00
+var max_fly_speed_base = max_fly_speed
 var terminal_velocity = 2000.00
 
 @onready var floor_check = get_node("FloorCheck")
@@ -13,7 +14,8 @@ var terminal_velocity = 2000.00
 @onready var wingbeat_clock = get_node("wingbeat_clock")
 @onready var resources = get_node("Resources")
 @onready var interact_field = get_node("InteractArea")
-@onready var GlobalData = get_parent()
+@onready var climb_detector = get_node("ClimbDetector")
+#@onready var GlobalData = get_parent()
 #@onready var dive_toggler = get_node("DiveToggler")
 
 #var base_gravity_scale = 2.0
@@ -37,6 +39,9 @@ var is_flying = false
 var is_hovering = false
 var is_gliding = false
 var is_running = false
+var is_climbing = false
+
+var is_grounded = false
 # Option to change from glide being a toggle, to being held
 #var option_hold_to_glide = false
 #var option_hold_to_hover = false
@@ -68,10 +73,18 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	just_jumped = false
 	is_running = false
+	is_climbing = false
+	is_grounded = false
 	previous_position = current_position
 	current_position = position
 	gravity_scale = grav_scale_default
 	
+	#if position.y < 0:
+		#max_fly_speed = max_fly_speed_base * (-position.y / 3000)
+		#if max_fly_speed < max_fly_speed_base:
+			#max_fly_speed = max_fly_speed_base
+	#else:
+		#max_fly_speed = max_fly_speed_base
 	# Here, we take the X and Y of our Linear Velocity and combine it into a total speed value.
 	# And uh, we needed the Pythoreum Theorum for it.
 	current_speed = pow(abs(linear_velocity.x),2) + pow(abs(linear_velocity.y),2)
@@ -116,6 +129,9 @@ func _physics_process(delta: float) -> void:
 	else:
 		is_stalling = false
 	
+	if floor_check.has_overlapping_bodies():
+		is_grounded = true
+	check_climb()
 	# Now we get inputs. Our wing flap, then movement axes, then our wing-fold/dive.
 	#if Input.is_action_just_pressed("flap"):
 	#	just_jumped = true
@@ -182,7 +198,7 @@ func _physics_process(delta: float) -> void:
 		if GlobalData.option_hold_to_hover:
 			is_hovering = false
 	
-	if is_hovering and not floor_check.has_overlapping_bodies():
+	if is_hovering and not is_grounded:
 		is_flying = true
 		#print("We are now Hovering and Flying")
 	
@@ -205,7 +221,7 @@ func _physics_process(delta: float) -> void:
 	
 	
 	# This is our jump! If we flap once, it's just a jump. If we flap twice, and we're not on the ground, we start flying!	
-	if jump_counter == 1 and not floor_check.has_overlapping_bodies():
+	if jump_counter == 1 and not is_grounded:
 		if flight_direction.y > 0:
 			flight_direction.y *= -1
 		wingbeat()
@@ -213,10 +229,10 @@ func _physics_process(delta: float) -> void:
 		if GlobalData.option_hover_leave:
 			is_hovering = true
 		jump_counter += 1
-	elif floor_check.has_overlapping_bodies():
+	elif is_grounded:
 		is_flying = false
 	
-	if floor_check.has_overlapping_bodies():
+	if is_grounded:
 		is_flying = false
 		jump_counter = 0
 	
@@ -225,6 +241,7 @@ func _physics_process(delta: float) -> void:
 	if distance_moved > 18 and not is_flying:
 		is_flying = true
 		jump_counter += 2
+		#flight_direction = position.direction_to(linear_velocity).normalized()
 		
 	
 	#if not dive_toggler.has_overlapping_bodies():
@@ -243,62 +260,17 @@ func _physics_process(delta: float) -> void:
 	
 	if not is_flying or hover_speed == 0:
 		is_hovering = false
-	# Flying movement.
 	
+	## MOVEMENT
 	if is_flying and not is_hovering:
-		if just_jumped and current_speed <= terminal_velocity and not on_wingbeat_cooldown:
-			wingbeat()
-			#print("Continue")
-		# Adding our afterburner force. This'll slowly go down long after we do the wingbeat, but it's to push us further for a bit longer.
-		if wingbeat_afterburner > 1:
-			wingbeat_afterburner /= 1.04
-			current_speed += wingbeat_afterburner
-			
-		if current_speed >= 20:
-			apply_momentum()
-		else:
-			flight_direction.y = 1.0
-	# Hovering Movement
+		fly()
 	elif is_hovering:
-		#print("Hovering: ", max_fly_speed)
-		gravity_scale = 0.0
-		#flight_direction = Vector2(direction_x,direction_y)
-		if current_speed <= max_fly_speed:
-			#print("Hovering: ", max_fly_speed)
-			var hover_direction = Vector2(direction_x,direction_y).normalized() * hover_speed
-			linear_velocity.x += hover_direction.x
-			if linear_velocity.y > -(max_fly_speed * 0.72):
-				linear_velocity.y += hover_direction.y
-				
-		# Stopping much more abruptly if we aren't trying to move,
-		# OR if one of the directions is directly opposite of another.
-		if direction_x == 0 and direction_y == 0:
-			linear_velocity /= 1 + (hover_speed / 750.0)
-		else:
-			if (-direction_x > 0 and linear_velocity.x > 0) or (-direction_x < 0 and linear_velocity.x < 0):
-				linear_velocity.x /= 1 + (hover_speed / 750.0)
-			if (-direction_y > 0 and linear_velocity.y > 0) or (-direction_y < 0 and linear_velocity.y < 0):
-				linear_velocity.y /= 1 + (hover_speed / 750.0)
-		
-		# Steering Radius
-		linear_velocity += linear_velocity.direction_to(Vector2(0,0)) * 15
-	# Grounded movement.
+		var max_hover_speed = max_fly_speed / 1.25
+		hover(max_hover_speed)
+	elif is_climbing:
+		climb()
 	else:
-		# And start moving in a direction if we move left and right. Not very fast, mind you.
-		var speed_limit = max_walk_speed
-		if is_running: speed_limit = max_run_speed
-		if direction_x:
-			flight_direction.x = direction_x
-			if abs(linear_velocity.x) < speed_limit:
-				linear_velocity.x += direction_x * speed
-		# This actually more quickly slows our movement, rather than increasing our friction.
-		# Using them legs to slow down!
-		# But only if we're touching the floor.
-		if floor_check.has_overlapping_bodies():
-			linear_velocity.x *= 0.95
-		# And again, clamping our speed just to make sure nothing breaks.
-		# X axis can be our maximum walking speed, but up and down are determined by air resistance!
-		#linear_velocity = linear_velocity.clamp(Vector2(-terminal_velocity,-terminal_velocity),Vector2(terminal_velocity,terminal_velocity))
+		walk()
 	if is_flying or is_hovering:
 		# This is just to make sure our speed never exceeds what we determine as Terminal Velocity. Otherwise... bad things
 		linear_velocity = linear_velocity.clamp(Vector2(-terminal_velocity,-terminal_velocity),Vector2(terminal_velocity,terminal_velocity))
@@ -395,47 +367,101 @@ func _input(event: InputEvent) -> void:
 			if body.is_in_group("entity"):
 				body.damage(0.5)
 
+## Flying
+func fly():
+	if just_jumped and current_speed <= terminal_velocity and not on_wingbeat_cooldown:
+		wingbeat()
+		#print("Continue")
+	# Adding our afterburner force. This'll slowly go down long after we do the wingbeat, but it's to push us further for a bit longer.
+	if wingbeat_afterburner > 1:
+		wingbeat_afterburner /= 1.04
+		current_speed += wingbeat_afterburner
+		
+	if current_speed >= 20:
+		apply_momentum()
+	else:
+		flight_direction.y = 1.0
+
+## Hovering
+func hover(max_hover_speed):
+	#print("Hovering: ", max_fly_speed)
+	gravity_scale = 0.0
+	#max_hover_speed = max_fly_speed / 1.25
+	#flight_direction = Vector2(direction_x,direction_y)
+	if current_speed <= max_hover_speed:
+		#print("Hovering: ", max_fly_speed)
+		var hover_direction = Vector2(direction_x,direction_y).normalized() * hover_speed
+		linear_velocity.x += hover_direction.x
+		if linear_velocity.y > -(max_hover_speed * 0.72):
+			linear_velocity.y += hover_direction.y
+			
+	# Stopping much more abruptly if we aren't trying to move,
+	# OR if one of the directions is directly opposite of another.
+	if direction_x == 0 and direction_y == 0:
+		linear_velocity /= 1 + (hover_speed / 750.0)
+	else:
+		if (-direction_x > 0 and linear_velocity.x > 0) or (-direction_x < 0 and linear_velocity.x < 0):
+			linear_velocity.x /= 1 + (hover_speed / 750.0)
+		if (-direction_y > 0 and linear_velocity.y > 0) or (-direction_y < 0 and linear_velocity.y < 0):
+			linear_velocity.y /= 1 + (hover_speed / 750.0)
+	
+	# Steering Radius
+	linear_velocity += linear_velocity.direction_to(Vector2(0,0)) * 15
+
+## Climbing
+func check_climb():
+	#print("checking climb")
+	if climb_detector.is_colliding() and abs(direction_x) > 0.2:
+		is_climbing = true
+		is_flying = false
+		is_hovering = false
+		#else:
+		#	print("Grounded, no climbing")
+	
+	
+	#if abs(linear_velocity.x) > 50 and abs(flight_direction.x) == 1.0 and not is_grounded:
+	#	is_climbing = true
+		#gravity_scale = 0.0
+	pass
+
+func climb():
+	print("Climbing!")
+	#jump_counter = 1
+	var max_climb_speed = (max_fly_speed / 4.0) + 200
+	hover(max_climb_speed)
+
+## Walking
+func walk():
+# And start moving in a direction if we move left and right. Not very fast, mind you.
+	var speed_limit = max_walk_speed
+	if is_running: speed_limit = max_run_speed
+	if direction_x:
+		flight_direction.x = direction_x
+		if abs(linear_velocity.x) < speed_limit:
+			linear_velocity.x += direction_x * speed
+	# This actually more quickly slows our movement, rather than increasing our friction.
+	# Using them legs to slow down!
+	# But only if we're touching the floor.
+	if is_grounded:
+		linear_velocity.x *= 0.95
+	# And again, clamping our speed just to make sure nothing breaks.
+	# X axis can be our maximum walking speed, but up and down are determined by air resistance!
+	#linear_velocity = linear_velocity.clamp(Vector2(-terminal_velocity,-terminal_velocity),Vector2(terminal_velocity,terminal_velocity))
+
+
+
 func _on_wingbeat_clock_timeout() -> void:
 	on_wingbeat_cooldown = false
 
-@onready var initial_speed = {
-	"max_jump_strength" : max_jump_strength,
-	"max_fly_speed" : max_fly_speed,
-	"hover_speed" : hover_speed
-}
-var injury_multiplier = 1.0
-# Hypothetically this should slow us down the more injured we are.
 func _on_injure_button_up() -> void:
-	health_update(-1)
+	resources.health_update(-1)
 
 func _on_heal_button_up() -> void:
-	health_update(1)
+	resources.health_update(1)
 
-
-func health_update(value):
-	resources.health += value
-	hover_speed = initial_speed["hover_speed"]
-	if resources.health > resources.max_health:
-		resources.health = resources.max_health
-	
-	if resources.health > 0:
-		injury_multiplier = resources.health / resources.max_health
-		#wingbeat_strength *= resources.health / resources.max_health
-		#speed *= resources.health / resources.max_health
-		#jump_strength_base *= resources.health / resources.max_health
-		#max_jump_strength *= resources.health / resources.max_health
-		#hover_speed = injury_multiplier * initial_speed["hover_speed"]
-		max_fly_speed = injury_multiplier * initial_speed["max_fly_speed"]
-		max_jump_strength = (injury_multiplier * (initial_speed["max_jump_strength"] - jump_strength_base)) + jump_strength_base
-		#print("INJURY: ", max_fly_speed)
-	else:
-		max_jump_strength = 3
-		hover_speed = 0
-		resources.health = 0
-
-
+# Fall damage
 func _on_body_entered(body: Node) -> void:
 	#print(distance_moved)
 	if distance_moved > 20:
-		health_update(snappedf(-distance_moved / 200,0.01))
+		resources.health_update(snappedf(-distance_moved / 200,0.01))
 	pass # Replace with function body.

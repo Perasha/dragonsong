@@ -2,6 +2,7 @@ extends "object_base.gd"
 
 ## STATS
 @export var health = 0.10
+@export var food_amount = health
 ##-------------------------
 
 @export var is_grounded = false

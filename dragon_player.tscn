@@ -102,17 +102,18 @@ collision_layer = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="FloorCheck"]
 position = Vector2(-14.574997, -7.2149963)
-scale = Vector2(5.885, 0.08)
+scale = Vector2(4.72, 0.08)
 shape = SubResource("RectangleShape2D_ngkl2")
 
 [node name="Direction Pointer" type="Area2D" parent="."]
-visible = false
 monitorable = false
 priority = -2
 script = ExtResource("5_vgkb3")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Direction Pointer"]
+z_index = 10
 shape = SubResource("RectangleShape2D_gilsg")
+debug_color = Color(1, 1, 1, 0.15294118)
 
 [node name="wingbeat_clock" type="Timer" parent="."]
 wait_time = 0.25
@@ -120,8 +121,14 @@ one_shot = true
 
 [node name="Presence" parent="." instance=ExtResource("6_ju2y0")]
 
+[node name="ClimbDetector" type="RayCast2D" parent="."]
+position = Vector2(-42.000004, -32)
+scale = Vector2(0.99999994, 0.99999994)
+target_position = Vector2(-65, 0)
+
 [node name="InteractArea" type="Area2D" parent="."]
-position = Vector2(-72, 0)
+position = Vector2(-45.000008, 0)
+scale = Vector2(1.5199994, 0.8400002)
 collision_layer = 0
 collision_mask = 4
 
@@ -141,6 +148,22 @@ frame_progress = 1.0
 
 [node name="Resources" type="Node" parent="."]
 script = ExtResource("6_j86p3")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+visible = false
+z_index = 10
+offset_left = -46.0
+offset_top = -120.0
+offset_right = 34.0
+offset_bottom = -80.0
+
+[node name="Panel" type="Panel" parent="PanelContainer"]
+visible = false
+layout_mode = 2
+
+[node name="Speechthought" type="Label" parent="PanelContainer"]
+layout_mode = 2
+text = "Thinking..."
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_entered" from="Direction Pointer" to="." method="_on_direction_pointer_body_entered"]

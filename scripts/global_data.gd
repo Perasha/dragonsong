@@ -6,6 +6,7 @@ extends Node
 var option_hold_to_glide = false
 var option_hold_to_hover = false
 var option_hover_leave = true
+var option_hold_to_look = true
 
 @export var terminal_velocity = 2000.00
 
