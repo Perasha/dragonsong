@@ -1,4 +1,4 @@
-[gd_scene load_steps=41 format=4 uid="uid://dtiywd80fsyrn"]
+[gd_scene load_steps=43 format=4 uid="uid://dtiywd80fsyrn"]
 
 [ext_resource type="PackedScene" uid="uid://drn046xbx7cku" path="res://debug_hud.tscn" id="2_t6101"]
 [ext_resource type="Script" uid="uid://2absxauv5538" path="res://scripts/CameraZoom.gd" id="3_8g0ca"]
@@ -14,11 +14,12 @@
 [ext_resource type="Script" uid="uid://brufnblmdv265" path="res://scripts/object_base.gd" id="12_ld413"]
 [ext_resource type="Texture2D" uid="uid://bh2vujetisv3k" path="res://Sprites/egg.png" id="13_sl5eo"]
 [ext_resource type="Texture2D" uid="uid://15xnvgkwl8qa" path="res://Sprites/tile_sheet.png" id="14_mdveq"]
+[ext_resource type="Script" uid="uid://jofgk6qujip0" path="res://scripts/object_interact_manager.gd" id="15_6jdpt"]
 [ext_resource type="Script" uid="uid://bvxkyx0ds2l6i" path="res://scripts/health_bar.gd" id="15_7ekg2"]
+[ext_resource type="Script" uid="uid://bbyvphoamnl7v" path="res://scripts/interactable.gd" id="16_4e6kc"]
 [ext_resource type="Texture2D" uid="uid://bsulgxbjt3gca" path="res://Sprites/statue.png" id="16_fqjxk"]
 [ext_resource type="PackedScene" uid="uid://dmk40wch1qbu5" path="res://quest_drop_point.tscn" id="16_mmmpg"]
 [ext_resource type="PackedScene" uid="uid://bks7gor6yrlx6" path="res://pause_menu.tscn" id="16_prg60"]
-[ext_resource type="PackedScene" uid="uid://b8rmpllse0o47" path="res://quest_menu.tscn" id="16_t6101"]
 [ext_resource type="Texture2D" uid="uid://scg63yoxuewp" path="res://parallax_bg/bg_03.png" id="20_4kaof"]
 [ext_resource type="Texture2D" uid="uid://nsqonkbfvwcp" path="res://parallax_bg/bg_05.png" id="20_12f22"]
 [ext_resource type="Texture2D" uid="uid://cocb0lk531e7o" path="res://parallax_bg/bg_02.png" id="21_cw5i7"]
@@ -36,6 +37,9 @@ height = 110.0
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_tyhah"]
 radius = 40.0
 height = 110.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_6jdpt"]
+radius = 22.501389
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_sw31v"]
 polygon = PackedVector2Array(-12.5, -12.5, 12.5, -12.5, 12.5, 12.5, -12.5, 12.5)
@@ -190,7 +194,7 @@ visible = false
 scale = Vector2(8, 8)
 texture = ExtResource("4_mmmpg")
 
-[node name="dragon" parent="." groups=["player"] instance=ExtResource("5_4kaof")]
+[node name="dragon" parent="." instance=ExtResource("5_4kaof")]
 z_index = 1
 position = Vector2(11045, -4319)
 collision_layer = 4
@@ -249,241 +253,238 @@ position = Vector2(-2741, 1460)
 [node name="Giant" parent="Entities" instance=ExtResource("8_12f22")]
 position = Vector2(-6884, 1442)
 
-[node name="Objects" type="Node" parent="."]
+[node name="Food" type="Node" parent="."]
 
-[node name="Flower" type="Sprite2D" parent="Objects"]
+[node name="Flower" type="Sprite2D" parent="Food"]
 position = Vector2(-3047, 1510)
 scale = Vector2(2, 2)
 texture = ExtResource("9_3lyxu")
 region_enabled = true
 region_rect = Rect2(32, 608, 32, 32)
 
-[node name="Area2D" type="Area2D" parent="Objects/Flower"]
+[node name="Area2D" type="Area2D" parent="Food/Flower"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/Flower/Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Food/Flower/Area2D"]
 shape = SubResource("CircleShape2D_8c1e2")
 
-[node name="Flower2" type="Sprite2D" parent="Objects"]
+[node name="Flower2" type="Sprite2D" parent="Food"]
 position = Vector2(-2059, 1510)
 scale = Vector2(2, 2)
 texture = ExtResource("9_3lyxu")
 region_enabled = true
 region_rect = Rect2(32, 608, 32, 32)
 
-[node name="Area2D" type="Area2D" parent="Objects/Flower2"]
+[node name="Area2D" type="Area2D" parent="Food/Flower2"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/Flower2/Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Food/Flower2/Area2D"]
 shape = SubResource("CircleShape2D_8c1e2")
 
-[node name="Flower3" type="Sprite2D" parent="Objects"]
+[node name="Flower3" type="Sprite2D" parent="Food"]
 position = Vector2(-2296, 1510)
 scale = Vector2(2, 2)
 texture = ExtResource("9_3lyxu")
 region_enabled = true
 region_rect = Rect2(32, 608, 32, 32)
 
-[node name="Area2D" type="Area2D" parent="Objects/Flower3"]
+[node name="Area2D" type="Area2D" parent="Food/Flower3"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/Flower3/Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Food/Flower3/Area2D"]
 shape = SubResource("CircleShape2D_8c1e2")
 
-[node name="Flower4" type="Sprite2D" parent="Objects"]
+[node name="Flower4" type="Sprite2D" parent="Food"]
 position = Vector2(-1724, 1510)
 scale = Vector2(2, 2)
 texture = ExtResource("9_3lyxu")
 region_enabled = true
 region_rect = Rect2(32, 608, 32, 32)
 
-[node name="Area2D" type="Area2D" parent="Objects/Flower4"]
+[node name="Area2D" type="Area2D" parent="Food/Flower4"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/Flower4/Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Food/Flower4/Area2D"]
 shape = SubResource("CircleShape2D_8c1e2")
 
-[node name="Flower5" type="Sprite2D" parent="Objects"]
+[node name="Flower5" type="Sprite2D" parent="Food"]
 position = Vector2(-1897, 1510)
 scale = Vector2(2, 2)
 texture = ExtResource("9_3lyxu")
 region_enabled = true
 region_rect = Rect2(32, 608, 32, 32)
 
-[node name="Area2D" type="Area2D" parent="Objects/Flower5"]
+[node name="Area2D" type="Area2D" parent="Food/Flower5"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/Flower5/Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Food/Flower5/Area2D"]
 shape = SubResource("CircleShape2D_8c1e2")
 
-[node name="Flower6" type="Sprite2D" parent="Objects"]
+[node name="Flower6" type="Sprite2D" parent="Food"]
 position = Vector2(-2192, 1510)
 scale = Vector2(2, 2)
 texture = ExtResource("9_3lyxu")
 region_enabled = true
 region_rect = Rect2(32, 608, 32, 32)
 
-[node name="Area2D" type="Area2D" parent="Objects/Flower6"]
+[node name="Area2D" type="Area2D" parent="Food/Flower6"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/Flower6/Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Food/Flower6/Area2D"]
 shape = SubResource("CircleShape2D_8c1e2")
 
-[node name="Flower7" type="Sprite2D" parent="Objects"]
+[node name="Flower7" type="Sprite2D" parent="Food"]
 position = Vector2(-3547, 1510)
 scale = Vector2(2, 2)
 texture = ExtResource("9_3lyxu")
 region_enabled = true
 region_rect = Rect2(32, 608, 32, 32)
 
-[node name="Area2D" type="Area2D" parent="Objects/Flower7"]
+[node name="Area2D" type="Area2D" parent="Food/Flower7"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/Flower7/Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Food/Flower7/Area2D"]
 shape = SubResource("CircleShape2D_8c1e2")
 
-[node name="Flower8" type="Sprite2D" parent="Objects"]
+[node name="Flower8" type="Sprite2D" parent="Food"]
 position = Vector2(-3146, 1510)
 scale = Vector2(2, 2)
 texture = ExtResource("9_3lyxu")
 region_enabled = true
 region_rect = Rect2(32, 608, 32, 32)
 
-[node name="Area2D" type="Area2D" parent="Objects/Flower8"]
+[node name="Area2D" type="Area2D" parent="Food/Flower8"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/Flower8/Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Food/Flower8/Area2D"]
 shape = SubResource("CircleShape2D_8c1e2")
 
-[node name="Flower9" type="Sprite2D" parent="Objects"]
+[node name="Flower9" type="Sprite2D" parent="Food"]
 position = Vector2(-3420, 1510)
 scale = Vector2(2, 2)
 texture = ExtResource("9_3lyxu")
 region_enabled = true
 region_rect = Rect2(32, 608, 32, 32)
 
-[node name="Area2D" type="Area2D" parent="Objects/Flower9"]
+[node name="Area2D" type="Area2D" parent="Food/Flower9"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/Flower9/Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Food/Flower9/Area2D"]
 shape = SubResource("CircleShape2D_8c1e2")
 
-[node name="Flower10" type="Sprite2D" parent="Objects"]
+[node name="Flower10" type="Sprite2D" parent="Food"]
 position = Vector2(-3949, 1510)
 scale = Vector2(2, 2)
 texture = ExtResource("9_3lyxu")
 region_enabled = true
 region_rect = Rect2(32, 608, 32, 32)
 
-[node name="Area2D" type="Area2D" parent="Objects/Flower10"]
+[node name="Area2D" type="Area2D" parent="Food/Flower10"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/Flower10/Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Food/Flower10/Area2D"]
 shape = SubResource("CircleShape2D_8c1e2")
 
-[node name="Flower11" type="Sprite2D" parent="Objects"]
+[node name="Flower11" type="Sprite2D" parent="Food"]
 position = Vector2(-5635, 1510)
 scale = Vector2(2, 2)
 texture = ExtResource("9_3lyxu")
 region_enabled = true
 region_rect = Rect2(32, 608, 32, 32)
 
-[node name="Area2D" type="Area2D" parent="Objects/Flower11"]
+[node name="Area2D" type="Area2D" parent="Food/Flower11"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/Flower11/Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Food/Flower11/Area2D"]
 shape = SubResource("CircleShape2D_8c1e2")
 
-[node name="Flower12" type="Sprite2D" parent="Objects"]
+[node name="Flower12" type="Sprite2D" parent="Food"]
 position = Vector2(-4436, 1510)
 scale = Vector2(2, 2)
 texture = ExtResource("9_3lyxu")
 region_enabled = true
 region_rect = Rect2(32, 608, 32, 32)
 
-[node name="Area2D" type="Area2D" parent="Objects/Flower12"]
+[node name="Area2D" type="Area2D" parent="Food/Flower12"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/Flower12/Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Food/Flower12/Area2D"]
 shape = SubResource("CircleShape2D_8c1e2")
 
-[node name="Flower13" type="Sprite2D" parent="Objects"]
+[node name="Flower13" type="Sprite2D" parent="Food"]
 position = Vector2(-4850, 1510)
 scale = Vector2(2, 2)
 texture = ExtResource("9_3lyxu")
 region_enabled = true
 region_rect = Rect2(32, 608, 32, 32)
 
-[node name="Area2D" type="Area2D" parent="Objects/Flower13"]
+[node name="Area2D" type="Area2D" parent="Food/Flower13"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/Flower13/Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Food/Flower13/Area2D"]
 shape = SubResource("CircleShape2D_8c1e2")
 
-[node name="Flower14" type="Sprite2D" parent="Objects"]
+[node name="Flower14" type="Sprite2D" parent="Food"]
 position = Vector2(-5484, 1510)
 scale = Vector2(2, 2)
 texture = ExtResource("9_3lyxu")
 region_enabled = true
 region_rect = Rect2(32, 608, 32, 32)
 
-[node name="Area2D" type="Area2D" parent="Objects/Flower14"]
+[node name="Area2D" type="Area2D" parent="Food/Flower14"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/Flower14/Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Food/Flower14/Area2D"]
 shape = SubResource("CircleShape2D_8c1e2")
 
-[node name="Flower15" type="Sprite2D" parent="Objects"]
+[node name="Flower15" type="Sprite2D" parent="Food"]
 position = Vector2(-4997, 1510)
 scale = Vector2(2, 2)
 texture = ExtResource("9_3lyxu")
 region_enabled = true
 region_rect = Rect2(32, 608, 32, 32)
 
-[node name="Area2D" type="Area2D" parent="Objects/Flower15"]
+[node name="Area2D" type="Area2D" parent="Food/Flower15"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/Flower15/Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Food/Flower15/Area2D"]
 shape = SubResource("CircleShape2D_8c1e2")
 
-[node name="Flower16" type="Sprite2D" parent="Objects"]
+[node name="Flower16" type="Sprite2D" parent="Food"]
 position = Vector2(-5291, 1510)
 scale = Vector2(2, 2)
 texture = ExtResource("9_3lyxu")
 region_enabled = true
 region_rect = Rect2(32, 608, 32, 32)
 
-[node name="Area2D" type="Area2D" parent="Objects/Flower16"]
+[node name="Area2D" type="Area2D" parent="Food/Flower16"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/Flower16/Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Food/Flower16/Area2D"]
 shape = SubResource("CircleShape2D_8c1e2")
 
-[node name="Flower17" type="Sprite2D" parent="Objects"]
+[node name="Flower17" type="Sprite2D" parent="Food"]
 position = Vector2(-4634, 1510)
 scale = Vector2(2, 2)
 texture = ExtResource("9_3lyxu")
 region_enabled = true
 region_rect = Rect2(32, 608, 32, 32)
 
-[node name="Area2D" type="Area2D" parent="Objects/Flower17"]
+[node name="Area2D" type="Area2D" parent="Food/Flower17"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/Flower17/Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Food/Flower17/Area2D"]
 shape = SubResource("CircleShape2D_8c1e2")
 
-[node name="Flower18" type="Sprite2D" parent="Objects"]
+[node name="Flower18" type="Sprite2D" parent="Food"]
 position = Vector2(-6183, 1510)
 scale = Vector2(2, 2)
 texture = ExtResource("9_3lyxu")
 region_enabled = true
 region_rect = Rect2(32, 608, 32, 32)
 
-[node name="Area2D" type="Area2D" parent="Objects/Flower18"]
+[node name="Area2D" type="Area2D" parent="Food/Flower18"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/Flower18/Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Food/Flower18/Area2D"]
 shape = SubResource("CircleShape2D_8c1e2")
 
-[node name="Flower19" type="Sprite2D" parent="Objects"]
+[node name="Flower19" type="Sprite2D" parent="Food"]
 position = Vector2(-6004, 1510)
 scale = Vector2(2, 2)
 texture = ExtResource("9_3lyxu")
 region_enabled = true
 region_rect = Rect2(32, 608, 32, 32)
 
-[node name="Area2D" type="Area2D" parent="Objects/Flower19"]
+[node name="Area2D" type="Area2D" parent="Food/Flower19"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/Flower19/Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Food/Flower19/Area2D"]
 shape = SubResource("CircleShape2D_8c1e2")
 
 [node name="Quests" type="Node" parent="."]
 script = ExtResource("11_8g0ca")
-
-[node name="QuestMenu" parent="Quests" instance=ExtResource("16_t6101")]
-visible = false
 
 [node name="The_Egg" type="Node" parent="Quests" node_paths=PackedStringArray("package")]
 script = ExtResource("11_6jdpt")
@@ -514,15 +515,43 @@ debug_color = Color(0.8776611, 0, 0.3516308, 0.41960785)
 [node name="DropPoint" parent="Quests/The_Egg" instance=ExtResource("16_mmmpg")]
 position = Vector2(10795, -10262)
 
-[node name="Statue" type="Sprite2D" parent="Quests"]
-position = Vector2(-3384, -3103)
-scale = Vector2(4, 4)
-texture = ExtResource("16_fqjxk")
+[node name="ObjectInteractManager" type="Node" parent="."]
+script = ExtResource("15_6jdpt")
 
-[node name="Statue2" type="Sprite2D" parent="Quests"]
+[node name="Statue" type="Sprite2D" parent="ObjectInteractManager"]
 position = Vector2(7104, -3002)
 scale = Vector2(4, 4)
 texture = ExtResource("16_fqjxk")
+script = ExtResource("16_4e6kc")
+
+[node name="Interactable" type="Area2D" parent="ObjectInteractManager/Statue"]
+collision_layer = 0
+collision_mask = 4
+
+[node name="ColorRect" type="Panel" parent="ObjectInteractManager/Statue/Interactable"]
+visible = false
+z_index = 10
+custom_minimum_size = Vector2(12, 18)
+offset_left = -4.75
+offset_top = -39.25
+offset_right = 7.25
+offset_bottom = -21.25
+
+[node name="Tip" type="Label" parent="ObjectInteractManager/Statue/Interactable/ColorRect"]
+layout_mode = 0
+offset_left = 3.5
+offset_top = 3.0
+offset_right = 8.5
+offset_bottom = 15.0
+size_flags_vertical = 1
+theme_override_font_sizes/font_size = 8
+text = "E"
+horizontal_alignment = 1
+autowrap_trim_flags = 64
+justification_flags = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ObjectInteractManager/Statue/Interactable"]
+shape = SubResource("CircleShape2D_6jdpt")
 
 [node name="Map" type="Node2D" parent="."]
 position = Vector2(1652, -571)
@@ -639,6 +668,40 @@ offset_bottom = -81.0
 grow_horizontal = 0
 grow_vertical = 0
 text = "Heal"
+
+[node name="Thought" type="PanelContainer" parent="HUD/PlayerStats"]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -192.5
+offset_top = 147.0
+offset_right = 192.5
+offset_bottom = 187.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_stretch_ratio = 0.0
+
+[node name="MarginPanel" type="MarginContainer" parent="HUD/PlayerStats/Thought"]
+z_index = 10
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="ThoughtLabel" type="Label" parent="HUD/PlayerStats/Thought/MarginPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+text = "You swear you've seen this kind of thing before."
+horizontal_alignment = 1
+autowrap_trim_flags = 64
+justification_flags = 0
 
 [node name="PauseMenu" parent="HUD" instance=ExtResource("16_prg60")]
 
@@ -789,6 +852,8 @@ color = Color(0.043039158, 0.04303915, 0.04303915, 1)
 polygon = PackedVector2Array(-1, -1, -1, 1, 5, 1, 5, -1)
 
 [connection signal="body_entered" from="Quests/The_Egg/Egg/DamageArea" to="Quests/The_Egg/Egg" method="_on_area_2d_body_entered"]
+[connection signal="body_entered" from="ObjectInteractManager/Statue/Interactable" to="ObjectInteractManager/Statue" method="_on_interactable_body_entered"]
+[connection signal="body_exited" from="ObjectInteractManager/Statue/Interactable" to="ObjectInteractManager/Statue" method="_on_interactable_body_exited"]
 [connection signal="button_up" from="HUD/PlayerStats/Injure" to="dragon" method="_on_injure_button_up"]
 [connection signal="button_up" from="HUD/PlayerStats/Heal" to="dragon" method="_on_heal_button_up"]
 [connection signal="timeout" from="TickTimer" to="." method="_on_tick_timer_timeout"]

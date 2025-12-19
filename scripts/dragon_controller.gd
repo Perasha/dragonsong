@@ -25,7 +25,6 @@ var previous_position = Vector2(0.0,0.0)
 var current_position = Vector2(0.0,0.0)
 
 var just_jumped = false
-var jump_counter = 0
 @export var jump_strength_base = 2.0
 var jump_strength = 2.0
 var stored_jump = 0.0
@@ -133,19 +132,12 @@ func _physics_process(delta: float) -> void:
 		is_grounded = true
 	check_climb()
 	# Now we get inputs. Our wing flap, then movement axes, then our wing-fold/dive.
-	#if Input.is_action_just_pressed("flap"):
-	#	just_jumped = true
-	#	jump_counter += 1
 	if Input.is_action_pressed("flap"):
-		#is_gliding = true
 		if jump_strength <= max_jump_strength:
 			jump_strength += 0.1
 	if Input.is_action_just_released("flap"):
-		#is_gliding = false
 		is_hovering = false
 		just_jumped = true
-		if jump_counter < 2:
-			jump_counter += 1
 		stored_jump = jump_strength
 	
 	direction_x = Input.get_axis("ui_left", "ui_right")
@@ -153,7 +145,6 @@ func _physics_process(delta: float) -> void:
 		
 	#If we're stalling, we can't climb. So we specifically anchor our Y direction down.
 	if is_stalling:
-		#direction_x *= 0.25
 		direction_y = 1
 	
 	# Can we make our Direction proportional to our speed? 
@@ -221,42 +212,28 @@ func _physics_process(delta: float) -> void:
 	
 	
 	# This is our jump! If we flap once, it's just a jump. If we flap twice, and we're not on the ground, we start flying!	
-	if jump_counter == 1 and not is_grounded:
+	if just_jumped and not is_grounded and not is_flying:
 		if flight_direction.y > 0:
 			flight_direction.y *= -1
 		wingbeat()
 		is_flying = true
 		if GlobalData.option_hover_leave:
 			is_hovering = true
-		jump_counter += 1
-	elif is_grounded:
+	#elif is_grounded:
 		is_flying = false
 	
 	if is_grounded:
 		is_flying = false
-		jump_counter = 0
 	
-	#if not floor_check.has_overlapping_bodies():
-	
-	if distance_moved > 18 and not is_flying:
-		is_flying = true
-		jump_counter += 2
-		#flight_direction = position.direction_to(linear_velocity).normalized()
-		
-	
-	#if not dive_toggler.has_overlapping_bodies():
-	#	is_flying = true
-	#	if jump_counter == 0:
-	#		jump_counter += 2
+	if not is_flying and not is_grounded:
+		if distance_moved > 18 or just_jumped:
+			is_flying = true
+			
 	
 	# If we're on the ground, add some directly upward velocity if we flap our wings!
-	if just_jumped and not is_flying:
-		#stored_jump *= 0.75
+	if just_jumped and is_grounded:
 		linear_velocity.x += direction_x * (wingbeat_strength * stored_jump)
-		#stored_jump *= 1.25
- 		#stored_jump = resources.consume_stamina(stored_jump)
 		linear_velocity.y -= wingbeat_strength * stored_jump
-		#linear_velocity.y -= wingbeat_strength * jump_strength * 1.25		
 	
 	if not is_flying or hover_speed == 0:
 		is_hovering = false
@@ -339,7 +316,6 @@ var grabbed_entity : RigidBody2D
 func _input(event: InputEvent) -> void:
 	## INTERACT
 	if Input.is_action_just_pressed("Interact"):
-		#print(interact_field.get_overlapping_bodies())
 		if not is_grabbing and grabbed_entity == null:
 			for body in interact_field.get_overlapping_bodies():
 				if not body.is_in_group("player"):
@@ -351,17 +327,12 @@ func _input(event: InputEvent) -> void:
 						body.linear_velocity.y -= 1
 						break
 		elif is_grabbing:
-			#print(grabbed_entity)
 			grabbed_entity.just_released = true
 			is_grabbing = false
-			#grabbed_entity.grabbing_entity = null
 			grabbed_entity = null
-			#print("RELEASE!")
-		#for body in interact_field.get_overlapping_bodies():
-		#	print(body)
 	## BITE
 	if Input.is_action_just_pressed("bite"):
-		print("Dragon script: ", GlobalData.ambrette_town)
+		#print("Dragon script: ", GlobalData.ambrette_town)
 		sprite.play_bite_animation()
 		for body in interact_field.get_overlapping_bodies():
 			if body.is_in_group("entity"):
@@ -425,10 +396,8 @@ func check_climb():
 	pass
 
 func climb():
-	print("Climbing!")
-	#jump_counter = 1
-	var max_climb_speed = (max_fly_speed / 4.0) + 200
-	hover(max_climb_speed)
+	#print("Climbing!")
+	hover(max_walk_speed)
 
 ## Walking
 func walk():

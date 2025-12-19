@@ -42,7 +42,7 @@ func health_update(value):
 func _input(event: InputEvent) -> void:
 	if Input.is_action_just_pressed("feed") and not dragon_node.is_flying:
 		for body in dragon_node.interact_field.get_overlapping_bodies():
-			if body.is_in_group("entity") and body.dead == true:
+			if body.is_in_group("entity") and body.dead == true and not body.is_grabbed:
 				body.food_amount -= 0.5
 				if body.food_amount < 0:
 					var food_consumed = 0.5 + body.food_amount

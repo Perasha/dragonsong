@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://b0n2m1kv2cdx1"]
+[gd_scene load_steps=21 format=3 uid="uid://b0n2m1kv2cdx1"]
 
 [ext_resource type="Script" uid="uid://cqu0w22jdjbs4" path="res://scripts/dragon_controller.gd" id="1_urtjn"]
 [ext_resource type="Texture2D" uid="uid://cbj5kmqjsr7ck" path="res://Sprites/DragonWingless.png" id="2_2w5qb"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://c1eborn8rg0gt" path="res://scripts/dragon_resources.gd" id="6_j86p3"]
 [ext_resource type="PackedScene" uid="uid://v3g8grpgtqyr" path="res://presence.tscn" id="6_ju2y0"]
 [ext_resource type="Texture2D" uid="uid://dus3vnh373g2c" path="res://Sprites/circle01.png" id="7_to7sl"]
+[ext_resource type="Script" uid="uid://ddouy4kbsgeyg" path="res://scripts/noodle_body.gd" id="9_5i4j3"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_0ucct"]
 friction = 0.0
@@ -67,7 +68,7 @@ animations = [{
 "speed": 20.0
 }]
 
-[node name="dragon" type="RigidBody2D"]
+[node name="dragon" type="RigidBody2D" groups=["player"]]
 collision_layer = 2
 mass = 0.001
 physics_material_override = SubResource("PhysicsMaterial_0ucct")
@@ -149,21 +150,8 @@ frame_progress = 1.0
 [node name="Resources" type="Node" parent="."]
 script = ExtResource("6_j86p3")
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
-visible = false
-z_index = 10
-offset_left = -46.0
-offset_top = -120.0
-offset_right = 34.0
-offset_bottom = -80.0
-
-[node name="Panel" type="Panel" parent="PanelContainer"]
-visible = false
-layout_mode = 2
-
-[node name="Speechthought" type="Label" parent="PanelContainer"]
-layout_mode = 2
-text = "Thinking..."
+[node name="NoodleBody" type="Node2D" parent="."]
+script = ExtResource("9_5i4j3")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_entered" from="Direction Pointer" to="." method="_on_direction_pointer_body_entered"]
