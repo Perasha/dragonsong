@@ -122,7 +122,7 @@ offset_right = -22.0
 offset_bottom = 74.0
 grow_horizontal = 2
 grow_vertical = 0
-text = "Shift + Ctrl + C: Debug Menu"
+text = "Shift + Ctrl + X: Debug Menu"
 
 [node name="FlyingMovement" type="VBoxContainer" parent="ControlsMenu"]
 layout_mode = 0

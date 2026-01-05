@@ -1,7 +1,7 @@
 extends "object_base.gd"
 
 ## STATS
-@export var health = 0.10
+@export var health = 0.8
 @export var food_amount = health
 ##-------------------------
 

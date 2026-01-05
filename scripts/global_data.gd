@@ -8,14 +8,19 @@ var option_hold_to_hover = false
 var option_hover_leave = true
 var option_hold_to_look = true
 
-@export var terminal_velocity = 2000.00
+@export var terminal_velocity = 2750.00
 
 var ambrette_town = {
 	"player_opinion" : 0,
 	"threats" : []
 }
 
+var flower_text = """The rose has a light trace of magic on it.
+It feels like a piece of the key is nearby."""
+
 var Active_Quests = []
+
+var collected_keys = 0
 
 func _on_tick_timer_timeout() -> void:
 	#print(ambrette_town)

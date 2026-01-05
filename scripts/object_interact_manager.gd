@@ -3,7 +3,7 @@ extends Node
 @onready var speechbubble = get_node("%Thought")
 @onready var speechbubble_label = get_node("%ThoughtLabel")
 var current_object 
-var speech_hide_timer_max = 300
+var speech_hide_timer_max = 200
 var speech_hide_timer = 0
 var speechbubble_is_shown = false
 var showing_speechbubble = false
@@ -32,19 +32,24 @@ func _process(delta: float) -> void:
 		fade_out(speechbubble,0.1)
 
 func receive_interact(object,player):
+	print(object,player)
 	if object.can_interact:
 		current_object = object
 		speechbubble_label.text = object.object_data["text"]
-	else:
-		speech_hide_timer = 0
+	#else:
+	#	speech_hide_timer = 0
 
 func _input(event: InputEvent) -> void:
-	if Input.is_action_just_pressed("Interact") and current_object.can_interact:
-		#speechbubble.show()
-		speechbubble_is_shown = true
-		fade_in(speechbubble,0.1)
-		speech_hide_timer = speech_hide_timer_max
-		# Input the data from the object
+	if Input.is_action_just_pressed("Interact") and current_object != null:
+		if current_object.can_interact:
+			#speechbubble.show()
+			speechbubble_is_shown = true
+			fade_in(speechbubble,0.1)
+			speech_hide_timer = speech_hide_timer_max
+			if current_object.is_collectible:
+				current_object.collect()
+				current_object.queue_free()
+			# Input the data from the object
 
 func fade_in(object,time_step):
 	showing_speechbubble = true

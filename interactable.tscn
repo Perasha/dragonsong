@@ -1,0 +1,33 @@
+[gd_scene load_steps=2 format=3 uid="uid://b4e2uds066g4e"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_6jdpt"]
+radius = 22.501389
+
+[node name="Interactable" type="Area2D"]
+collision_layer = 0
+collision_mask = 4
+
+[node name="ColorRect" type="Panel" parent="."]
+visible = false
+z_index = 10
+custom_minimum_size = Vector2(12, 18)
+offset_left = -4.75
+offset_top = -39.25
+offset_right = 7.25
+offset_bottom = -21.25
+
+[node name="Tip" type="Label" parent="ColorRect"]
+layout_mode = 0
+offset_left = 3.5
+offset_top = 3.0
+offset_right = 8.5
+offset_bottom = 15.0
+size_flags_vertical = 1
+theme_override_font_sizes/font_size = 8
+text = "E"
+horizontal_alignment = 1
+autowrap_trim_flags = 64
+justification_flags = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_6jdpt")

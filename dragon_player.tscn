@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://b0n2m1kv2cdx1"]
+[gd_scene load_steps=24 format=3 uid="uid://b0n2m1kv2cdx1"]
 
 [ext_resource type="Script" uid="uid://cqu0w22jdjbs4" path="res://scripts/dragon_controller.gd" id="1_urtjn"]
 [ext_resource type="Texture2D" uid="uid://cbj5kmqjsr7ck" path="res://Sprites/DragonWingless.png" id="2_2w5qb"]
@@ -8,7 +8,7 @@
 [ext_resource type="Script" uid="uid://c1eborn8rg0gt" path="res://scripts/dragon_resources.gd" id="6_j86p3"]
 [ext_resource type="PackedScene" uid="uid://v3g8grpgtqyr" path="res://presence.tscn" id="6_ju2y0"]
 [ext_resource type="Texture2D" uid="uid://dus3vnh373g2c" path="res://Sprites/circle01.png" id="7_to7sl"]
-[ext_resource type="Script" uid="uid://ddouy4kbsgeyg" path="res://scripts/noodle_body.gd" id="9_5i4j3"]
+[ext_resource type="Script" uid="uid://bedoflfa5k85g" path="res://scripts/spell_effect.gd" id="9_5i4j3"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_0ucct"]
 friction = 0.0
@@ -67,6 +67,59 @@ animations = [{
 "name": &"default",
 "speed": 20.0
 }]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_5i4j3"]
+lifetime_randomness = 0.5
+particle_flag_rotate_y = true
+particle_flag_disable_z = true
+emission_shape_scale = Vector3(115.075, 76.76, 10)
+emission_shape = 1
+emission_sphere_radius = 1.0
+angle_min = -176.09999
+angle_max = 90.000015
+direction = Vector3(0, 0, 0)
+spread = 180.0
+initial_velocity_max = 1.0
+radial_velocity_min = -2.2351742e-05
+radial_velocity_max = -2.2351742e-05
+gravity = Vector3(0, 0, 0)
+scale_max = 10.0
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_1tael"]
+lifetime_randomness = 0.5
+particle_flag_rotate_y = true
+particle_flag_disable_z = true
+emission_shape_scale = Vector3(115.075, 76.76, 10)
+emission_shape = 1
+emission_sphere_radius = 1.0
+angle_min = -176.09999
+angle_max = 90.000015
+direction = Vector3(0, 0, 0)
+spread = 180.0
+initial_velocity_max = 1.0
+orbit_velocity_min = -0.047999907
+orbit_velocity_max = 9.49949e-08
+radial_velocity_min = -100.00002
+radial_velocity_max = -2.2351742e-05
+gravity = Vector3(0, 0, 0)
+scale_max = 10.0
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_cvsob"]
+lifetime_randomness = 0.5
+particle_flag_rotate_y = true
+particle_flag_disable_z = true
+emission_shape_scale = Vector3(115.075, 76.76, 10)
+emission_shape = 1
+emission_sphere_radius = 1.0
+angle_min = -176.09999
+angle_max = 90.000015
+direction = Vector3(0, 0, 0)
+spread = 180.0
+initial_velocity_max = 1.0
+radial_velocity_min = 99.99998
+radial_velocity_max = 149.99997
+gravity = Vector3(0, 0, 0)
+scale_max = 10.0
 
 [node name="dragon" type="RigidBody2D" groups=["player"]]
 collision_layer = 2
@@ -150,8 +203,36 @@ frame_progress = 1.0
 [node name="Resources" type="Node" parent="."]
 script = ExtResource("6_j86p3")
 
-[node name="NoodleBody" type="Node2D" parent="."]
+[node name="SpellEffect" type="GPUParticles2D" parent="."]
+z_index = 10
+position = Vector2(-13, -8)
+emitting = false
+amount = 16
+explosiveness = 0.11
+randomness = 1.0
+process_material = SubResource("ParticleProcessMaterial_5i4j3")
 script = ExtResource("9_5i4j3")
+
+[node name="CastEffect" type="GPUParticles2D" parent="SpellEffect"]
+z_index = 10
+emitting = false
+amount = 32
+explosiveness = 0.11
+randomness = 1.0
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_1tael")
+
+[node name="BurstEffect" type="GPUParticles2D" parent="SpellEffect"]
+z_index = 10
+emitting = false
+amount = 32
+lifetime = 2.0
+one_shot = true
+speed_scale = 4.0
+explosiveness = 1.0
+randomness = 1.0
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_cvsob")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_entered" from="Direction Pointer" to="." method="_on_direction_pointer_body_entered"]

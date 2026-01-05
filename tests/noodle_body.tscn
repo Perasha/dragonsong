@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://uap2fumrw2bw"]
+
+[ext_resource type="Script" uid="uid://ddouy4kbsgeyg" path="res://scripts/noodle_body.gd" id="1_nj257"]
+
+[node name="NoodleBody" type="Node2D"]
+z_index = 10
+script = ExtResource("1_nj257")

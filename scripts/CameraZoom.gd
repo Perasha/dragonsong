@@ -22,7 +22,7 @@ var maxHeight = 10000
 
 # Zoom levels 0 - 2
 enum {GROUND, NEAR, FAR, MAX}
-var zoom_levels = [defaultZoomLevel,defaultZoomLevel / 1.7,defaultZoomLevel / 3,defaultZoomLevel / 6]
+var zoom_levels = [defaultZoomLevel,defaultZoomLevel / 1.7,defaultZoomLevel / 2,defaultZoomLevel / 3]
 var zoom_dist_nodes = []
 var current_zoom_level = GROUND
 
@@ -133,7 +133,8 @@ func check_zoom() -> void:
 	if not cam_marker.is_looking:
 		#print("Resetting Zoom!")
 		defaultZoomLevel = get_viewport().get_visible_rect().size.x / 2800
-		zoom_levels = [defaultZoomLevel * 1.5,defaultZoomLevel / 1.7,defaultZoomLevel / 3,defaultZoomLevel / 6]
+		#zoom_levels = [defaultZoomLevel * 1.5,defaultZoomLevel / 1.7,defaultZoomLevel / 3,defaultZoomLevel / 6]
+		zoom_levels = [defaultZoomLevel * 1.25,defaultZoomLevel / 1.7,defaultZoomLevel / 2,defaultZoomLevel / 3]
 		#print(defaultZoomLevel)
 		var i = -1
 		for node in zoom_dist_nodes:

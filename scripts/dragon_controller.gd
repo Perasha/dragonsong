@@ -66,7 +66,9 @@ var max_glide_height = 0.0
 
 func _ready() -> void:
 	jump_strength = jump_strength_base
-	terminal_velocity = GlobalData.terminal_velocity + 500.0
+	terminal_velocity = GlobalData.terminal_velocity
+	#max_fly_speed_base = terminal_velocity
+	#max_fly_speed = max_fly_speed_base
 
 
 func _physics_process(delta: float) -> void:
@@ -243,7 +245,7 @@ func _physics_process(delta: float) -> void:
 		fly()
 	elif is_hovering:
 		var max_hover_speed = max_fly_speed / 1.25
-		hover(max_hover_speed)
+		hover(max_hover_speed,hover_speed)
 	elif is_climbing:
 		climb()
 	else:
@@ -291,6 +293,8 @@ func wingbeat():
 			current_speed += (wingbeat_strength * stored_jump * 1.25) / int((distance_moved / 10) + 1)
 		#print(current_speed)
 		apply_momentum()
+	#else:
+		#current_speed = max_fly_speed
 	on_wingbeat_cooldown = true
 	
 	#resources.consume_stamina(stored_jump)
@@ -308,7 +312,7 @@ func apply_momentum():
 	if flight_direction.y < 0:
 		gravity_scale = grav_scale_default / 1.5
 	else:
-		gravity_scale = grav_scale_default * 1.5
+		gravity_scale = grav_scale_default
 
 var is_grabbing = false
 var grabbed_entity : RigidBody2D
@@ -354,27 +358,27 @@ func fly():
 		flight_direction.y = 1.0
 
 ## Hovering
-func hover(max_hover_speed):
+func hover(max_speed,acceleration):
 	#print("Hovering: ", max_fly_speed)
 	gravity_scale = 0.0
 	#max_hover_speed = max_fly_speed / 1.25
 	#flight_direction = Vector2(direction_x,direction_y)
-	if current_speed <= max_hover_speed:
+	if current_speed <= max_speed:
 		#print("Hovering: ", max_fly_speed)
-		var hover_direction = Vector2(direction_x,direction_y).normalized() * hover_speed
+		var hover_direction = Vector2(direction_x,direction_y).normalized() * acceleration
 		linear_velocity.x += hover_direction.x
-		if linear_velocity.y > -(max_hover_speed * 0.72):
+		if linear_velocity.y > -(max_speed * 0.72):
 			linear_velocity.y += hover_direction.y
 			
 	# Stopping much more abruptly if we aren't trying to move,
 	# OR if one of the directions is directly opposite of another.
 	if direction_x == 0 and direction_y == 0:
-		linear_velocity /= 1 + (hover_speed / 750.0)
+		linear_velocity /= 1 + (acceleration / 750.0)
 	else:
 		if (-direction_x > 0 and linear_velocity.x > 0) or (-direction_x < 0 and linear_velocity.x < 0):
-			linear_velocity.x /= 1 + (hover_speed / 750.0)
+			linear_velocity.x /= 1 + (acceleration / 750.0)
 		if (-direction_y > 0 and linear_velocity.y > 0) or (-direction_y < 0 and linear_velocity.y < 0):
-			linear_velocity.y /= 1 + (hover_speed / 750.0)
+			linear_velocity.y /= 1 + (acceleration / 750.0)
 	
 	# Steering Radius
 	linear_velocity += linear_velocity.direction_to(Vector2(0,0)) * 15
@@ -397,7 +401,7 @@ func check_climb():
 
 func climb():
 	#print("Climbing!")
-	hover(max_walk_speed)
+	hover(max_walk_speed,speed)
 
 ## Walking
 func walk():

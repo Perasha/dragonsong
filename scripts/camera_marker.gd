@@ -39,39 +39,20 @@ func _process(delta: float) -> void:
 		if camera_node.current_zoom_level == GROUND:
 			new_position *= 1.5
 		elif camera_node.current_zoom_level == NEAR:
-			new_position *= 3
+			new_position *= 5
 		elif camera_node.current_zoom_level == FAR:
-			new_position *= 6
+			new_position *= 8
 		else:
 			new_position *= 12
 		#print(new_position)
 		#weight = 0.05
 	
 	elif dragon_node.is_flying:
-		var distance_lag = dragon_node.current_speed / 1.2
+		var distance_lag = dragon_node.current_speed / 1.01
 		if distance_lag > lag_threshold:
 			distance_lag = lag_threshold
 		new_position = dragon_node.flight_direction * distance_lag
-		#print(dragon_node.current_speed * delta)
-		# Our speed is going to range from 1000 to 2000.
-		# A slow weight is 0.05, and a fast weight is 0.1
 		weight = dragon_node.current_speed * 0.00006
-		#print(weight)
-		#var weight = pow(log(2.0),2)
-		#position = lerp(position, new_position, pow(-weight*delta,3))
-		#position = lerp(position, new_position, 0.05)
-		## Move the camera down if we're flying very h
-		#if camera_node.current_zoom_level == MAX:
-		#	var viewport_dimensions: Vector2 = get_viewport().get_visible_rect().size
-			#print(viewport_dimensions)
-		#	new_position += Vector2(0,viewport_dimensions.y * 1.5)
-		#	weight *= 0.5
-		
-		#print(dragon_node.distance_moved)
-		#if dragon_node.distance_moved < 1:
-			#print("Relocate")
-		#	new_position = Vector2(0,0)
-		#	weight = 0.01
 	else:
 		new_position = Vector2(0,0)
 		weight = 0.05

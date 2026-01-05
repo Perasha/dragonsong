@@ -10,7 +10,7 @@ var health = max_health
 
 @onready var initial_speed = {
 	"max_jump_strength" : dragon_node.max_jump_strength,
-	"max_fly_speed" : dragon_node.max_fly_speed,
+	"max_fly_speed" : dragon_node.max_fly_speed_base,
 	"hover_speed" : dragon_node.hover_speed
 }
 
@@ -35,7 +35,8 @@ func health_update(value):
 		dragon_node.max_fly_speed_base = dragon_node.max_fly_speed
 		#print("INJURY: ", max_fly_speed)
 	else:
-		dragon_node.max_jump_strength = 3
+		dragon_node.max_fly_speed = 0
+		dragon_node.max_jump_strength = 0
 		dragon_node.hover_speed = 0
 		health = 0
 
@@ -43,11 +44,11 @@ func _input(event: InputEvent) -> void:
 	if Input.is_action_just_pressed("feed") and not dragon_node.is_flying:
 		for body in dragon_node.interact_field.get_overlapping_bodies():
 			if body.is_in_group("entity") and body.dead == true and not body.is_grabbed:
-				body.food_amount -= 0.5
-				if body.food_amount < 0:
-					var food_consumed = 0.5 + body.food_amount
-					body.queue_free()
-					health_update(food_consumed)
+				#body.food_amount -= 0.5
+				#if body.food_amount < 0:
+				#	var food_consumed = 0.5 + body.food_amount
+				body.queue_free()
+				health_update(body.food_amount)
 				break
 		#if dragon_node.grabbed_entity != null:
 		#	if dragon_node.grabbed_entity.is_in_group("entity"):
