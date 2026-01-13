@@ -13,7 +13,7 @@ var terminal_velocity = 2000.00
 @onready var sprite = get_node("Body") #Animator
 @onready var wingbeat_clock = get_node("wingbeat_clock")
 @onready var resources = get_node("Resources")
-@onready var interact_field = get_node("InteractArea")
+#@onready var interact_field = get_node("InteractArea")
 @onready var climb_detector = get_node("ClimbDetector")
 #@onready var GlobalData = get_parent()
 #@onready var dive_toggler = get_node("DiveToggler")
@@ -175,7 +175,7 @@ func _physics_process(delta: float) -> void:
 		is_gliding = false
 		if Input.is_action_pressed("Glide"):
 			is_running = true
-	# And here's the same thing for Hovering
+	## And here's the same thing for Hovering
 	if Input.is_action_just_pressed("Hover"):
 		if not GlobalData.option_hold_to_hover:
 			if is_hovering == true:
@@ -193,27 +193,23 @@ func _physics_process(delta: float) -> void:
 	
 	if is_hovering and not is_grounded:
 		is_flying = true
-		#print("We are now Hovering and Flying")
 	
-	# If our wings are out, it's a bit harder to make sharp turns. But if they're in, we can make sharp turns!
+	## If our wings are out, it's a bit harder to make sharp turns. But if they're in, we can make sharp turns!
 	if is_hovering:
 		turn_radius = 0.4
 	elif is_gliding:
 		turn_radius = 0.03
-		#gravity_scale = grav_scale_default
 	else:
 		turn_radius = 0.06
-		#gravity_scale = 2.5
-	#print(turn_radius)
 		
-	# This is where we use our turning radius. We incrementally will be adding this value to
-	# our Flight Direction every tick, which will go against the gravity that constantly pushes it down.
+	## This is where we use our turning radius. We incrementally will be adding this value to
+	## our Flight Direction every tick, which will go against the gravity that constantly pushes it down.
 	flight_direction += Vector2(direction_x,direction_y) * turn_radius
-	# Oh and then we make sure that we don't actually go above 1 for either value because that would lead to ~problems~!
+	## Oh and then we make sure that we don't actually go above 1 for either value because that would lead to ~problems~!
 	flight_direction = flight_direction.normalized()
 	
 	
-	# This is our jump! If we flap once, it's just a jump. If we flap twice, and we're not on the ground, we start flying!	
+	## This is our jump! If we flap once, it's just a jump. If we flap twice, and we're not on the ground, we start flying!	
 	if just_jumped and not is_grounded and not is_flying:
 		if flight_direction.y > 0:
 			flight_direction.y *= -1
@@ -221,7 +217,6 @@ func _physics_process(delta: float) -> void:
 		is_flying = true
 		if GlobalData.option_hover_leave:
 			is_hovering = true
-	#elif is_grounded:
 		is_flying = false
 	
 	if is_grounded:
@@ -232,7 +227,7 @@ func _physics_process(delta: float) -> void:
 			is_flying = true
 			
 	
-	# If we're on the ground, add some directly upward velocity if we flap our wings!
+	## If we're on the ground, add some directly upward velocity if we flap our wings!
 	if just_jumped and is_grounded:
 		linear_velocity.x += direction_x * (wingbeat_strength * stored_jump)
 		linear_velocity.y -= wingbeat_strength * stored_jump
@@ -251,11 +246,10 @@ func _physics_process(delta: float) -> void:
 	else:
 		walk()
 	if is_flying or is_hovering:
-		# This is just to make sure our speed never exceeds what we determine as Terminal Velocity. Otherwise... bad things
+		## This is just to make sure our speed never exceeds what we determine as Terminal Velocity. Otherwise... bad things
 		linear_velocity = linear_velocity.clamp(Vector2(-terminal_velocity,-terminal_velocity),Vector2(terminal_velocity,terminal_velocity))
-	# Oh and finally, we calculate our distance moved!
+	## Oh and finally, we calculate our distance moved!
 	distance_moved = previous_position.distance_to(current_position)
-	#print(current_position - previous_position)
 	if just_jumped:
 		jump_strength = jump_strength_base
 		
@@ -263,7 +257,7 @@ func _physics_process(delta: float) -> void:
 	
 	if resources.health == 0:
 		is_gliding = false
-# END PHYSICS_PROCESS------------------------------------------------
+## END PHYSICS_PROCESS------------------------------------------------
 
 @onready var reset_pos = global_position
 var reset = false
@@ -271,41 +265,32 @@ var reset = false
 func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 	if reset:
 		state.transform.origin = reset_pos
-		# Call reset_physics_interpolation() at the end of the frame once the physics engine has been updated
+		## Call reset_physics_interpolation() at the end of the frame once the physics engine has been updated
 		reset_physics_interpolation.call_deferred()
 		reset = false
 
 func wingbeat():
 	wingbeat_clock.start()
-	#flight_direction.y -= 0.1
-	#if is_gliding:
-	#	flight_direction.y = lerp(flight_direction.y, -1.0, 0.15)
-	#else:
-	#	flight_direction.y = -0.45
+	if not direction_x:
+		flight_direction.y -= (stored_jump-3) / 9
+	
 	if current_speed <= max_fly_speed:
-		# Adding an "afterburner" to continually apply force after we do a wingbeat.
+		## Adding an "afterburner" to continually apply force after we do a wingbeat.
 		wingbeat_afterburner = (stored_jump * 3)
-		#print("Wingbeat!")
-		#print(current_speed)
 		if is_gliding:
 			current_speed += (wingbeat_strength * stored_jump) / int((distance_moved / 20) + 1)
 		else:
 			current_speed += (wingbeat_strength * stored_jump * 1.25) / int((distance_moved / 10) + 1)
-		#print(current_speed)
-		apply_momentum()
-	#else:
-		#current_speed = max_fly_speed
+
 	on_wingbeat_cooldown = true
 	
-	#resources.consume_stamina(stored_jump)
-	
 ## SUPER IMPORTANT!
-		# Here, we're actually dividing our current speed among our new directions.
-		# Remember when we evenly merged our Linear Velocity earlier?
-		# That's because we need to redivide it! Except among two NEW slightly different directions.
-		# If we were pointing up, and now we're pointing down, the same speed is now being transferred to that direction.
-		# And that's how we keep our momentum!
-		# And also, if we stall, we actually immediately drop our direction downward.
+		## Here, we're actually dividing our current speed among our new directions.
+		## Remember when we evenly merged our Linear Velocity earlier?
+		## That's because we need to redivide it! Except among two NEW slightly different directions.
+		## If we were pointing up, and now we're pointing down, the same speed is now being transferred to that direction.
+		## And that's how we keep our momentum!
+		## And also, if we stall, we actually immediately drop our direction downward.
 func apply_momentum():
 	linear_velocity.x = (current_speed * flight_direction.x)
 	linear_velocity.y = (current_speed * flight_direction.y)
@@ -314,33 +299,6 @@ func apply_momentum():
 	else:
 		gravity_scale = grav_scale_default
 
-var is_grabbing = false
-var grabbed_entity : RigidBody2D
-
-func _input(event: InputEvent) -> void:
-	## INTERACT
-	if Input.is_action_just_pressed("Interact"):
-		if not is_grabbing and grabbed_entity == null:
-			for body in interact_field.get_overlapping_bodies():
-				if not body.is_in_group("player"):
-					if body.can_be_grabbed:
-						body.is_grabbed = true
-						body.grabbing_entity = self
-						is_grabbing = true
-						grabbed_entity = body
-						body.linear_velocity.y -= 1
-						break
-		elif is_grabbing:
-			grabbed_entity.just_released = true
-			is_grabbing = false
-			grabbed_entity = null
-	## BITE
-	if Input.is_action_just_pressed("bite"):
-		#print("Dragon script: ", GlobalData.ambrette_town)
-		sprite.play_bite_animation()
-		for body in interact_field.get_overlapping_bodies():
-			if body.is_in_group("entity"):
-				body.damage(0.5)
 
 ## Flying
 func fly():
@@ -405,21 +363,19 @@ func climb():
 
 ## Walking
 func walk():
-# And start moving in a direction if we move left and right. Not very fast, mind you.
+## Start moving in a direction if we move left and right. Not very fast, mind you.
 	var speed_limit = max_walk_speed
 	if is_running: speed_limit = max_run_speed
 	if direction_x:
+		#physics_material_override.friction = 0.0
 		flight_direction.x = direction_x
 		if abs(linear_velocity.x) < speed_limit:
 			linear_velocity.x += direction_x * speed
-	# This actually more quickly slows our movement, rather than increasing our friction.
-	# Using them legs to slow down!
-	# But only if we're touching the floor.
+	## This actually more quickly slows our movement, rather than increasing our friction.
+	## Using them legs to slow down!
+	## But only if we're touching the floor.
 	if is_grounded:
 		linear_velocity.x *= 0.95
-	# And again, clamping our speed just to make sure nothing breaks.
-	# X axis can be our maximum walking speed, but up and down are determined by air resistance!
-	#linear_velocity = linear_velocity.clamp(Vector2(-terminal_velocity,-terminal_velocity),Vector2(terminal_velocity,terminal_velocity))
 
 
 

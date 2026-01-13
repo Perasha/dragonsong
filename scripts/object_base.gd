@@ -26,16 +26,6 @@ func _physics_process(delta: float) -> void:
 	pass
 
 func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
-	#print(is_grabbed, grabbing_entity)
-	
-	## Error checking
-	#if grabbing_entity != null:
-	#	print(position, ", entity position: ", grabbing_entity.position)
-	#if is_grabbed and grabbing_entity == null:
-	#	just_released = true
-	#	is_grabbed = false
-	#	reset_physics_interpolation.call_deferred()
-	
 	
 	if just_released:
 		#print("Releasing!")
@@ -61,6 +51,7 @@ func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 ## DAMAGE AREA FOR OBJECTS
 var impact_threshold = 30.0
 var impact = 0.0
+
 func _on_area_2d_body_entered(body: Node2D) -> void:
 	if distance_moved > impact_threshold:
 		impact = distance_moved / 200

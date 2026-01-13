@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://g8wmh25utla5"]
 
-[ext_resource type="Script" uid="uid://2wp0o2b1oqys" path="res://scripts/ai_wind_script.gd" id="1_b41e4"]
+[ext_resource type="Script" uid="uid://2wp0o2b1oqys" path="res://scripts/OldCode/ai_wind_script.gd" id="1_b41e4"]
 [ext_resource type="Shader" uid="uid://c4eg2b5eofmh8" path="res://shaders/wind.gdshader" id="2_xjh6c"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6jdpt"]

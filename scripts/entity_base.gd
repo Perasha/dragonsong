@@ -2,10 +2,10 @@ extends "object_base.gd"
 
 ## STATS
 @export var health = 0.8
-@export var food_amount = health
+var food_amount = health
 ##-------------------------
 
-@export var is_grounded = false
+var is_grounded = false
 var entity = true
 var dead = false
 const DeathAura = preload("res://death_aura.tscn")
@@ -26,10 +26,7 @@ var destination = Vector2(0,0)
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	destination = position
-	pass # Replace with function body.
 
-#var previous_position 
-#var current_position = position
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	max_speed = default_speed

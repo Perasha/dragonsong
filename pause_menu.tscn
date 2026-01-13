@@ -76,7 +76,6 @@ text = "Hold to Hover"
 
 [node name="HoldLook" type="CheckButton" parent="OptionsMenu"]
 layout_mode = 2
-button_pressed = true
 text = "Hold to Look"
 
 [node name="HoverLeave" type="CheckButton" parent="OptionsMenu"]

@@ -1,12 +1,13 @@
-[gd_scene load_steps=24 format=3 uid="uid://b0n2m1kv2cdx1"]
+[gd_scene load_steps=25 format=3 uid="uid://b0n2m1kv2cdx1"]
 
-[ext_resource type="Script" uid="uid://cqu0w22jdjbs4" path="res://scripts/dragon_controller.gd" id="1_urtjn"]
+[ext_resource type="Script" uid="uid://cqu0w22jdjbs4" path="res://player/dragon_controller.gd" id="1_urtjn"]
 [ext_resource type="Texture2D" uid="uid://cbj5kmqjsr7ck" path="res://Sprites/DragonWingless.png" id="2_2w5qb"]
-[ext_resource type="Script" uid="uid://ct4lehwag4jqw" path="res://scripts/dragon_animation.gd" id="3_b1f37"]
+[ext_resource type="Script" uid="uid://ct4lehwag4jqw" path="res://player/dragon_animation.gd" id="3_b1f37"]
 [ext_resource type="Texture2D" uid="uid://6d5k318sfh03" path="res://Sprites/wings_folded.png" id="4_au75c"]
 [ext_resource type="Script" uid="uid://csdttjcujdw6f" path="res://scripts/direction_pointer.gd" id="5_vgkb3"]
-[ext_resource type="Script" uid="uid://c1eborn8rg0gt" path="res://scripts/dragon_resources.gd" id="6_j86p3"]
+[ext_resource type="Script" uid="uid://c1eborn8rg0gt" path="res://player/dragon_resources.gd" id="6_j86p3"]
 [ext_resource type="PackedScene" uid="uid://v3g8grpgtqyr" path="res://presence.tscn" id="6_ju2y0"]
+[ext_resource type="Script" uid="uid://j6bf53um2w80" path="res://player/interact.gd" id="7_1tael"]
 [ext_resource type="Texture2D" uid="uid://dus3vnh373g2c" path="res://Sprites/circle01.png" id="7_to7sl"]
 [ext_resource type="Script" uid="uid://bedoflfa5k85g" path="res://scripts/spell_effect.gd" id="9_5i4j3"]
 
@@ -185,6 +186,7 @@ position = Vector2(-45.000008, 0)
 scale = Vector2(1.5199994, 0.8400002)
 collision_layer = 0
 collision_mask = 4
+script = ExtResource("7_1tael")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="InteractArea"]
 position = Vector2(-30.5, 0)
@@ -234,7 +236,15 @@ randomness = 1.0
 fixed_fps = 60
 process_material = SubResource("ParticleProcessMaterial_cvsob")
 
+[node name="ProgressBar" type="ProgressBar" parent="SpellEffect"]
+offset_left = -80.0
+offset_top = -137.0
+offset_right = 74.0
+offset_bottom = -110.0
+
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_entered" from="Direction Pointer" to="." method="_on_direction_pointer_body_entered"]
 [connection signal="timeout" from="wingbeat_clock" to="." method="_on_wingbeat_clock_timeout"]
+[connection signal="area_entered" from="Presence" to="Resources" method="_on_presence_area_entered"]
+[connection signal="area_exited" from="Presence" to="Resources" method="_on_presence_area_exited"]
 [connection signal="animation_finished" from="Bite" to="Body" method="_on_bite_animation_finished"]

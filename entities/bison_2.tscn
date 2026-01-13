@@ -1,0 +1,43 @@
+[gd_scene load_steps=6 format=3 uid="uid://8pgxtr804yu1"]
+
+[ext_resource type="Script" uid="uid://bd80gqoc7clur" path="res://entities/entity_data.gd" id="1_4qmxk"]
+[ext_resource type="Texture2D" uid="uid://be6a7qv7q1gqq" path="res://Sprites/animals.png" id="2_obftc"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_h1in3"]
+friction = 0.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hyc5p"]
+radius = 56.0
+height = 132.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1clwq"]
+size = Vector2(76.92308, 2.3076172)
+
+[node name="Bison" type="RigidBody2D" groups=["entity"]]
+collision_layer = 4
+physics_material_override = SubResource("PhysicsMaterial_h1in3")
+gravity_scale = 2.0
+lock_rotation = true
+contact_monitor = true
+max_contacts_reported = 1
+script = ExtResource("1_4qmxk")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_hyc5p")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+scale = Vector2(4, 4)
+texture = ExtResource("2_obftc")
+region_enabled = true
+region_rect = Rect2(64, 320, 32, 32)
+
+[node name="FloorCheck" type="Area2D" parent="."]
+scale = Vector2(0.26, 0.26)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FloorCheck"]
+position = Vector2(0, 219.23077)
+scale = Vector2(4.8461494, 1)
+shape = SubResource("RectangleShape2D_1clwq")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

@@ -4,7 +4,7 @@ extends Camera2D
 # 5x5
 # 
 
-@export_category("Follow_Character")
+@export_category("Follow Character")
 var zoomSpeed = 1.2
 
 @export var cam_marker : Node2D
@@ -22,7 +22,9 @@ var maxHeight = 10000
 
 # Zoom levels 0 - 2
 enum {GROUND, NEAR, FAR, MAX}
-var zoom_levels = [defaultZoomLevel,defaultZoomLevel / 1.7,defaultZoomLevel / 2,defaultZoomLevel / 3]
+#var zoom_levels_base = [defaultZoomLevel,defaultZoomLevel / 1.7,defaultZoomLevel / 3,defaultZoomLevel / 4.5]
+# 1, 1.7, 3, 4.5
+var zoom_levels = [1,1.7,3,4.5]
 var zoom_dist_nodes = []
 var current_zoom_level = GROUND
 
@@ -40,6 +42,7 @@ func _ready():
 			zoom_dist_nodes.append(node)
 	#print(zoom_dist_nodes)
 	#print(zoom_levels[GROUND])
+	get_tree().get_root().size_changed.connect(update_window)
 
 ## Dynamic Zoom, but only if we're looking
 #func _input(event):	
@@ -104,9 +107,9 @@ func _process(delta):
 		#print(zoom_levels[current_zoom_level])
 		#new_zoom.x = zoom_levels[current_zoom_level]
 		#new_zoom.y = new_zoom.x
-		if not cam_marker.is_looking:
+		#if not cam_marker.is_looking:
 			#print("Resetting Zoom!")
-			zoom = lerp(zoom, new_zoom, weight)
+		zoom = lerp(zoom, new_zoom, weight)
 		#print(zoom)
 		
 		var camera_position : Vector2
@@ -129,21 +132,17 @@ func _process(delta):
 func set_zoom_level(level):
 	return Vector2(level,level)
 
+func update_window():
+	defaultZoomLevel = get_viewport().get_visible_rect().size.x / 2800
+
 func check_zoom() -> void:
-	if not cam_marker.is_looking:
-		#print("Resetting Zoom!")
-		defaultZoomLevel = get_viewport().get_visible_rect().size.x / 2800
-		#zoom_levels = [defaultZoomLevel * 1.5,defaultZoomLevel / 1.7,defaultZoomLevel / 3,defaultZoomLevel / 6]
-		zoom_levels = [defaultZoomLevel * 1.25,defaultZoomLevel / 1.7,defaultZoomLevel / 2,defaultZoomLevel / 3]
-		#print(defaultZoomLevel)
-		var i = -1
-		for node in zoom_dist_nodes:
-			i += 1
-			#print(node.get_overlapping_bodies())
-			if node.get_overlapping_bodies().size() > 0:
-				current_zoom_level = i
-				break
-			else:
-				current_zoom_level = MAX
-		##ZOOM CHANGING
-		new_zoom = set_zoom_level(zoom_levels[current_zoom_level])
+	var i = -1
+	for node in zoom_dist_nodes:
+		i += 1
+		if node.get_overlapping_bodies().size() > 0:
+			current_zoom_level = i
+			break
+		else:
+			current_zoom_level = MAX
+	##ZOOM CHANGING
+	new_zoom = set_zoom_level(defaultZoomLevel / zoom_levels[current_zoom_level])

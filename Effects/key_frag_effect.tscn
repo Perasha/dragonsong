@@ -19,7 +19,7 @@ hue_variation_min = -2.2351742e-08
 hue_variation_max = 0.009999977
 
 [node name="KeyFragEffect" type="GPUParticles2D"]
-z_index = 10
+z_index = 2
 explosiveness = 0.11
 randomness = 1.0
 process_material = SubResource("ParticleProcessMaterial_ld413")

@@ -6,7 +6,7 @@ extends Node
 var option_hold_to_glide = false
 var option_hold_to_hover = false
 var option_hover_leave = true
-var option_hold_to_look = true
+var option_hold_to_look = false
 
 @export var terminal_velocity = 2750.00
 
@@ -21,6 +21,9 @@ It feels like a piece of the key is nearby."""
 var Active_Quests = []
 
 var collected_keys = 0
+
+func test():
+	print("Complete!")
 
 func _on_tick_timer_timeout() -> void:
 	#print(ambrette_town)

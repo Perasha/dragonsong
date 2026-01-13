@@ -1,9 +1,11 @@
 extends Node2D
 
+#@export var player_visibility : VisibleOnScreenNotifier2D
 @onready var dragon_node = get_parent()
 @onready var dragon_resources = get_parent().get_node("Resources")
 @onready var camera_node = get_parent().get_parent().get_node("Camera2D")
-var lag_threshold = 2000
+@export var look_marker : Sprite2D
+var lag_threshold = Vector2()
 var duration_step = 2.0
 var new_position = Vector2(0,0)
 var is_looking = false
@@ -29,28 +31,54 @@ func _process(delta: float) -> void:
 			else:
 				is_looking = true
 	
+	if look_marker.visible and is_looking == false:
+		look_marker.hide()
+	elif not look_marker.visible and is_looking == true:
+		look_marker.show()
+	
+	var viewport_dimensions: Vector2 = get_viewport().get_visible_rect().size
+	
 	if is_looking:
 		weight = 0.01
 		#print("looking!")
 		#print(position)
 		#print(get_viewport().get_mouse_position())
-		var viewport_dimensions: Vector2 = get_viewport().get_visible_rect().size
+		#var viewport_dimensions: Vector2 = get_viewport().get_visible_rect().size
 		new_position = (get_viewport().get_mouse_position() - (viewport_dimensions / 2))
 		if camera_node.current_zoom_level == GROUND:
 			new_position *= 1.5
 		elif camera_node.current_zoom_level == NEAR:
-			new_position *= 5
+			new_position *= 2
 		elif camera_node.current_zoom_level == FAR:
-			new_position *= 8
+			new_position *= 3
 		else:
-			new_position *= 12
+			new_position *= 5
 		#print(new_position)
 		#weight = 0.05
 	
 	elif dragon_node.is_flying:
-		var distance_lag = dragon_node.current_speed / 1.01
-		if distance_lag > lag_threshold:
-			distance_lag = lag_threshold
+		var distance_lag = Vector2(dragon_node.current_speed / 1.01, dragon_node.current_speed / 1.1)
+		
+		if camera_node.current_zoom_level == GROUND:
+			distance_lag *= 0.9
+		elif camera_node.current_zoom_level == NEAR:
+			distance_lag *= 0.9
+		elif camera_node.current_zoom_level == FAR:
+			distance_lag *= 1.01
+			#lag_threshold = viewport_dimensions * 2
+		else:
+			distance_lag *= 1.4
+			#lag_threshold = viewport_dimensions * 3
+		#print(distance_lag)
+		#print(lag_threshold)
+		#print(viewport_dimensions)
+		
+		## Updating the threshold based on the size of the screen
+		#lag_threshold = viewport_dimensions
+		#if distance_lag.x > lag_threshold.x:
+			#distance_lag.x = lag_threshold.x
+		#if distance_lag.y > lag_threshold.y:
+			#distance_lag.y = lag_threshold.y
 		new_position = dragon_node.flight_direction * distance_lag
 		weight = dragon_node.current_speed * 0.00006
 	else:

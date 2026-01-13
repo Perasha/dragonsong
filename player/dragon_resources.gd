@@ -58,3 +58,19 @@ func _input(event: InputEvent) -> void:
 			pass
 		pass
 	
+
+
+func _on_presence_area_entered(area: Area2D) -> void:
+	## If its parent is CaveCovers, hide it.
+	var parent = area.get_parent()
+	if parent.name == "CaveCovers":
+		print("Hiding!")
+		parent.get_parent().hide_cave(area)
+
+
+func _on_presence_area_exited(area: Area2D) -> void:
+	## If its parent is CaveCovers, show it.
+	var parent = area.get_parent()
+	if parent.name == "CaveCovers":
+		print("Showing!")
+		parent.get_parent().show_cave(area)
