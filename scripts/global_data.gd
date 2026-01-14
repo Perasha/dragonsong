@@ -28,3 +28,9 @@ func test():
 func _on_tick_timer_timeout() -> void:
 	#print(ambrette_town)
 	pass # Replace with function body.
+
+func array_swapback(array,index):
+	## This removes the element we want, then swaps the element at the very back with the element we remove. 
+	## Because we care not about the order of the array.
+	array[index] = array[array.size() - 1]
+	array.remove_at(array.size() - 1)

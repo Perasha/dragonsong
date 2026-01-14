@@ -18,8 +18,7 @@ func _ready() -> void:
 			herd_entities.append(entity)
 		if entity.thought == EntityBehavior.IDLE:
 			idle_entities.append(entity)
-		entity.destination = entity.position
-		print(entity.destination)
+		EntityBehavior.wander(entity)
 		entity.speed += randi_range(0,50)
 
 
@@ -31,7 +30,7 @@ func _physics_process(delta: float) -> void:
 		if entity.nav_timer >= entity.nav_timeout:
 			EntityBehavior.wander(entity)
 			moving_entities.append(entity)
-			array_swapback(idle_entities, i)
+			GlobalData.array_swapback(idle_entities, i)
 			entity.nav_timer = 0
 		i += 1
 	i = 0
@@ -41,11 +40,6 @@ func _physics_process(delta: float) -> void:
 		if entity.position.distance_to(entity.destination) < 100:
 			entity.linear_velocity *= 0.15
 			idle_entities.append(entity)
-			array_swapback(moving_entities, i)
+			GlobalData.array_swapback(moving_entities, i)
+			entity.thought = EntityBehavior.IDLE
 		i += 1
-
-func array_swapback(array,index):
-	## This removes the element we want, then swaps the element at the very back with the element we remove. 
-	## Because we care not about the order of the array.
-	array[index] = array[array.size() - 1]
-	array.remove_at(array.size() - 1)

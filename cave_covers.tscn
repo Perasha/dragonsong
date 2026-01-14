@@ -1,0 +1,92 @@
+[gd_scene load_steps=2 format=3 uid="uid://x6ci2qhidvsa"]
+
+[ext_resource type="Script" uid="uid://1fpt8b2fc5dx" path="res://Maps/_map_collision_copy.gd" id="1_gpfbv"]
+
+[node name="CaveCovers" type="Node2D"]
+z_index = 2
+
+[node name="CaveBottom" type="Area2D" parent="."]
+position = Vector2(443, 482.75)
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+
+[node name="Polygon2D" type="Polygon2D" parent="CaveBottom"]
+color = Color(0.22352941, 0.11372549, 0.09411765, 1)
+polygon = PackedVector2Array(-152.25, -36.5, -101.75, -45, -77.75, -68, -78.75, -92.75, -31.25, -81.75, 309.5, -58, 278, 20, -85.5, 19)
+uv = PackedVector2Array(-130.5, -42, -46.5, -70, -12.5, -38, -16.5, 7, -85.5, 19)
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="CaveBottom"]
+script = ExtResource("1_gpfbv")
+
+[node name="CaveBottom2" type="Area2D" parent="."]
+position = Vector2(258, 674.5)
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+
+[node name="Polygon2D" type="Polygon2D" parent="CaveBottom2"]
+color = Color(0.22352941, 0.11372549, 0.09411765, 1)
+polygon = PackedVector2Array(-144.25, -62.75, -29.25, -114, 131.25, -189, 243.25, -175.5, 154.75, -59.25, -43.5, 61.5)
+uv = PackedVector2Array(-130.5, -42, -46.5, -70, -12.5, -38, -16.5, 7, -85.5, 19)
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="CaveBottom2"]
+script = ExtResource("1_gpfbv")
+
+[node name="CaveBottom3" type="Area2D" parent="."]
+position = Vector2(-215, 785.25)
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+
+[node name="Polygon2D" type="Polygon2D" parent="CaveBottom3"]
+color = Color(0.22352941, 0.11372549, 0.09411765, 1)
+polygon = PackedVector2Array(38.25, -158.25, 340, -162.5, 435.75, -50.5, 305.75, -35.5, 243, -17, -91, -13.5)
+uv = PackedVector2Array(-130.5, -42, -46.5, -70, -12.5, -38, -16.5, 7, -85.5, 19)
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="CaveBottom3"]
+script = ExtResource("1_gpfbv")
+
+[node name="CaveBottom4" type="Area2D" parent="."]
+position = Vector2(125, 908.75)
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+
+[node name="Polygon2D" type="Polygon2D" parent="CaveBottom4"]
+color = Color(0.22352941, 0.11372549, 0.09411765, 1)
+polygon = PackedVector2Array(88, -178, 374, -160, 538, -222, 796, -360, 1048, -304, 1024, -102, 846, -156, 668, -118, 446, -44, 272, 56, 102, -10, -54, -168)
+uv = PackedVector2Array(-130.5, -42, -46.5, -70, -12.5, -38, -16.5, 7, -85.5, 19)
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="CaveBottom4"]
+script = ExtResource("1_gpfbv")
+
+[node name="HomeCave" type="Area2D" parent="."]
+position = Vector2(3357.5, -2616.75)
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+
+[node name="Polygon2D" type="Polygon2D" parent="HomeCave"]
+position = Vector2(-8.75, 2)
+color = Color(0.22352941, 0.11372549, 0.09411765, 1)
+polygon = PackedVector2Array(-152.25, -36.5, -78.75, -92.75, 163.25, -72.75, 168.75, 105.25, 565.75, 214, 555.5, 488.5, 81, 463.25, 5.25, 365.5, 44, 121.75, -131, 88.75, -102, 62, -104.25, 1.75)
+uv = PackedVector2Array(-130.5, -42, -46.5, -70, -12.5, -38, -16.5, 7, -85.5, 19)
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="HomeCave"]
+script = ExtResource("1_gpfbv")
+
+[node name="SpikedCave" type="Area2D" parent="."]
+position = Vector2(2649, -307.25)
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+
+[node name="Polygon2D" type="Polygon2D" parent="SpikedCave"]
+position = Vector2(-8.75, 2)
+color = Color(0.22352941, 0.11372549, 0.09411765, 1)
+polygon = PackedVector2Array(-95.25, 218, -81.25, 122, 208.75, 152, 565.75, 214, 628.75, 480, 190.75, 460, -137.25, 360, -291.25, 240, -211.25, 264, -167.25, 256)
+uv = PackedVector2Array(-130.5, -42, -46.5, -70, -12.5, -38, -16.5, 7, -85.5, 19)
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="SpikedCave"]
+script = ExtResource("1_gpfbv")

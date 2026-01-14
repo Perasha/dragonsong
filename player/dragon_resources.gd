@@ -65,7 +65,7 @@ func _on_presence_area_entered(area: Area2D) -> void:
 	var parent = area.get_parent()
 	if parent.name == "CaveCovers":
 		print("Hiding!")
-		parent.get_parent().hide_cave(area)
+		get_node("/root/Main/Map").hide_cave(area)
 
 
 func _on_presence_area_exited(area: Area2D) -> void:
@@ -73,4 +73,4 @@ func _on_presence_area_exited(area: Area2D) -> void:
 	var parent = area.get_parent()
 	if parent.name == "CaveCovers":
 		print("Showing!")
-		parent.get_parent().show_cave(area)
+		get_node("/root/Main/Map").show_cave(area)

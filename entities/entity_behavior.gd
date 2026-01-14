@@ -3,7 +3,7 @@ extends Node
 ## ENTITY BEHAVIOR-------
 
 # States
-enum {IDLE,SEARCHING_FOOD}
+enum {IDLE,WANDER,SEARCHING_FOOD}
 
 # Pathfind
 # Eat
@@ -33,14 +33,16 @@ func move_to(entity, destination):
 
 
 ## PATHFINDING
-var choice = [-500,500]
+#var choice = [-500,500]
 # Wander
 func wander(entity):
 	# Randomly choose a point
-	choice.shuffle()
-	var temp_direction = choice.pick_random()
+	#choice.shuffle()
+	randomize()
+	var temp_direction = randi_range(-750,750)
 	temp_direction *= randi_range(1,3)
 	entity.destination = Vector2(temp_direction,entity.position.y)
+	entity.thought = WANDER
 
 ## Herd Behavior
 
