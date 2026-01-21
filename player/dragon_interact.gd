@@ -1,6 +1,7 @@
 extends Area2D
 
 @onready var dragon_node = get_parent()
+@onready var entity_manager = get_node("/root/Main/EntityManager")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -10,20 +11,20 @@ var is_grabbing = false
 var grabbed_entity : RigidBody2D
 
 func _input(event: InputEvent) -> void:
-	## INTERACT
+	## GRAB
 	if Input.is_action_just_pressed("Interact"):
 		if not is_grabbing and grabbed_entity == null:
 			for body in get_overlapping_bodies():
-				if not body.is_in_group("player"):
-					#if body.can_be_grabbed:
-						#body.is_grabbed = true
-						#body.grabbing_entity = self
+				if body.is_in_group("entity") and not body == dragon_node:
+					#print("grabbing")
+					entity_manager.grab_entity(body)
+					body.thought = EntityBehavior.GRABBED
+					body.grabbing_entity = dragon_node
 					is_grabbing = true
 					grabbed_entity = body
-					#body.linear_velocity.y -= 1
 					break
 		elif is_grabbing:
-			grabbed_entity.just_released = true
+			entity_manager.release_entity(grabbed_entity)
 			is_grabbing = false
 			grabbed_entity = null
 	## BITE
@@ -31,5 +32,8 @@ func _input(event: InputEvent) -> void:
 		#print("Dragon script: ", GlobalData.ambrette_town)
 		dragon_node.sprite.play_bite_animation()
 		for body in get_overlapping_bodies():
-			if body.is_in_group("entity"):
-				body.damage(0.5)
+			if body.is_in_group("entity") and not body == dragon_node:
+				EntityBehavior.damage(body,0.5)
+
+#func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
+	#pass

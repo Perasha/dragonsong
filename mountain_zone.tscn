@@ -82,7 +82,7 @@ texture = ExtResource("4_mmmpg")
 z_index = 0
 dragon_node = NodePath("../dragon")
 
-[node name="dragon" parent="." instance=ExtResource("5_4kaof")]
+[node name="dragon" parent="." groups=["entity"] instance=ExtResource("5_4kaof")]
 z_index = 1
 position = Vector2(16053, -9624)
 collision_layer = 4
@@ -140,7 +140,7 @@ texture_scale = 9.97
 script = ExtResource("9_mdveq")
 
 [node name="Bison" type="RigidBody2D" parent="EntityManager" groups=["entity"]]
-position = Vector2(-2581, 1465)
+position = Vector2(214, 1214)
 collision_layer = 4
 physics_material_override = SubResource("PhysicsMaterial_h1in3")
 gravity_scale = 2.0
@@ -160,7 +160,7 @@ region_enabled = true
 region_rect = Rect2(64, 320, 32, 32)
 
 [node name="Bison2" type="RigidBody2D" parent="EntityManager" groups=["entity"]]
-position = Vector2(-1510, 1557)
+position = Vector2(1285, 1306)
 collision_layer = 4
 physics_material_override = SubResource("PhysicsMaterial_h1in3")
 gravity_scale = 2.0
@@ -180,7 +180,7 @@ region_enabled = true
 region_rect = Rect2(64, 320, 32, 32)
 
 [node name="Bison3" type="RigidBody2D" parent="EntityManager" groups=["entity"]]
-position = Vector2(-3100, 1404)
+position = Vector2(-305, 1153)
 collision_layer = 4
 physics_material_override = SubResource("PhysicsMaterial_h1in3")
 gravity_scale = 2.0
@@ -200,7 +200,7 @@ region_enabled = true
 region_rect = Rect2(64, 320, 32, 32)
 
 [node name="Bison4" type="RigidBody2D" parent="EntityManager" groups=["entity"]]
-position = Vector2(-1610, 1558)
+position = Vector2(1185, 1307)
 collision_layer = 4
 physics_material_override = SubResource("PhysicsMaterial_h1in3")
 gravity_scale = 2.0
@@ -220,7 +220,7 @@ region_enabled = true
 region_rect = Rect2(64, 320, 32, 32)
 
 [node name="Bison5" type="RigidBody2D" parent="EntityManager" groups=["entity"]]
-position = Vector2(-1850, 1550)
+position = Vector2(945, 1299)
 collision_layer = 4
 physics_material_override = SubResource("PhysicsMaterial_h1in3")
 gravity_scale = 2.0
@@ -240,7 +240,7 @@ region_enabled = true
 region_rect = Rect2(64, 320, 32, 32)
 
 [node name="Bison6" type="RigidBody2D" parent="EntityManager" groups=["entity"]]
-position = Vector2(-2855, 1438)
+position = Vector2(-60, 1187)
 collision_layer = 4
 physics_material_override = SubResource("PhysicsMaterial_h1in3")
 gravity_scale = 2.0
@@ -260,7 +260,7 @@ region_enabled = true
 region_rect = Rect2(64, 320, 32, 32)
 
 [node name="Bison7" type="RigidBody2D" parent="EntityManager" groups=["entity"]]
-position = Vector2(-2662, 1483)
+position = Vector2(133, 1232)
 collision_layer = 4
 physics_material_override = SubResource("PhysicsMaterial_h1in3")
 gravity_scale = 2.0
@@ -280,7 +280,7 @@ region_enabled = true
 region_rect = Rect2(64, 320, 32, 32)
 
 [node name="Bison8" type="RigidBody2D" parent="EntityManager" groups=["entity"]]
-position = Vector2(-2027, 1534)
+position = Vector2(768, 1283)
 collision_layer = 4
 physics_material_override = SubResource("PhysicsMaterial_h1in3")
 gravity_scale = 2.0
@@ -1027,6 +1027,12 @@ position = Vector2(0, 218.40399)
 scale = Vector2(99.99999, 164.82559)
 color = Color(0.5211406, 0.52114064, 0.52114046, 1)
 polygon = PackedVector2Array(-1, -1, -1, 1, 5, 1, 5, -1)
+
+[node name="Polygon2D" type="Polygon2D" parent="ParallaxBG/Far_1"]
+visible = false
+color = Color(0.5176471, 0.5176471, 0.5176471, 1)
+polygon = PackedVector2Array(-288, -96, 176, -80, 152, 80, -312, 48)
+uv = PackedVector2Array(-288, -96, 176, -80, 152, 80, -312, 48)
 
 [node name="Middle_0" type="Parallax2D" parent="ParallaxBG"]
 z_index = -4

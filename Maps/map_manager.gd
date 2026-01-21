@@ -15,7 +15,7 @@ func _process(delta: float) -> void:
 	var i = 0
 	for cave_node in cave_lerp_list:
 		## Check the Alpha channel
-		print(cave_node)
+		#print(cave_node)
 		if cave_node[0].modulate.a <= 0.01:# and cave_node[2] == true:
 			cave_node[0].modulate.a = 0.0
 			GlobalData.array_swapback(cave_lerp_list,i)

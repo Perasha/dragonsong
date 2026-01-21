@@ -34,6 +34,7 @@ monster=""
 quest_item=""
 dialogue="Objects that, when interacted with, display dialogue instead of anything else."
 collectible=""
+object=""
 
 [input]
 

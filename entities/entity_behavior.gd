@@ -1,12 +1,28 @@
 extends Node
 
+@onready var entity_manager = get_node("/root/EntityManager")
+
 ## ENTITY BEHAVIOR-------
 
-# States
-enum {IDLE,WANDER,SEARCHING_FOOD}
+## States
+#enum {GRABBED,GRABBING,DEAD,MOVE_RUN,MOVE,STAND}
+enum {IDLE,MOVE,GRABBED,DEAD}
 
-# Pathfind
-# Eat
+func health_update(entity, value):
+	entity.health += value
+
+## Pathfind
+## Eat
+
+## Grab
+#func try_grab(entity,grabbing_entity):
+#	pass
+
+## Idle
+#func idle(entity):
+	#entity.linear_velocity *= 0.75
+	#entity.nav_timer += 1
+	#entity.thought = IDLE
 
 ## Move
 func move_to(entity, destination):
@@ -33,19 +49,20 @@ func move_to(entity, destination):
 
 
 ## PATHFINDING
-#var choice = [-500,500]
+var choice = [1,-1]
+var temp_direction = 0
 # Wander
 func wander(entity):
 	# Randomly choose a point
 	#choice.shuffle()
 	randomize()
-	var temp_direction = randi_range(-750,750)
-	temp_direction *= randi_range(1,3)
+	temp_direction = choice.pick_random()
+	temp_direction *= randi_range(300,2500)
 	entity.destination = Vector2(temp_direction,entity.position.y)
-	entity.thought = WANDER
+	entity.thought = MOVE
 
 ## Herd Behavior
 
 ## Find Food
 
-# Pick a random direction
+## Pick a random direction

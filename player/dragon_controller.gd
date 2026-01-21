@@ -262,12 +262,12 @@ func _physics_process(delta: float) -> void:
 @onready var reset_pos = global_position
 var reset = false
 
-func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
-	if reset:
-		state.transform.origin = reset_pos
-		## Call reset_physics_interpolation() at the end of the frame once the physics engine has been updated
-		reset_physics_interpolation.call_deferred()
-		reset = false
+#func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
+#	if reset:
+#		state.transform.origin = reset_pos
+#		## Call reset_physics_interpolation() at the end of the frame once the physics engine has been updated
+#		reset_physics_interpolation.call_deferred()
+#		reset = false
 
 func wingbeat():
 	wingbeat_clock.start()

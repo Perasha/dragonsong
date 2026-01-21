@@ -7,7 +7,7 @@
 [ext_resource type="Script" uid="uid://csdttjcujdw6f" path="res://scripts/direction_pointer.gd" id="5_vgkb3"]
 [ext_resource type="Script" uid="uid://c1eborn8rg0gt" path="res://player/dragon_resources.gd" id="6_j86p3"]
 [ext_resource type="PackedScene" uid="uid://v3g8grpgtqyr" path="res://presence.tscn" id="6_ju2y0"]
-[ext_resource type="Script" uid="uid://j6bf53um2w80" path="res://player/interact.gd" id="7_1tael"]
+[ext_resource type="Script" uid="uid://j6bf53um2w80" path="res://player/dragon_interact.gd" id="7_1tael"]
 [ext_resource type="Texture2D" uid="uid://dus3vnh373g2c" path="res://Sprites/circle01.png" id="7_to7sl"]
 [ext_resource type="Script" uid="uid://bedoflfa5k85g" path="res://scripts/spell_effect.gd" id="9_5i4j3"]
 
