@@ -32,5 +32,11 @@ func _on_tick_timer_timeout() -> void:
 func array_swapback(array,index):
 	## This removes the element we want, then swaps the element at the very back with the element we remove. 
 	## Because we care not about the order of the array.
+	#print("Array before:")
+	#for entry in array:
+		#print(entry)
 	array[index] = array[array.size() - 1]
 	array.remove_at(array.size() - 1)
+	#print("Array after:")
+	#for entry in array:
+		#print(entry)

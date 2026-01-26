@@ -16,9 +16,8 @@ func _input(event: InputEvent) -> void:
 		if not is_grabbing and grabbed_entity == null:
 			for body in get_overlapping_bodies():
 				if body.is_in_group("entity") and not body == dragon_node:
-					#print("grabbing")
+					print("grabbing ", body)
 					entity_manager.grab_entity(body)
-					body.thought = EntityBehavior.GRABBED
 					body.grabbing_entity = dragon_node
 					is_grabbing = true
 					grabbed_entity = body
@@ -33,7 +32,7 @@ func _input(event: InputEvent) -> void:
 		dragon_node.sprite.play_bite_animation()
 		for body in get_overlapping_bodies():
 			if body.is_in_group("entity") and not body == dragon_node:
-				EntityBehavior.damage(body,0.5)
+				EntityBehavior.health_update(body,-2)
 
 #func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 	#pass

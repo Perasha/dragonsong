@@ -298,6 +298,7 @@ func apply_momentum():
 		gravity_scale = grav_scale_default / 1.5
 	else:
 		gravity_scale = grav_scale_default
+	pass
 
 
 ## Flying

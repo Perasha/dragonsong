@@ -1,11 +1,12 @@
 extends Node
 
 ## These arrays will let us batch process the different behaviors of each entity
-var herd_entities = []
+#var herd_entities = []
 
 ## And these process the raw individual states of each entity
 var idle_entities = []
 var moving_entities = []
+
 var dead_entities = []
 var grabbed_entities = []
 
@@ -17,10 +18,10 @@ var grabbed_entities = []
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	for entity in get_children():
-		if entity.behavior == "Herd":
-			herd_entities.append(entity)
+		#if entity.behavior == EntityBehavior.HERD:
+		#	insert(entity,herd_entities)
 		if entity.thought == EntityBehavior.IDLE:
-			idle_entities.append(entity)
+			insert(entity,idle_entities)
 		entity.destination = entity.position
 		entity.speed += randi_range(0,50)
 
@@ -28,66 +29,66 @@ func _ready() -> void:
 
 func grab_entity(entity):
 	print("grabbing")
-	## First, remove the entity from whatever list it was in
-	var i = 0
-	if entity.thought == EntityBehavior.IDLE:
-		for entry in idle_entities:
-			if entry == entity:
-				GlobalData.array_swapback(idle_entities, i)
-				break
-			i += 1
-	elif entity.thought == EntityBehavior.MOVE:
-		for entry in moving_entities:
-			if entry == entity:
-				GlobalData.array_swapback(moving_entities, i)
-				break
-			i += 1
-	grabbed_entities.append(entity)
+	if entity.thought != EntityBehavior.DEAD:
+		relocate(entity,grabbed_entities,array_search(entity))
+		thought_change(entity,EntityBehavior.GRABBED)
 
 func release_entity(entity):
 	print("Releasing")
 	entity.linear_velocity = entity.grabbing_entity.linear_velocity + Vector2(0,200)
-	var i = 0
-	for entry in grabbed_entities:
-		if entry == entity:
-			GlobalData.array_swapback(grabbed_entities, i)
-			idle_entities.append(entry)
-			entity.thought = EntityBehavior.IDLE
-			break
-		i += 1
+	print(entity.thought)
+	if entity.thought != EntityBehavior.DEAD:
+		relocate(entity,idle_entities,grabbed_entities)
 	entity.grabbing_entity = null
+
+func kill(entity):
+	relocate(entity,dead_entities,array_search(entity))
+	thought_change(entity,EntityBehavior.DEAD)
+
 func debug_print(entity):
 	print("Entity:", entity.name, "; Timer: ", entity.nav_timer, "; Thought:", entity.thought)
 
-func _physics_process(delta: float) -> void:	
-	var i = 0
+## ARRAY MAGIC
+func thought_change(entity,thought):
+	entity.prev_thought = entity.thought
+	entity.thought = thought
+func insert(entity,array):
+	array.append(entity)
+	entity.array_key = array.size() - 1
+func relocate(entity,array,prev_array):
+	GlobalData.array_swapback(prev_array, entity.array_key)
+	if prev_array != [] and entity.array_key != prev_array.size():
+		prev_array[entity.array_key].array_key = entity.array_key
+	insert(entity,array)
+func array_search(entity):
+	## Check the entity's thought to see which array it's in
+	var found_array = null
+	if entity.thought == EntityBehavior.IDLE:
+		print("Entity is in IDLE")
+		found_array = idle_entities
+	elif entity.thought == EntityBehavior.MOVE:
+		print("Entity is in MOVE")
+		found_array = moving_entities
+	elif entity.thought == EntityBehavior.GRABBED:
+		print("Entity is in MOVE")
+		found_array = grabbed_entities
+	return found_array
+
+func _physics_process(delta: float) -> void:
 	for entity in idle_entities:
-		#print("-----IDLE ENTITIES-----")
-		#debug_print(entity)
 		entity.linear_velocity.x *= 0.75
 		entity.nav_timer += 1
-	#var i = 0
-	#for entity in idle_entities:
+	for entity in idle_entities:
 		if entity.nav_timer >= entity.nav_timeout:
 			EntityBehavior.wander(entity)
-			moving_entities.append(entity)
-			GlobalData.array_swapback(idle_entities, i)
+			relocate(entity,moving_entities,idle_entities)
 			entity.nav_timer = 0
-			entity.thought = EntityBehavior.MOVE
-			i += 1
+			thought_change(entity,EntityBehavior.MOVE)
 	
-	i = 0
 	for entity in moving_entities:
-		#if entity.nav_timer > 0:
-			#debug_print(entity)
 		EntityBehavior.move_to(entity, entity.destination)
-	#for entity in moving_entities:
+	for entity in moving_entities:
 		if entity.position.distance_to(entity.destination) < 100:
 			entity.linear_velocity *= 0.15
-			idle_entities.append(entity)
-			GlobalData.array_swapback(moving_entities, i)
-			entity.thought = EntityBehavior.IDLE
-		i += 1
-	#reset_physics_interpolation.call_deferred()
-	#for entity in grabbed_entities:
-		#entity._integrate_forces(entity)
+			relocate(entity,idle_entities,moving_entities)
+			thought_change(entity,EntityBehavior.IDLE)

@@ -1,15 +1,26 @@
 extends Node
 
-@onready var entity_manager = get_node("/root/EntityManager")
+@onready var entity_manager = get_node("/root/Main/EntityManager")
 
-## ENTITY BEHAVIOR-------
+## ENTITY BEHAVIORS-------
+## Behavior enums
+enum {HERD}
+
+var behavior_herd = {
+	"name" : "herd",
+	"follow_distance" : 300
+}
 
 ## States
-#enum {GRABBED,GRABBING,DEAD,MOVE_RUN,MOVE,STAND}
 enum {IDLE,MOVE,GRABBED,DEAD}
 
 func health_update(entity, value):
 	entity.health += value
+	#print(entity_manager)
+	if entity.health <= 0 and entity.thought != DEAD:
+		entity_manager.kill(entity)
+		print("Killed!")
+		entity.sprite.rotation_degrees = 180
 
 ## Pathfind
 ## Eat
@@ -59,9 +70,12 @@ func wander(entity):
 	temp_direction = choice.pick_random()
 	temp_direction *= randi_range(300,2500)
 	entity.destination = Vector2(temp_direction,entity.position.y)
-	entity.thought = MOVE
+	#entity.thought = MOVE
 
 ## Herd Behavior
+## If the individual is too far from another member, choose a location near them and move back.
+func herd():
+	pass
 
 ## Find Food
 
