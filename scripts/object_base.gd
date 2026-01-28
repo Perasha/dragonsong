@@ -47,17 +47,3 @@ func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 		custom_integrator = true
 		# Call reset_physics_interpolation() at the end of the frame once the physics engine has been updated
 		#reset_physics_interpolation()
-	
-## DAMAGE AREA FOR OBJECTS
-var impact_threshold = 30.0
-var impact = 0.0
-
-func _on_area_2d_body_entered(body: Node2D) -> void:
-	if distance_moved > impact_threshold:
-		impact = distance_moved / 200
-		if body.is_in_group("entity"):
-			body.damage(snappedf(impact,0.01))
-		elif body.is_in_group("player") and (distance_moved - body.distance_moved) > impact_threshold:
-			impact = (distance_moved - body.distance_moved) / 200
-			body.resources.health_update(snappedf(-impact,-0.01))
-	pass # Replace with function body.

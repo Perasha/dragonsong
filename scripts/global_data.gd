@@ -1,6 +1,6 @@
 extends Node
 
-#Pointer: "/root/Main"
+enum {IDLE,MOVE,GRABBED,DEAD}
 
 # Menu Toggles
 var option_hold_to_glide = false
@@ -25,18 +25,22 @@ var collected_keys = 0
 func test():
 	print("Complete!")
 
+@onready var tick_timer = get_node("/root/Main/TickTimer")
+
 func _on_tick_timer_timeout() -> void:
-	#print(ambrette_town)
+	#print("Bang!")
 	pass # Replace with function body.
 
-func array_swapback(array,index):
+func array_swapback(array,index,debug_info):
+	#print(debug_info)
 	## This removes the element we want, then swaps the element at the very back with the element we remove. 
 	## Because we care not about the order of the array.
-	#print("Array before:")
+	#print("Array before:", array)
 	#for entry in array:
-		#print(entry)
+	#	print(entry)
+	#print("index: ", index)
 	array[index] = array[array.size() - 1]
 	array.remove_at(array.size() - 1)
 	#print("Array after:")
 	#for entry in array:
-		#print(entry)
+	#	print(entry)

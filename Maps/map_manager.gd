@@ -18,10 +18,10 @@ func _process(delta: float) -> void:
 		#print(cave_node)
 		if cave_node[0].modulate.a <= 0.01:# and cave_node[2] == true:
 			cave_node[0].modulate.a = 0.0
-			GlobalData.array_swapback(cave_lerp_list,i)
+			GlobalData.array_swapback(cave_lerp_list,i,"Cave01")
 		if cave_node[0].modulate.a >= 0.99:
 			cave_node[0].modulate.a = 1.0
-			GlobalData.array_swapback(cave_lerp_list,i)
+			GlobalData.array_swapback(cave_lerp_list,i,"Cave02")
 		i += 1
 
 ## This is in the context of showing/hiding the COVER of the cave.

@@ -134,72 +134,68 @@ texture_scale = 9.97
 script = ExtResource("9_mdveq")
 
 [node name="Bison" parent="EntityManager" instance=ExtResource("10_ld413")]
-position = Vector2(15802, -9581)
+position = Vector2(15802, -9579)
 physics_material_override = SubResource("PhysicsMaterial_h1in3")
 
 [node name="Bison2" parent="EntityManager" instance=ExtResource("10_ld413")]
-position = Vector2(785, 1217)
+position = Vector2(2210, 1186)
 physics_material_override = SubResource("PhysicsMaterial_h1in3")
 
 [node name="Bison3" parent="EntityManager" instance=ExtResource("10_ld413")]
-position = Vector2(1056, 1231)
+position = Vector2(1855, 1269)
 physics_material_override = SubResource("PhysicsMaterial_h1in3")
 
 [node name="Bison4" parent="EntityManager" instance=ExtResource("10_ld413")]
-position = Vector2(1493, 1249)
+position = Vector2(1567, 1298)
 physics_material_override = SubResource("PhysicsMaterial_h1in3")
 
 [node name="Bison5" parent="EntityManager" instance=ExtResource("10_ld413")]
-position = Vector2(1750, 1235)
+position = Vector2(1248, 1303)
 physics_material_override = SubResource("PhysicsMaterial_h1in3")
 
 [node name="Bison6" parent="EntityManager" instance=ExtResource("10_ld413")]
-position = Vector2(2017, 1226)
+position = Vector2(958, 1303)
 physics_material_override = SubResource("PhysicsMaterial_h1in3")
 
 [node name="Bison7" parent="EntityManager" instance=ExtResource("10_ld413")]
-position = Vector2(2265, 1175)
+position = Vector2(714, 1316)
 physics_material_override = SubResource("PhysicsMaterial_h1in3")
-species = "Serpent"
 
 [node name="Bison8" parent="EntityManager" instance=ExtResource("10_ld413")]
-position = Vector2(2633, 1092)
+position = Vector2(356, 1337)
 physics_material_override = SubResource("PhysicsMaterial_h1in3")
-species = "Serpent"
 
 [node name="Bison9" parent="EntityManager" instance=ExtResource("10_ld413")]
-position = Vector2(611, 1276)
+position = Vector2(32, 1358)
 physics_material_override = SubResource("PhysicsMaterial_h1in3")
 
 [node name="Bison10" parent="EntityManager" instance=ExtResource("10_ld413")]
-position = Vector2(211, 1294)
+position = Vector2(-321, 1428)
 physics_material_override = SubResource("PhysicsMaterial_h1in3")
 
 [node name="Bison11" parent="EntityManager" instance=ExtResource("10_ld413")]
-position = Vector2(23, 1340)
+position = Vector2(-624, 1464)
 physics_material_override = SubResource("PhysicsMaterial_h1in3")
 
 [node name="Bison12" parent="EntityManager" instance=ExtResource("10_ld413")]
-position = Vector2(-230, 1386)
+position = Vector2(-925, 1505)
 physics_material_override = SubResource("PhysicsMaterial_h1in3")
 
 [node name="Bison13" parent="EntityManager" instance=ExtResource("10_ld413")]
-position = Vector2(-478, 1414)
+position = Vector2(-1213, 1515)
 physics_material_override = SubResource("PhysicsMaterial_h1in3")
 
 [node name="Bison14" parent="EntityManager" instance=ExtResource("10_ld413")]
-position = Vector2(-758, 1405)
+position = Vector2(-1550, 1512)
 physics_material_override = SubResource("PhysicsMaterial_h1in3")
 
 [node name="Bison15" parent="EntityManager" instance=ExtResource("10_ld413")]
-position = Vector2(-956, 1488)
+position = Vector2(-1830, 1502)
 physics_material_override = SubResource("PhysicsMaterial_h1in3")
 
 [node name="Bison16" parent="EntityManager" instance=ExtResource("10_ld413")]
-position = Vector2(-1163, 1516)
+position = Vector2(-2089, 1505)
 physics_material_override = SubResource("PhysicsMaterial_h1in3")
-
-[node name="ObjectManager" type="Node" parent="."]
 
 [node name="ObjectInteractManager" type="Node" parent="."]
 script = ExtResource("15_6jdpt")

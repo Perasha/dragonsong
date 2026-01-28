@@ -2,8 +2,11 @@ extends Node
 
 #@export var stamina_max = 500.0
 #var stamina = stamina_max
-var max_health = 5.0
+@export var max_health = 100.0
 var health = max_health
+
+@export var attack_speed = 10
+var attack_cooldown = 0
 
 @onready var dragon_node = get_parent()
 @onready var presence_node = get_parent().get_node("Presence")
@@ -16,13 +19,9 @@ var health = max_health
 
 var injury_multiplier = 1.0
 
-func _ready() -> void:
-	pass
-#	for i in initial_speeds:
-#		print(initial_speeds[i])
-#	print(initial_speeds)
-
 func health_update(value):
+	#print(health)
+	#print(value)
 	health += value
 	dragon_node.hover_speed = initial_speed["hover_speed"]
 	if health > max_health:
@@ -39,24 +38,6 @@ func health_update(value):
 		dragon_node.max_jump_strength = 0
 		dragon_node.hover_speed = 0
 		health = 0
-
-func _input(event: InputEvent) -> void:
-	if Input.is_action_just_pressed("feed") and not dragon_node.is_flying:
-		for body in dragon_node.interact_field.get_overlapping_bodies():
-			if body.is_in_group("entity") and body.dead == true and not body.is_grabbed:
-				#body.food_amount -= 0.5
-				#if body.food_amount < 0:
-				#	var food_consumed = 0.5 + body.food_amount
-				body.queue_free()
-				health_update(body.food_amount)
-				break
-		#if dragon_node.grabbed_entity != null:
-		#	if dragon_node.grabbed_entity.is_in_group("entity"):
-		#		dragon_node.grabbed_entity.damage(0.5)
-		#		health_update(0.15)
-		#		pass
-			pass
-		pass
 	
 
 

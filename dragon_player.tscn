@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://b0n2m1kv2cdx1"]
+[gd_scene load_steps=24 format=3 uid="uid://b0n2m1kv2cdx1"]
 
 [ext_resource type="Script" uid="uid://cqu0w22jdjbs4" path="res://player/dragon_controller.gd" id="1_urtjn"]
 [ext_resource type="Texture2D" uid="uid://cbj5kmqjsr7ck" path="res://Sprites/DragonWingless.png" id="2_2w5qb"]
@@ -17,9 +17,6 @@ friction = 0.0
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_v4tli"]
 radius = 10.399032
 height = 35.835346
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ngkl2"]
-size = Vector2(22.89043, 30.375)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gilsg"]
 
@@ -151,14 +148,10 @@ script = ExtResource("3_b1f37")
 [node name="Wings" type="Sprite2D" parent="Body"]
 texture = ExtResource("4_au75c")
 
-[node name="FloorCheck" type="Area2D" parent="."]
-position = Vector2(0, 52)
-collision_layer = 0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="FloorCheck"]
-position = Vector2(-14.574997, -7.2149963)
-scale = Vector2(4.72, 0.08)
-shape = SubResource("RectangleShape2D_ngkl2")
+[node name="FloorCheck" type="RayCast2D" parent="."]
+position = Vector2(40, 45)
+target_position = Vector2(-111.165, 0)
+hit_from_inside = true
 
 [node name="Direction Pointer" type="Area2D" parent="."]
 monitorable = false

@@ -75,7 +75,8 @@ func _physics_process(delta: float) -> void:
 	just_jumped = false
 	is_running = false
 	is_climbing = false
-	is_grounded = false
+	#is_grounded = false
+	is_grounded = floor_check.is_colliding()
 	previous_position = current_position
 	current_position = position
 	gravity_scale = grav_scale_default
@@ -129,9 +130,7 @@ func _physics_process(delta: float) -> void:
 	# If we ARE hovering
 	else:
 		is_stalling = false
-	
-	if floor_check.has_overlapping_bodies():
-		is_grounded = true
+		
 	check_climb()
 	# Now we get inputs. Our wing flap, then movement axes, then our wing-fold/dive.
 	if Input.is_action_pressed("flap"):
@@ -393,5 +392,6 @@ func _on_heal_button_up() -> void:
 func _on_body_entered(body: Node) -> void:
 	#print(distance_moved)
 	if distance_moved > 20:
-		resources.health_update(snappedf(-distance_moved / 200,0.01))
+		#resources.health_update(snappedf(-distance_moved / 200,0.01))
+		resources.health_update(snappedf(-distance_moved / 2,1.0))
 	pass # Replace with function body.

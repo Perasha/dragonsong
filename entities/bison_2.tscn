@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://8pgxtr804yu1"]
 
-[ext_resource type="Script" uid="uid://bd80gqoc7clur" path="res://entities/entity_data.gd" id="1_4qmxk"]
+[ext_resource type="Script" uid="uid://bd80gqoc7clur" path="res://entities/entity_base.gd" id="1_4qmxk"]
 [ext_resource type="Texture2D" uid="uid://be6a7qv7q1gqq" path="res://Sprites/animals.png" id="2_obftc"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_h1in3"]
