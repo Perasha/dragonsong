@@ -1,7 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://dy0vj4qse4rh0"]
+[gd_scene load_steps=7 format=3 uid="uid://dy0vj4qse4rh0"]
 
-[ext_resource type="Script" uid="uid://bd80gqoc7clur" path="res://entities/entity_base.gd" id="1_hal2f"]
+[ext_resource type="Script" uid="uid://bd80gqoc7clur" path="res://Entities/entity_base.gd" id="1_hal2f"]
 [ext_resource type="Texture2D" uid="uid://be6a7qv7q1gqq" path="res://Sprites/animals.png" id="2_d3br8"]
+[ext_resource type="Script" uid="uid://cjasbgxxwvk2e" path="res://Entities/Behaviors/Flee.gd" id="2_sgjt3"]
+[ext_resource type="Script" uid="uid://daydejqd00thx" path="res://Entities/Behaviors/Empty.gd" id="3_yqnij"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_h1in3"]
 friction = 0.0
@@ -18,6 +20,12 @@ lock_rotation = true
 contact_monitor = true
 max_contacts_reported = 1
 script = ExtResource("1_hal2f")
+speed = 1
+perception = 3
+PresenceBehavior_script = ExtResource("3_yqnij")
+ResponseSightThreat_script = ExtResource("2_sgjt3")
+ResponseAttack_script = ExtResource("2_sgjt3")
+ResponseDeath_script = ExtResource("3_yqnij")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 rotation = 1.5707964
@@ -30,8 +38,8 @@ region_enabled = true
 region_rect = Rect2(64, 320, 32, 32)
 
 [node name="FloorCheck" type="RayCast2D" parent="."]
-position = Vector2(81, 58)
-target_position = Vector2(-175, 0)
+position = Vector2(25, 58)
+target_position = Vector2(-48.675, 0)
 hit_from_inside = true
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

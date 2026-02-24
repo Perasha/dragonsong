@@ -12,7 +12,7 @@ var is_spell_active = false
 
 var active_spell = {
 	"name" : "Sonic Burst",
-	"cast_time" : 5.0,
+	"cast_time" : 2.0,
 	"duration" : 3.0
 }
 # While the spell Sonic Burst is active, max_fly_speed becomes equal to terminal velocity. 

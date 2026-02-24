@@ -16,7 +16,7 @@ func _input(event: InputEvent) -> void:
 	if Input.is_action_just_pressed("Interact"):
 		if not is_grabbing and grabbed_entity == null:
 			for body in get_overlapping_bodies():
-				if body.is_in_group("entity"):
+				if body.is_in_group("entity") or body.is_in_group("object_grabbable"):
 					print("grabbing ", body)
 					#entity_manager.grab_entity(body)
 					body.sleeping = false
@@ -25,8 +25,11 @@ func _input(event: InputEvent) -> void:
 					grabbed_entity = body
 					print("Grabbing Entity", body.grabbing_entity)
 					break
+					
 		elif is_grabbing:
 			#entity_manager.release_entity(grabbed_entity)
+			if grabbed_entity.is_in_group("object_grabbable"):
+				grabbed_entity.just_released = true
 			print("Releasing")
 			grabbed_entity.grabbing_entity = null
 			grabbed_entity.sleeping = false

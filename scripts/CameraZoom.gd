@@ -24,7 +24,7 @@ var maxHeight = 10000
 enum {GROUND, NEAR, FAR, MAX}
 #var zoom_levels_base = [defaultZoomLevel,defaultZoomLevel / 1.7,defaultZoomLevel / 3,defaultZoomLevel / 4.5]
 # 1, 1.7, 3, 4.5
-var zoom_levels = [1,1.7,3,4.5]
+var zoom_levels = [1,1.7,3,6.5]
 var zoom_dist_nodes = []
 var current_zoom_level = GROUND
 

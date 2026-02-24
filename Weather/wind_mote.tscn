@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://wpa0mqjvvexg"]
+
+[ext_resource type="Script" uid="uid://dcf8plgf6txwb" path="res://Weather/wind_mote_data.gd" id="1_j6obv"]
+[ext_resource type="PackedScene" uid="uid://bre8exmom2c4v" path="res://ParticleEffects/wind_mote.tscn" id="1_qgkvq"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_2sriv"]
+radius = 185.0
+height = 868.0
+
+[node name="WindMote" type="CollisionShape2D"]
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_2sriv")
+script = ExtResource("1_j6obv")
+
+[node name="WindMote" parent="." instance=ExtResource("1_qgkvq")]
+position = Vector2(-1.7091153e-05, -391)
+rotation = -1.5707964
+amount = 16
+lifetime = 1.5

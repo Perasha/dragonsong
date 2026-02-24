@@ -8,11 +8,15 @@ var option_hold_to_hover = false
 var option_hover_leave = true
 var option_hold_to_look = false
 
-@export var terminal_velocity = 2750.00
+@export var terminal_velocity = 3250.00
 
 var ambrette_town = {
 	"player_opinion" : 0,
 	"threats" : []
+}
+
+var move_database = {
+	"strike" : {"range" : 200, "damage" : 1}
 }
 
 var flower_text = """The rose has a light trace of magic on it.

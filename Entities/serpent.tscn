@@ -1,0 +1,61 @@
+[gd_scene load_steps=9 format=3 uid="uid://bpitoll6new3x"]
+
+[ext_resource type="Script" uid="uid://bd80gqoc7clur" path="res://Entities/entity_base.gd" id="1_hnxmp"]
+[ext_resource type="Script" uid="uid://deioiag5p0qqs" path="res://Entities/Behaviors/PredatorPresence_Base.gd" id="2_h8wk8"]
+[ext_resource type="Script" uid="uid://crb6cuajie1xw" path="res://Entities/Behaviors/Retaliate.gd" id="2_hnxmp"]
+[ext_resource type="Script" uid="uid://daydejqd00thx" path="res://Entities/Behaviors/Empty.gd" id="3_f7c5a"]
+[ext_resource type="Texture2D" uid="uid://be6a7qv7q1gqq" path="res://Sprites/animals.png" id="4_i5r4e"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_h1in3"]
+friction = 0.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hyc5p"]
+radius = 56.0
+height = 132.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_h8wk8"]
+radius = 200.0
+
+[node name="Serpent" type="RigidBody2D" node_paths=PackedStringArray("presence") groups=["entity"]]
+collision_layer = 4
+physics_material_override = SubResource("PhysicsMaterial_h1in3")
+gravity_scale = 2.0
+lock_rotation = true
+contact_monitor = true
+max_contacts_reported = 1
+script = ExtResource("1_hnxmp")
+species = "Serpent"
+speed = 4
+strength = 4
+perception = 8
+stealth = 4
+PresenceBehavior_script = ExtResource("2_h8wk8")
+ResponseSightThreat_script = ExtResource("3_f7c5a")
+ResponseAttack_script = ExtResource("2_hnxmp")
+ResponseDeath_script = ExtResource("3_f7c5a")
+presence = NodePath("Presence")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_hyc5p")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+scale = Vector2(4, 4)
+texture = ExtResource("4_i5r4e")
+region_enabled = true
+region_rect = Rect2(32, 224, 32, 32)
+
+[node name="FloorCheck" type="RayCast2D" parent="."]
+position = Vector2(81, 58)
+target_position = Vector2(-175, 0)
+hit_from_inside = true
+
+[node name="Presence" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Presence"]
+shape = SubResource("CircleShape2D_h8wk8")
+debug_color = Color(0.7448639, 0.43423298, 0.44489163, 0.41960785)
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

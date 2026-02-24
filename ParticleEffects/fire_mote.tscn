@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://dco7srxofagfv"]
+
+[ext_resource type="Material" uid="uid://dxkiyew0ggn1d" path="res://ParticleEffects/FireMaterial_Base.tres" id="1_n7dcw"]
+
+[node name="FireMote" type="GPUParticles2D"]
+amount = 32
+lifetime = 2.0
+fract_delta = false
+process_material = ExtResource("1_n7dcw")

@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://bre8exmom2c4v"]
+
+[ext_resource type="Material" uid="uid://bx5yni78o1pib" path="res://ParticleEffects/WindMaterial.tres" id="1_shs4a"]
+
+[node name="WindMote" type="GPUParticles2D"]
+fract_delta = false
+trail_enabled = true
+process_material = ExtResource("1_shs4a")

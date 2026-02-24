@@ -6,7 +6,7 @@ extends RigidBody2D
 @export var max_walk_speed = 200.00
 @export var max_run_speed = 400.00
 @export var max_fly_speed = 1250.00
-var max_fly_speed_base = max_fly_speed
+var max_fly_speed_base = GlobalData.terminal_velocity / 1.5
 var terminal_velocity = 2000.00
 
 @onready var floor_check = get_node("FloorCheck")
@@ -238,7 +238,7 @@ func _physics_process(delta: float) -> void:
 	if is_flying and not is_hovering:
 		fly()
 	elif is_hovering:
-		var max_hover_speed = max_fly_speed / 1.25
+		var max_hover_speed = max_fly_speed / 1.8
 		hover(max_hover_speed,hover_speed)
 	elif is_climbing:
 		climb()
@@ -270,17 +270,23 @@ var reset = false
 
 func wingbeat():
 	wingbeat_clock.start()
+	## Lifting us up ever so slightly
 	if not direction_x:
 		flight_direction.y -= (stored_jump-3) / 9
 	
-	if current_speed <= max_fly_speed:
+	if current_speed < max_fly_speed:
 		## Adding an "afterburner" to continually apply force after we do a wingbeat.
-		wingbeat_afterburner = (stored_jump * 3)
+		wingbeat_afterburner = (stored_jump * 6)
+		
+		## I uh... don't know what values to shift.
 		if is_gliding:
-			current_speed += (wingbeat_strength * stored_jump) / int((distance_moved / 20) + 1)
+			current_speed += (wingbeat_strength * stored_jump)# / int((distance_moved / 20) + 1)
 		else:
-			current_speed += (wingbeat_strength * stored_jump * 1.25) / int((distance_moved / 10) + 1)
-
+			current_speed += (wingbeat_strength * stored_jump * 1.25)# / int((distance_moved / 10) + 1)
+		
+		if current_speed > max_fly_speed:
+			current_speed = max_fly_speed
+	
 	on_wingbeat_cooldown = true
 	
 ## SUPER IMPORTANT!
