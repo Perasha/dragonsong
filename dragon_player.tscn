@@ -181,8 +181,8 @@ lock_rotation = true
 contact_monitor = true
 max_contacts_reported = 1
 script = ExtResource("1_urtjn")
-wingbeat_strength = 100.0
 speed = 50.0
+wingbeat_strength = 100.0
 jump_strength_base = 3.0
 max_jump_strength = 6.0
 
@@ -193,8 +193,8 @@ scale = Vector2(4.135, 4.13)
 shape = SubResource("CapsuleShape2D_v4tli")
 
 [node name="Body" type="Sprite2D" parent="."]
-position = Vector2(0, -128.00002)
-scale = Vector2(7, 7)
+position = Vector2(0, -107)
+scale = Vector2(6, 6)
 texture = ExtResource("2_2w5qb")
 script = ExtResource("3_b1f37")
 

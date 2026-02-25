@@ -8,7 +8,7 @@ extends Camera2D
 var zoomSpeed = 1.2
 
 @export var cam_marker : Node2D
-@onready var player = get_parent().get_node("dragon")
+@onready var dragon_node = get_parent().get_node("dragon")
 
 @export_category("Camera Smoothing")
 @export var smoothing_enabled : bool
@@ -24,47 +24,25 @@ var maxHeight = 10000
 enum {GROUND, NEAR, FAR, MAX}
 #var zoom_levels_base = [defaultZoomLevel,defaultZoomLevel / 1.7,defaultZoomLevel / 3,defaultZoomLevel / 4.5]
 # 1, 1.7, 3, 4.5
-var zoom_levels = [1,1.7,3,6.5]
+var zoom_levels = [1,1.7,3,5.5]
 var zoom_dist_nodes = []
 var current_zoom_level = GROUND
 
 var maxZoom_fly = 0.7
 
-var default_weight = 0.005
+@export var default_weight = 0.005
 var weight = default_weight
 
 func _ready():
 	current_zoom_level = GROUND
 	#weight = float(smoothing_distance) / 5000
-	for node in player.get_children():
+	for node in dragon_node.get_children():
 		if node.is_in_group("cam_zoom_lvl"):
 			#print(node.name)
 			zoom_dist_nodes.append(node)
 	#print(zoom_dist_nodes)
 	#print(zoom_levels[GROUND])
 	get_tree().get_root().size_changed.connect(update_window)
-
-## Dynamic Zoom, but only if we're looking
-#func _input(event):	
-	#if event is InputEventMouseButton and cam_marker.is_looking:
-		##weight = 1.0
-		#print("--------------------START----------------")
-		#print("Before calc: ", zoom)
-		#print("Factor: ", zoomSpeed)
-		#if event.button_index == MOUSE_BUTTON_WHEEL_UP:
-			#print("ZOOM IN!")
-			#zoom *= Vector2(zoomSpeed,zoomSpeed)
-			#print("After calc: ", zoom)
-			#print("Max Zoom we can't go below: ", zoom_levels[GROUND])
-			#if zoom.x > zoom_levels[GROUND]:
-				#zoom = set_zoom_level(zoom_levels[GROUND])
-		#if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			#print("ZOOM OUT!")
-			#zoom /= Vector2(zoomSpeed,zoomSpeed)
-			#print("After calc: ", zoom)
-			#if zoom.x < zoom_levels[MAX]:
-				#zoom = set_zoom_level(zoom_levels[MAX])
-		#print("Final Zoom: ", zoom)
 
 var direction = Vector2()
 var anticipated_direction = Vector2(0.0,0.0)
@@ -73,12 +51,18 @@ var max_hold = 50.0
 var max_hold_y = max_hold / 1.5
 
 var new_zoom : Vector2
+
+@export_category("Edge Margins")
+@export var on_screen_offset: Vector2 = Vector2(0.5, -5.0)
+@export var screen_margin: float = 4.0
+@export var smoothing_speed: float = 8.0
+
 @warning_ignore("unused_parameter")
 func _process(delta):
 	#print("Screen size: ", get_viewport().get_visible_rect().size)
-	if player != null:
+	if dragon_node != null:
 		#check_zoom()
-		max_hold = player.distance_moved * 1.5
+		max_hold = dragon_node.distance_moved * 1.5
 		#Here, we're getting our direction inputs again.
 		# We use this to add to a hold_count value, 
 		# and essentially slowly push our camera in that direction if it's held there.
@@ -117,11 +101,18 @@ func _process(delta):
 		
 		camera_target = cam_marker.global_position
 		
+		#if dragon_node.is_flying:
+			#smoothing_enabled = false
+		#else:
+			#smoothing_enabled = true
+		
 		if smoothing_enabled:
 			var smoothing_weight = pow(log(1.2),2)
 			#position = lerp(position, new_position, pow(-weight*delta,3))
 			#print("Weight: ", weight)
 			#print("Calculated Weight: ", pow(-weight*delta,2))
+			#print("Distance Behind Dragon: ", position.distance_to(dragon_node.position))
+			#print("Distance to Target Position: ", position.distance_to(dragon_node.position))
 			camera_position = lerp(global_position, camera_target, smoothing_weight)
 		else:
 			camera_position = camera_target

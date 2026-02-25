@@ -1,6 +1,5 @@
 extends RigidBody2D
 
-@export var wingbeat_strength = 200.00
 @export var speed = 5.00
 #@export var jump_height = -400.00
 @export var max_walk_speed = 200.00
@@ -25,10 +24,8 @@ var previous_position = Vector2(0.0,0.0)
 var current_position = Vector2(0.0,0.0)
 
 var just_jumped = false
-@export var jump_strength_base = 2.0
-var jump_strength = 2.0
+var jump_strength = 0.0
 var stored_jump = 0.0
-@export var max_jump_strength = 4.0
 #var is_running = false
 var direction_x
 var direction_y
@@ -52,14 +49,14 @@ var wingbeat_afterburner = 0.0
 @export var hover_speed = 20.0
 
 var current_speed = 0.0
-var turn_radius = 0.1
-var fd_dampen = 0.85
+@export var turn_radius = 0.1
+var fd_dampen = 0.0
 # Multiplier for our dampen value; this is proportional to our GRAVITY constant.
-var dampen_base = 0.3 
-var dampen_glide = 0.05 
+@export var dampen_base = 0.3 
+var dampen_glide = dampen_base / 6.0#0.05 
 #var gravity = 150
 
-var grav_scale_default = 2.0
+@export var grav_scale_default = 2.0
 
 var flight_direction = Vector2(0.0,0.0)
 var max_glide_height = 0.0
@@ -228,8 +225,8 @@ func _physics_process(delta: float) -> void:
 	
 	## If we're on the ground, add some directly upward velocity if we flap our wings!
 	if just_jumped and is_grounded:
-		linear_velocity.x += direction_x * (wingbeat_strength * stored_jump)
-		linear_velocity.y -= wingbeat_strength * stored_jump
+		linear_velocity.x += (direction_x * (wingbeat_strength * stored_jump)) * 2
+		linear_velocity.y -= (wingbeat_strength * stored_jump) * 4
 	
 	if not is_flying or hover_speed == 0:
 		is_hovering = false
@@ -267,6 +264,12 @@ var reset = false
 #		## Call reset_physics_interpolation() at the end of the frame once the physics engine has been updated
 #		reset_physics_interpolation.call_deferred()
 #		reset = false
+@export_category("Wingbeat Parameters")
+@export var wingbeat_strength = 200.00
+@export var afterburner_amount = 6.0
+@export var stored_jump_multiplier = 1.0
+@export var jump_strength_base = 2.0
+@export var max_jump_strength = 4.0
 
 func wingbeat():
 	wingbeat_clock.start()
@@ -274,9 +277,11 @@ func wingbeat():
 	if not direction_x:
 		flight_direction.y -= (stored_jump-3) / 9
 	
+	stored_jump *= stored_jump_multiplier
+	
 	if current_speed < max_fly_speed:
 		## Adding an "afterburner" to continually apply force after we do a wingbeat.
-		wingbeat_afterburner = (stored_jump * 6)
+		wingbeat_afterburner = (stored_jump * afterburner_amount)
 		
 		## I uh... don't know what values to shift.
 		if is_gliding:
