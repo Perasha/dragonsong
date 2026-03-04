@@ -27,17 +27,8 @@ func _process(delta: float) -> void:
 	line_distance = dragon_node.distance_moved * 1.5
 	#Set the first link's position to be at the Flight Direction.
 	point_array[0] = dragon_node.global_position
-	#print(flight_direction_node.position)
-	#print(point_array[0])
-	#var to_next = point_array[0]
 	for i in (point_array.size() - 1):
-		#point_array[i] -= dragon_node.global_position
-		#point_array[i+1] -= dragon_node.global_position
 		point_array[i+1] = constrain_distance(point_array[i+1],point_array[i],line_distance)
-		pass
-	#print(point_array[0])
-	
-	#print(constrain_distance(point,global_position,line_distance))
 	queue_redraw()
 
 func _draw() -> void:

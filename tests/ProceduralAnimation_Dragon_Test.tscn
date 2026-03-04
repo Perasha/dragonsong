@@ -1,0 +1,126 @@
+[gd_scene load_steps=8 format=3 uid="uid://dmeenll0gplgw"]
+
+[ext_resource type="PackedScene" uid="uid://cg4csi2ar0re7" path="res://tests/dragon_test_proceduralanimation.tscn" id="1_f4i6r"]
+[ext_resource type="Script" uid="uid://bn2gitnl1aawp" path="res://tests/procedural_body.gd" id="2_f4i6r"]
+[ext_resource type="Script" uid="uid://1fpt8b2fc5dx" path="res://Maps/_map_collision_copy.gd" id="3_f4i6r"]
+[ext_resource type="PackedScene" uid="uid://drn046xbx7cku" path="res://debug_hud.tscn" id="4_xsdba"]
+[ext_resource type="Script" uid="uid://dc1rwc8b5wnv" path="res://tests/slider_debug.gd" id="5_j6taf"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_f4i6r"]
+radius = 47.93
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_xsdba"]
+friction = 0.25
+rough = true
+
+[node name="Main" type="Node"]
+
+[node name="ProceduralBody" type="Node2D" parent="." node_paths=PackedStringArray("dragon_node")]
+position = Vector2(1956, -2777)
+script = ExtResource("2_f4i6r")
+dragon_node = NodePath("../dragon")
+
+[node name="COM" type="Polygon2D" parent="ProceduralBody"]
+position = Vector2(-16, -30)
+polygon = PackedVector2Array(10, 10, 10, -10, -10, -10, -10, 10)
+uv = PackedVector2Array(-102.5, -7, -103.5, 26, -79.5, 25, -82.5, -8, -82.5, -8)
+
+[node name="Body" type="Polygon2D" parent="ProceduralBody/COM"]
+z_index = -1
+position = Vector2(-1, 3)
+color = Color(0.43134022, 0.43134025, 0.43134025, 1)
+polygon = PackedVector2Array(28, 18, 60, -14, 49, -37, -28, -36, -30, 19)
+uv = PackedVector2Array(-102.5, -7, -103.5, 26, -79.5, 25, -82.5, -8, -82.5, -8)
+
+[node name="Hip" type="Polygon2D" parent="ProceduralBody"]
+position = Vector2(89, -33)
+polygon = PackedVector2Array(10, 10, 10, -10, -10, -10, -10, 10)
+uv = PackedVector2Array(-102.5, -7, -103.5, 26, -79.5, 25, -82.5, -8, -82.5, -8)
+
+[node name="dragon" parent="." instance=ExtResource("1_f4i6r")]
+position = Vector2(1956, -2777)
+
+[node name="Camera2D" type="Camera2D" parent="dragon"]
+position = Vector2(14, -76)
+zoom = Vector2(0.715, 0.715)
+position_smoothing_enabled = true
+
+[node name="Marker" type="CollisionShape2D" parent="dragon/Camera2D"]
+visible = false
+shape = SubResource("CircleShape2D_f4i6r")
+debug_color = Color(0.28627452, 0, 0.38039216, 0.8)
+
+[node name="Mountain" type="StaticBody2D" parent="."]
+position = Vector2(-4494, -611)
+physics_material_override = SubResource("PhysicsMaterial_xsdba")
+
+[node name="Polygon2D" type="Polygon2D" parent="Mountain"]
+color = Color(0.14406255, 0.14406255, 0.14406255, 1)
+polygon = PackedVector2Array(3935.25, -2129.25, 3935.918, -1728.56, 6924.998, -655.5569, 9611.25, -2107.25)
+uv = PackedVector2Array(6133.0195, -2392.8003, 3935.918, -1728.56, 6924.998, -655.5569, 8279.025, -2418.3477)
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Mountain"]
+script = ExtResource("3_f4i6r")
+
+[node name="HUD" parent="." node_paths=PackedStringArray("camera_node") instance=ExtResource("4_xsdba")]
+camera_node = NodePath("../dragon/Camera2D")
+
+[node name="COM_Freq" type="HSlider" parent="HUD" node_paths=PackedStringArray("val_label")]
+custom_minimum_size = Vector2(200, 30)
+offset_left = 922.0
+offset_top = 522.0
+offset_right = 1122.0
+offset_bottom = 552.0
+focus_mode = 0
+min_value = 0.01
+max_value = 2.0
+step = 0.001
+value = 0.03
+script = ExtResource("5_j6taf")
+val_label = NodePath("Val")
+
+[node name="Label" type="Label" parent="HUD/COM_Freq"]
+layout_mode = 0
+offset_left = 37.0
+offset_top = -28.0
+offset_right = 160.0
+offset_bottom = -5.0
+text = "COM Frequency"
+
+[node name="Val" type="Label" parent="HUD/COM_Freq"]
+layout_mode = 0
+offset_left = -129.0
+offset_top = 3.0
+offset_right = -6.0
+offset_bottom = 26.0
+text = "0.0"
+horizontal_alignment = 2
+
+[node name="COM_Amp" type="HSlider" parent="HUD" node_paths=PackedStringArray("val_label")]
+custom_minimum_size = Vector2(200, 30)
+offset_left = 922.0
+offset_top = 589.0
+offset_right = 1122.0
+offset_bottom = 619.0
+focus_mode = 0
+max_value = 50.0
+step = 0.01
+script = ExtResource("5_j6taf")
+val_label = NodePath("Val")
+
+[node name="Label" type="Label" parent="HUD/COM_Amp"]
+layout_mode = 0
+offset_left = 37.0
+offset_top = -28.0
+offset_right = 160.0
+offset_bottom = -5.0
+text = "COM Amplitude"
+
+[node name="Val" type="Label" parent="HUD/COM_Amp"]
+layout_mode = 0
+offset_left = -129.0
+offset_top = 3.0
+offset_right = -6.0
+offset_bottom = 26.0
+text = "0.0"
+horizontal_alignment = 2

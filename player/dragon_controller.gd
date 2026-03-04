@@ -138,8 +138,8 @@ func _physics_process(delta: float) -> void:
 		just_jumped = true
 		stored_jump = jump_strength
 	
-	direction_x = Input.get_axis("ui_left", "ui_right")
-	direction_y = Input.get_axis("ui_up", "ui_down")
+	direction_x = Input.get_axis("move_left", "move_right")
+	direction_y = Input.get_axis("move_up", "move_down")
 		
 	#If we're stalling, we can't climb. So we specifically anchor our Y direction down.
 	if is_stalling:

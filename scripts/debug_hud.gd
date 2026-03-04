@@ -3,7 +3,7 @@ extends CanvasLayer
 
 @onready var dragon_node = get_node("/root/Main/dragon")
 @onready var dragon_resources = get_node("/root/Main/dragon/Resources")
-@onready var camera_node = get_node("/root/Main/Camera2D")
+@export var camera_node : Camera2D
 
 @onready var speedLabel = get_node("Speed")
 @onready var lin_vel_Label = get_node("LinearVelocity")

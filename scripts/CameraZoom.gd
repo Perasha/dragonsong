@@ -33,6 +33,8 @@ var maxZoom_fly = 0.7
 @export var default_weight = 0.005
 var weight = default_weight
 
+@export var smoothing_weight_modifier = 1.0
+
 func _ready():
 	current_zoom_level = GROUND
 	#weight = float(smoothing_distance) / 5000
@@ -107,9 +109,10 @@ func _process(delta):
 			#smoothing_enabled = true
 		
 		if smoothing_enabled:
-			var smoothing_weight = pow(log(1.2),2)
+			var smoothing_weight = (cam_marker.dist_moved * 0.01) * smoothing_weight_modifier#0.03#pow(log(1.2),2)
+			if smoothing_weight < 0.03: smoothing_weight = 0.03
 			#position = lerp(position, new_position, pow(-weight*delta,3))
-			#print("Weight: ", weight)
+			#print("Weight: ", smoothing_weight)
 			#print("Calculated Weight: ", pow(-weight*delta,2))
 			#print("Distance Behind Dragon: ", position.distance_to(dragon_node.position))
 			#print("Distance to Target Position: ", position.distance_to(dragon_node.position))

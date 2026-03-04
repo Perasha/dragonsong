@@ -10,6 +10,10 @@ extends Node2D
 var screen_constraint = Vector2(0,0)
 @export var look_marker : Sprite2D
 
+var current_pos = Vector2()
+var prev_pos = Vector2()
+var dist_moved = 0.1
+
 ## Apply Zoom Multiplier
 func zoom_multipler():
 	return camera_node.zoom.x / camera_node.defaultZoomLevel
@@ -47,6 +51,9 @@ var weight = 0.1
 #var ci_screen_pos: Vector2 
 
 func _process(delta: float) -> void:
+	prev_pos = current_pos
+	current_pos = position
+	
 	if GlobalData.option_hold_to_look:
 		if Input.is_action_pressed("look"):
 			is_looking = true
@@ -146,3 +153,6 @@ func _process(delta: float) -> void:
 	#	weight = 0.05
 	
 	position = lerp(position, new_position, weight)
+	
+	dist_moved = prev_pos.distance_to(current_pos)
+	#print(dist_moved * 0.01)
