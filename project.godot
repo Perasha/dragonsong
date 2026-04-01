@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="DragonGame_2DScroller"
-run/main_scene="uid://dmeenll0gplgw"
+run/main_scene="uid://dtiywd80fsyrn"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
 

@@ -5,12 +5,13 @@ extends RigidBody2D
 @export var max_walk_speed = 200.00
 @export var max_run_speed = 400.00
 @export var max_fly_speed = 1250.00
-var max_fly_speed_base = GlobalData.terminal_velocity / 1.5
+var max_fly_speed_base = GlobalData.terminal_velocity / 2.5#1.5
 var terminal_velocity = 2000.00
 
 @onready var floor_check = get_node("FloorCheck")
-@onready var sprite = get_node("Body") #Animator
+#@onready var sprite = get_node("Body") #Animator
 @onready var wingbeat_clock = get_node("wingbeat_clock")
+var wingbeat_timer_min = 0.25
 @onready var resources = get_node("Resources")
 #@onready var interact_field = get_node("InteractArea")
 @onready var climb_detector = get_node("ClimbDetector")
@@ -134,7 +135,7 @@ func _physics_process(delta: float) -> void:
 		if jump_strength <= max_jump_strength:
 			jump_strength += 0.1
 	if Input.is_action_just_released("flap"):
-		is_hovering = false
+		#is_hovering = false
 		just_jumped = true
 		stored_jump = jump_strength
 	
@@ -206,14 +207,25 @@ func _physics_process(delta: float) -> void:
 	
 	
 	## This is our jump! If we flap once, it's just a jump. If we flap twice, and we're not on the ground, we start flying!	
-	if just_jumped and not is_grounded and not is_flying:
-		if flight_direction.y > 0:
-			flight_direction.y *= -1
-		wingbeat()
-		is_flying = true
-		if GlobalData.option_hover_leave:
-			is_hovering = true
-		is_flying = false
+	if just_jumped:
+		if not is_grounded and not is_flying:
+			if flight_direction.y > 0:
+				flight_direction.y *= -1
+			wingbeat()
+			is_flying = true
+			
+			if GlobalData.option_hover_leave:
+				is_hovering = true
+			else:
+				## If Glide on Fly is true:
+				is_gliding = true
+	
+		## If we're hovering, manually set flight_direction so that we have an easy transition
+		elif is_hovering:
+			is_hovering = false
+			## If Glide on Fly is true:
+			is_gliding = true
+			wingbeat()
 	
 	if is_grounded:
 		is_flying = false
@@ -221,7 +233,8 @@ func _physics_process(delta: float) -> void:
 	if not is_flying and not is_grounded:
 		if distance_moved > 18 or just_jumped:
 			is_flying = true
-			
+			## If Glide on Fly is true:
+			is_gliding = true
 	
 	## If we're on the ground, add some directly upward velocity if we flap our wings!
 	if just_jumped and is_grounded:
@@ -272,27 +285,48 @@ var reset = false
 @export var max_jump_strength = 4.0
 
 func wingbeat():
-	wingbeat_clock.start()
 	## Lifting us up ever so slightly
-	if not direction_x:
+	print(flight_direction.y)
+	if not direction_x and flight_direction.y < 0.2:
+		print("Flying upwards")
 		flight_direction.y -= (stored_jump-3) / 9
 	
 	stored_jump *= stored_jump_multiplier
+	var wingbeat_force = 0.0
 	
-	if current_speed < max_fly_speed:
+	#print(terminal_velocity)
+	if current_speed < terminal_velocity:
 		## Adding an "afterburner" to continually apply force after we do a wingbeat.
+		
+		
 		wingbeat_afterburner = (stored_jump * afterburner_amount)
 		
-		## I uh... don't know what values to shift.
-		if is_gliding:
-			current_speed += (wingbeat_strength * stored_jump)# / int((distance_moved / 20) + 1)
-		else:
-			current_speed += (wingbeat_strength * stored_jump * 1.25)# / int((distance_moved / 10) + 1)
+		#var speed_reduction = current_speed / 10
+		#print("Current speed: ", speed_reduction)
+		#print("Afterburner: ", wingbeat_afterburner)
+		#print("Wingbeat Force: ", wingbeat_strength * stored_jump)
+		#print("Speed-reduced wingbeat force: ", (wingbeat_strength * stored_jump) - speed_reduction)
 		
-		if current_speed > max_fly_speed:
-			current_speed = max_fly_speed
+		wingbeat_force = (wingbeat_strength * stored_jump)# - speed_reduction
+		#print("Modified Wingbeat Force: ", wingbeat_force)
+		if wingbeat_force < 0:
+			wingbeat_force = 0
+		## I uh... don't know what values to shift.
+		#print("Final Wingbeat Force: ", wingbeat_force)
+		if is_gliding:
+			current_speed += wingbeat_force# / int((distance_moved / 20) + 1)
+		else:
+			wingbeat_force *= 1.25
+			current_speed += wingbeat_force# / int((distance_moved / 10) + 1)
+		#current_speed -= speed_reduction
+	if current_speed > terminal_velocity:
+		current_speed = terminal_velocity
 	
 	on_wingbeat_cooldown = true
+	var new_wait_time = 0.11 * (stored_jump * stored_jump)
+	print(new_wait_time)
+	wingbeat_clock.wait_time = new_wait_time
+	wingbeat_clock.start()
 	
 ## SUPER IMPORTANT!
 		## Here, we're actually dividing our current speed among our new directions.
@@ -316,10 +350,10 @@ func fly():
 	if just_jumped and current_speed <= terminal_velocity and not on_wingbeat_cooldown:
 		wingbeat()
 		#print("Continue")
-	# Adding our afterburner force. This'll slowly go down long after we do the wingbeat, but it's to push us further for a bit longer.
+	## Adding our afterburner force. This'll slowly go down long after we do the wingbeat, but it's to push us further for a bit longer.
 	if wingbeat_afterburner > 1:
 		wingbeat_afterburner /= 1.04
-		current_speed += wingbeat_afterburner
+		current_speed += wingbeat_afterburner * 0.6
 		
 	if current_speed >= 20:
 		apply_momentum()
@@ -394,10 +428,10 @@ func _on_wingbeat_clock_timeout() -> void:
 	on_wingbeat_cooldown = false
 
 func _on_injure_button_up() -> void:
-	resources.health_update(-1)
+	resources.health_update(-10)
 
 func _on_heal_button_up() -> void:
-	resources.health_update(1)
+	resources.health_update(10)
 
 # Fall damage
 func _on_body_entered(body: Node) -> void:

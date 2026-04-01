@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://b7a6y3i5hmuxt"]
+
+[ext_resource type="PackedScene" uid="uid://ibv331v1v602" path="res://player/dragon_3D/CX74-JackNew3-4-RiggedPose6.blend" id="1_66p4s"]
+
+[node name="CX74-JackNew3-4-RiggedPose6" instance=ExtResource("1_66p4s")]
+
+[node name="Lamp" parent="." index="0"]
+transform = Transform3D(-0.29086468, -0.77110094, 0.56639314, -0.055189036, 0.6045247, 0.79467237, -0.9551711, 0.19988343, -0.2183912, -1.599863, 8.140829, -1.005454)

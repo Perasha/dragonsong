@@ -5,7 +5,7 @@ enum {IDLE,MOVE,GRABBED,DEAD}
 # Menu Toggles
 var option_hold_to_glide = false
 var option_hold_to_hover = false
-var option_hover_leave = true
+var option_hover_leave = false
 var option_hold_to_look = false
 
 @export var terminal_velocity = 3250.00

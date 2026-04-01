@@ -61,6 +61,11 @@ var hip_time_offset = 1.0
 var is_in_air = false
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	print(dragon_node.direction_x)
+	if dragon_node.direction_x == -1.0:
+		scale.x = 1.0
+	if dragon_node.direction_x == 1.0:
+		scale.x = -1.0
 	#print("Distance Moved: ", dragon_node.distance_moved)
 	## DEBUG NUMBER SHIFTING
 	com_freq_base = com_freq_slider.value
@@ -89,7 +94,8 @@ func _process(delta: float) -> void:
 			#com_amp = com_amp_base * int(dragon_node.distance_moved)# + com_amp_base)#lerp(com_amp,com_amp_base * (dragon_node.distance_moved),0.01)# * dragon_speed_multiplier
 			
 			com.position.y = com_rest_pos.y + sin(move_timer * com_freq) * com_amp
-			hip.position.y = hip_rest_pos.y - (sin((move_timer * com_freq) + hip_time_offset) * com_amp) ## Adding this value at the end to offset the timing
+			hip.position.y = hip_rest_pos.y + cos(move_timer * com_freq) * com_amp
+			#hip.position.y = hip_rest_pos.y - (sin((move_timer * com_freq) + hip_time_offset) * com_amp) ## Adding this value at the end to offset the timing
 			
 			#print("Previous Frequency: ", prev_freq)
 			#print("Current Frequency: ", com_freq)

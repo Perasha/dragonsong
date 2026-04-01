@@ -1,24 +1,21 @@
-[gd_scene load_steps=34 format=3 uid="uid://b0n2m1kv2cdx1"]
+[gd_scene load_steps=32 format=3 uid="uid://b0n2m1kv2cdx1"]
 
 [ext_resource type="Script" uid="uid://cqu0w22jdjbs4" path="res://player/dragon_controller.gd" id="1_urtjn"]
-[ext_resource type="Texture2D" uid="uid://cbj5kmqjsr7ck" path="res://Sprites/DragonWingless.png" id="2_2w5qb"]
-[ext_resource type="Script" uid="uid://ct4lehwag4jqw" path="res://player/dragon_animation.gd" id="3_b1f37"]
-[ext_resource type="Texture2D" uid="uid://6d5k318sfh03" path="res://Sprites/wings_folded.png" id="4_au75c"]
 [ext_resource type="Script" uid="uid://csdttjcujdw6f" path="res://scripts/direction_pointer.gd" id="5_vgkb3"]
 [ext_resource type="Script" uid="uid://c1eborn8rg0gt" path="res://player/dragon_resources.gd" id="6_j86p3"]
 [ext_resource type="PackedScene" uid="uid://v3g8grpgtqyr" path="res://presence.tscn" id="6_ju2y0"]
 [ext_resource type="Script" uid="uid://j6bf53um2w80" path="res://player/dragon_interact.gd" id="7_1tael"]
 [ext_resource type="Texture2D" uid="uid://dus3vnh373g2c" path="res://Sprites/circle01.png" id="7_to7sl"]
 [ext_resource type="Script" uid="uid://bedoflfa5k85g" path="res://scripts/spell_effect.gd" id="9_5i4j3"]
+[ext_resource type="Texture2D" uid="uid://cbj5kmqjsr7ck" path="res://Sprites/DragonWingless.png" id="10_1tael"]
 [ext_resource type="Script" uid="uid://bmv5ue121lsj2" path="res://player/dragon_breath_weapon.gd" id="11_cvsob"]
 [ext_resource type="PackedScene" uid="uid://dco7srxofagfv" path="res://ParticleEffects/fire_mote.tscn" id="12_p6rrk"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_0ucct"]
 friction = 0.0
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_v4tli"]
-radius = 10.399032
-height = 35.835346
+[sub_resource type="CircleShape2D" id="CircleShape2D_p6rrk"]
+radius = 20.07255
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gilsg"]
 
@@ -183,23 +180,15 @@ max_contacts_reported = 1
 script = ExtResource("1_urtjn")
 speed = 50.0
 wingbeat_strength = 100.0
+stored_jump_multiplier = 0.1
 jump_strength_base = 3.0
 max_jump_strength = 6.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-19, -1)
+position = Vector2(-19, -45)
 rotation = 1.5708
 scale = Vector2(4.135, 4.13)
-shape = SubResource("CapsuleShape2D_v4tli")
-
-[node name="Body" type="Sprite2D" parent="."]
-position = Vector2(0, -107)
-scale = Vector2(6, 6)
-texture = ExtResource("2_2w5qb")
-script = ExtResource("3_b1f37")
-
-[node name="Wings" type="Sprite2D" parent="Body"]
-texture = ExtResource("4_au75c")
+shape = SubResource("CircleShape2D_p6rrk")
 
 [node name="FloorCheck" type="RayCast2D" parent="."]
 position = Vector2(40, 45)
@@ -221,6 +210,7 @@ wait_time = 0.25
 one_shot = true
 
 [node name="Presence" parent="." instance=ExtResource("6_ju2y0")]
+visible = false
 
 [node name="ClimbDetector" type="RayCast2D" parent="."]
 position = Vector2(-42.000004, -32)
@@ -328,9 +318,14 @@ amount = 256
 lifetime = 1.0
 process_material = SubResource("ParticleProcessMaterial_p6rrk")
 
+[node name="Sprite2D" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(6, -107)
+scale = Vector2(6, 6)
+texture = ExtResource("10_1tael")
+
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_entered" from="Direction Pointer" to="." method="_on_direction_pointer_body_entered"]
 [connection signal="timeout" from="wingbeat_clock" to="." method="_on_wingbeat_clock_timeout"]
 [connection signal="area_entered" from="Presence" to="Resources" method="_on_presence_area_entered"]
 [connection signal="area_exited" from="Presence" to="Resources" method="_on_presence_area_exited"]
-[connection signal="animation_finished" from="Bite" to="Body" method="_on_bite_animation_finished"]

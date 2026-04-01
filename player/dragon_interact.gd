@@ -39,7 +39,7 @@ func _input(event: InputEvent) -> void:
 	## BITE
 	if Input.is_action_just_pressed("bite") and dragon_node.resources.attack_cooldown == 0:
 		#print("Dragon script: ", GlobalData.ambrette_town)
-		dragon_node.sprite.play_bite_animation()
+		#dragon_node.sprite.play_bite_animation()
 		dragon_node.resources.attack_cooldown = dragon_node.resources.attack_speed
 		for body in get_overlapping_bodies():
 			if body.is_in_group("entity"):

@@ -1,0 +1,57 @@
+[gd_scene load_steps=9 format=3 uid="uid://cuitsn06hqik7"]
+
+[ext_resource type="Script" uid="uid://bfif2s38o6i8d" path="res://player/dragon_animator.gd" id="1_5qt0x"]
+[ext_resource type="Texture2D" uid="uid://dajjcmqmxsmxa" path="res://player/dragon_new/Head.png" id="2_1pjt8"]
+[ext_resource type="Texture2D" uid="uid://b8rrnl17shk63" path="res://player/dragon_new/Hip.png" id="3_em21q"]
+[ext_resource type="Texture2D" uid="uid://cawhnf8mxtgxq" path="res://player/dragon_new/Standing_BackLeg.png" id="4_pux5i"]
+[ext_resource type="Texture2D" uid="uid://da8qvwy61ru2i" path="res://player/dragon_new/Torso.png" id="5_vr01g"]
+[ext_resource type="Texture2D" uid="uid://dvqy1v2fh6kss" path="res://player/dragon_new/Wing_Folded.png" id="6_8be4y"]
+[ext_resource type="Texture2D" uid="uid://chpn77x4wi0pp" path="res://player/dragon_new/Standing_FrontLeg.png" id="7_g5d8s"]
+
+[sub_resource type="Curve" id="Curve_0oli0"]
+_data = [Vector2(0, 0.6516854), 0.0, 0.0, 0, 0, Vector2(0.12041885, 0.9101124), 0.0, 0.0, 0, 0, Vector2(0.49738222, 0.68539333), -2.2111, -2.2111, 0, 0, Vector2(1, 0.15730345), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[node name="AnimatedBody" type="Node2D" node_paths=PackedStringArray("dragon_node", "camera_marker")]
+script = ExtResource("1_5qt0x")
+dragon_node = NodePath("")
+camera_marker = NodePath("")
+body_offset = Vector2(0, 40.89)
+
+[node name="Spine" type="Line2D" parent="."]
+position = Vector2(-130, -130)
+points = PackedVector2Array(-113, -9, -81, -16, -57, -11, -19, 12, 9, 23, 35, 27, 67, 25, 189, -2, 222, -2, 244, 3, 306, 17, 392, 38, 528, 64, 616, 66, 685, 59, 750, 42, 818, 20, 882, 13, 967, 12, 1039, 34)
+width = 76.05
+width_curve = SubResource("Curve_0oli0")
+default_color = Color(0.5764706, 0.5764706, 0.5764706, 1)
+
+[node name="Head" type="Sprite2D" parent="."]
+position = Vector2(-241, -138)
+texture = ExtResource("2_1pjt8")
+offset = Vector2(-29.69, 6.725)
+
+[node name="Hip" type="Sprite2D" parent="."]
+position = Vector2(108, -131)
+texture = ExtResource("3_em21q")
+offset = Vector2(32, 0)
+
+[node name="BackLeg" type="Sprite2D" parent="Hip"]
+position = Vector2(23, 74)
+texture = ExtResource("4_pux5i")
+offset = Vector2(32, 0)
+
+[node name="Torso" type="Sprite2D" parent="."]
+position = Vector2(-60, -107)
+texture = ExtResource("5_vr01g")
+offset = Vector2(60, 0)
+
+[node name="Wings" type="Sprite2D" parent="Torso"]
+z_index = 1
+position = Vector2(210, 12)
+texture = ExtResource("6_8be4y")
+offset = Vector2(60, 0)
+
+[node name="FrontLeg" type="Sprite2D" parent="Torso"]
+position = Vector2(-37, 67)
+texture = ExtResource("7_g5d8s")
+offset = Vector2(60, 0)
