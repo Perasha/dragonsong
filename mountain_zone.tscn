@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://dtiywd80fsyrn"]
+[gd_scene load_steps=51 format=3 uid="uid://dtiywd80fsyrn"]
 
 [ext_resource type="PackedScene" uid="uid://drn046xbx7cku" path="res://debug_hud.tscn" id="2_t6101"]
 [ext_resource type="Script" uid="uid://2absxauv5538" path="res://scripts/CameraZoom.gd" id="3_8g0ca"]
@@ -7,22 +7,34 @@
 [ext_resource type="PackedScene" uid="uid://b0n2m1kv2cdx1" path="res://dragon_player.tscn" id="5_4kaof"]
 [ext_resource type="Script" uid="uid://djpubhctp6wmu" path="res://scripts/camera_marker.gd" id="6_gcil1"]
 [ext_resource type="Texture2D" uid="uid://dg2cduwhunwxt" path="res://Sprites/point_light.webp" id="7_sw31v"]
+[ext_resource type="Script" uid="uid://0vjgvtna8udf" path="res://player/dragon_3D/dragon_model_script.gd" id="8_m1ry6"]
+[ext_resource type="PackedScene" uid="uid://bclxvnrkknrs2" path="res://player/dragon_3D/keyframes/wings_dive.fbx" id="9_0oli0"]
 [ext_resource type="Script" uid="uid://5s1s4paeqnsv" path="res://Weather/weather_manager.gd" id="9_7ekg2"]
 [ext_resource type="Script" uid="uid://cimk5tdxjhoy4" path="res://Entities/entity_manager.gd" id="9_mdveq"]
+[ext_resource type="PackedScene" uid="uid://di5kcj2tm3q7d" path="res://player/dragon_3D/keyframes/wing_flap_top.fbx" id="10_hcy15"]
 [ext_resource type="PackedScene" uid="uid://dy0vj4qse4rh0" path="res://Entities/bison.tscn" id="10_ld413"]
 [ext_resource type="Script" uid="uid://xx1o4eljbjg5" path="res://Weather/wind_system.gd" id="10_prg60"]
 [ext_resource type="Texture2D" uid="uid://cqarwc7fbrbeh" path="res://Sprites/key_frag1.png" id="11_12f22"]
+[ext_resource type="PackedScene" uid="uid://djek8i81kpjo1" path="res://player/dragon_3D/keyframes/wing_flap_mid.fbx" id="11_rc4ga"]
+[ext_resource type="PackedScene" uid="uid://c452i6timb4hf" path="res://player/dragon_3D/keyframes/wing_flap_bottom.fbx" id="12_kvg7p"]
 [ext_resource type="PackedScene" uid="uid://b4e2uds066g4e" path="res://interactable.tscn" id="13_cw5i7"]
+[ext_resource type="PackedScene" uid="uid://5mc7dpynwpbx" path="res://player/dragon_3D/keyframes/wings_folded.fbx" id="13_wnhwn"]
 [ext_resource type="Texture2D" uid="uid://cjyvaq32h8tc2" path="res://Sprites/key_frag2.png" id="14_6jdpt"]
+[ext_resource type="PackedScene" uid="uid://qkq00ib1e5yd" path="res://player/dragon_3D/keyframes/wings_glide.fbx" id="14_d425j"]
 [ext_resource type="PackedScene" uid="uid://055gk0wf3t0j" path="res://ParticleEffects/key_frag_effect.tscn" id="14_sl5eo"]
 [ext_resource type="Script" uid="uid://jofgk6qujip0" path="res://scripts/object_interact_manager.gd" id="15_6jdpt"]
 [ext_resource type="Script" uid="uid://bvxkyx0ds2l6i" path="res://scripts/health_bar.gd" id="15_7ekg2"]
+[ext_resource type="PackedScene" uid="uid://je2e87c8wqp5" path="res://player/dragon_3D/models/body.fbx" id="15_8u07s"]
 [ext_resource type="Texture2D" uid="uid://pia7toet32wu" path="res://Sprites/key_frag3.png" id="15_ld413"]
 [ext_resource type="Script" uid="uid://bbyvphoamnl7v" path="res://scripts/interactable.gd" id="16_4e6kc"]
 [ext_resource type="Texture2D" uid="uid://bsulgxbjt3gca" path="res://Sprites/statue.png" id="16_fqjxk"]
+[ext_resource type="PackedScene" uid="uid://b2sx5xxjokyj6" path="res://player/dragon_3D/models/head.fbx" id="16_nyc6l"]
 [ext_resource type="PackedScene" uid="uid://bks7gor6yrlx6" path="res://pause_menu.tscn" id="16_prg60"]
+[ext_resource type="PackedScene" uid="uid://cbandjcl4faan" path="res://player/dragon_3D/models/neck.fbx" id="17_vwurm"]
+[ext_resource type="PackedScene" uid="uid://kpij4ixhp174" path="res://player/dragon_3D/models/tail.fbx" id="18_a8pjr"]
 [ext_resource type="Script" uid="uid://bfpmv7tl4iuxw" path="res://scripts/fragments_found.gd" id="18_fqjxk"]
 [ext_resource type="Script" uid="uid://1fpt8b2fc5dx" path="res://Maps/_map_collision_copy.gd" id="19_ld413"]
+[ext_resource type="PackedScene" uid="uid://d04gywa38jsox" path="res://player/dragon_3D/models/wings.fbx" id="19_qrces"]
 [ext_resource type="Script" uid="uid://c376g4kols45m" path="res://Maps/map_manager.gd" id="19_sl5eo"]
 [ext_resource type="Texture2D" uid="uid://scg63yoxuewp" path="res://parallax_bg/bg_03.png" id="20_4kaof"]
 [ext_resource type="Texture2D" uid="uid://cocb0lk531e7o" path="res://parallax_bg/bg_02.png" id="21_cw5i7"]
@@ -34,8 +46,6 @@
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_prg60"]
 radius = 47.93
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_anmmy"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_pejub"]
 
@@ -115,13 +125,6 @@ uv = PackedVector2Array(-258.5, -62, 2.5, -63, 1.5, 93, -265.5, 87)
 z_index = 0
 dragon_node = NodePath("../dragon")
 
-[node name="RigidBody2D" type="RigidBody2D" parent="."]
-position = Vector2(2369, 1245)
-collision_layer = 0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="RigidBody2D"]
-shape = SubResource("CircleShape2D_anmmy")
-
 [node name="dragon" parent="." instance=ExtResource("5_4kaof")]
 z_index = 1
 position = Vector2(2135, 1244)
@@ -191,6 +194,57 @@ shadow_color = Color(0, 0, 0, 1)
 shadow_filter = 1
 texture = ExtResource("7_sw31v")
 texture_scale = 9.97
+
+[node name="SubViewport" type="SubViewportContainer" parent="dragon"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -933.0
+offset_top = -1065.0
+offset_right = 867.0
+offset_bottom = 735.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SubViewport" type="SubViewport" parent="dragon/SubViewport"]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(1800, 1800)
+render_target_update_mode = 4
+
+[node name="Camera3D" type="Camera3D" parent="dragon/SubViewport/SubViewport"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 5.722842, 3.2266412, 0)
+projection = 1
+size = 30.141
+far = 50.0
+
+[node name="dragon_model" type="Node3D" parent="dragon/SubViewport/SubViewport" node_paths=PackedStringArray("dragon_node")]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0, 0)
+script = ExtResource("8_m1ry6")
+wing_dive = ExtResource("9_0oli0")
+wing_flap_top = ExtResource("10_hcy15")
+wing_flap_mid = ExtResource("11_rc4ga")
+wing_flap_bottom = ExtResource("12_kvg7p")
+wing_folded = ExtResource("13_wnhwn")
+wing_glide = ExtResource("14_d425j")
+dragon_node = NodePath("../../..")
+
+[node name="body" parent="dragon/SubViewport/SubViewport/dragon_model" instance=ExtResource("15_8u07s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.722842, 3.2266412, 0)
+
+[node name="head" parent="dragon/SubViewport/SubViewport/dragon_model" instance=ExtResource("16_nyc6l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.722842, 3.2266412, 0)
+
+[node name="neck" parent="dragon/SubViewport/SubViewport/dragon_model" instance=ExtResource("17_vwurm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.722842, 3.2266412, 0)
+
+[node name="tail" parent="dragon/SubViewport/SubViewport/dragon_model" instance=ExtResource("18_a8pjr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.722842, 3.2266412, 0)
+
+[node name="wings" parent="dragon/SubViewport/SubViewport/dragon_model" instance=ExtResource("19_qrces")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.722842, 3.2266412, 0)
 
 [node name="WeatherManager" type="Node" parent="."]
 script = ExtResource("9_7ekg2")
