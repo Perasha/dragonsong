@@ -8,7 +8,7 @@ var option_hold_to_hover = false
 var option_hover_leave = false
 var option_hold_to_look = false
 
-@export var terminal_velocity = 3250.00
+@export var terminal_velocity = 2250.00
 
 var ambrette_town = {
 	"player_opinion" : 0,

@@ -37,6 +37,7 @@ var is_hovering = false
 var is_gliding = false
 var is_running = false
 var is_climbing = false
+var is_flap_held = false
 
 var is_grounded = false
 # Option to change from glide being a toggle, to being held
@@ -85,73 +86,49 @@ func _physics_process(delta: float) -> void:
 			#max_fly_speed = max_fly_speed_base
 	#else:
 		#max_fly_speed = max_fly_speed_base
-	# Here, we take the X and Y of our Linear Velocity and combine it into a total speed value.
-	# And uh, we needed the Pythoreum Theorum for it.
+	## Here, we take the X and Y of our Linear Velocity and combine it into a total speed value.
+	## And uh, we needed the Pythoreum Theorum for it.
 	current_speed = pow(abs(linear_velocity.x),2) + pow(abs(linear_velocity.y),2)
 	current_speed = sqrt(current_speed)
-	# Now, we're constantly pushing our Flight Direction (the thing that dictates which way we go when we fly) down.
-	# That's because of gravity! Because otherwise, well, we're always adding force forward and it's
-	# not enough to cancel out the built-in gravity.
-	# Also it lets us do cool diving maneuvers.
+	## Now, we're constantly pushing our Flight Direction (the thing that dictates which way we go when we fly) down.
+	## That's because of gravity! Because otherwise, well, we're always adding force forward and it's
+	## not enough to cancel out the built-in gravity.
+	## Also it lets us do cool diving maneuvers.
 	
-	# So first, we set our dampening value.
+	## So first, we set our dampening value.
 	fd_dampen = dampen_base
-	#print(gravity)
-	# First, if our glide is toggled, we lower this dampening value so we get a nice, slow descent.
-	# if the distance we moved is low enough, meaning we've slowed down, we'll disable it and start diving.
-	# If the distance moved is low and we're flying, that means... we've stalled!
-	# Also if we're hovering, skip this ENTIRE thing.
 	if not is_hovering:
-		if distance_moved < 4 and is_flying:
-			is_stalling = true
-			fd_dampen = dampen_base
-		elif distance_moved > 10 and is_flying:
-			is_stalling = false
-		if is_flying == false:
-			is_stalling = false
-		if is_gliding and not is_stalling:
-			fd_dampen = dampen_glide
-		
-		if is_gliding:
-			if flight_direction.y < 0.04:
-				flight_direction.y += fd_dampen / (distance_moved + fd_dampen)
-			#elif flight_direction.y > 0.04:
-			#	flight_direction.y -= fd_dampen / (distance_moved + fd_dampen)
-		# Now here's the actual dampening.
-		# We first make sure that we are flying *and* that our flight direction isn't directly up (meaning we have enough force to fly up)
-		elif flight_direction.y < 0.95:
-			# We take our dampening value, and divide it by the distance moved. 
-			# We also then add our dampening value to that number so that we don't accidentally divide by zero.
-			flight_direction.y += fd_dampen / (distance_moved + fd_dampen)
-		elif not is_flying:
+		if not is_flying:
 			flight_direction.y = 1
-	# If we ARE hovering
-	else:
-		is_stalling = false
 		
 	check_climb()
-	# Now we get inputs. Our wing flap, then movement axes, then our wing-fold/dive.
+	## Now we get inputs. Our wing flap, then movement axes, then our wing-fold/dive.
 	if Input.is_action_pressed("flap"):
+		is_flap_held = true
 		if jump_strength <= max_jump_strength:
 			jump_strength += 0.1
 	if Input.is_action_just_released("flap"):
 		#is_hovering = false
 		just_jumped = true
+		is_flap_held = false
 		stored_jump = jump_strength
 	
 	direction_x = Input.get_axis("move_left", "move_right")
 	direction_y = Input.get_axis("move_up", "move_down")
-		
-	#If we're stalling, we can't climb. So we specifically anchor our Y direction down.
-	if is_stalling:
-		direction_y = 1
 	
-	# Can we make our Direction proportional to our speed? 
-	# For example, if we're going too slow, 
+	## Disabling Stalling to instead modify our direction_y based on our speed
+	#print("Old FD_Dampen: ", fd_dampen)
+	fd_dampen = (1.0 - (current_speed / terminal_velocity))
+	#fd_dampen = fd_dampen ** 10
+	fd_dampen *= 0.011
+	#print("Stalling Test: ", fd_dampen)
+	#print(fd_dampen)
+	if is_gliding:
+		fd_dampen *= 0.25
+	flight_direction.y += fd_dampen	
 	
-	
-	# If option_hold_to_glide is on, then you need to hold to fold in wings. Otherwise, it's a toggle.
-	# Some players might prefer one way or the other so it's a good option to have.
+	## If option_hold_to_glide is on, then you need to hold to fold in wings. Otherwise, it's a toggle.
+	## Some players might prefer one way or the other so it's a good option to have.
 	if is_flying:
 		if Input.is_action_just_pressed("Glide"):
 			if not GlobalData.option_hold_to_glide:
@@ -197,7 +174,7 @@ func _physics_process(delta: float) -> void:
 	elif is_gliding:
 		turn_radius = 0.03
 	else:
-		turn_radius = 0.06
+		turn_radius = 0.05
 		
 	## This is where we use our turning radius. We incrementally will be adding this value to
 	## our Flight Direction every tick, which will go against the gravity that constantly pushes it down.
@@ -286,10 +263,10 @@ var reset = false
 
 func wingbeat():
 	## Lifting us up ever so slightly
-	print(flight_direction.y)
-	if not direction_x and flight_direction.y < 0.2:
-		print("Flying upwards")
-		flight_direction.y -= (stored_jump-3) / 9
+	#print(flight_direction.y)
+	if not direction_x and flight_direction.y < 0.4:
+		#print("Flying upwards")
+		flight_direction.y -= (stored_jump-2) / 9
 	
 	stored_jump *= stored_jump_multiplier
 	var wingbeat_force = 0.0
@@ -324,7 +301,7 @@ func wingbeat():
 	
 	on_wingbeat_cooldown = true
 	var new_wait_time = 0.11 * (stored_jump * stored_jump)
-	print(new_wait_time)
+	#print(new_wait_time)
 	wingbeat_clock.wait_time = new_wait_time
 	wingbeat_clock.start()
 	
@@ -341,7 +318,7 @@ func apply_momentum():
 	if flight_direction.y < 0:
 		gravity_scale = grav_scale_default / 1.5
 	else:
-		gravity_scale = grav_scale_default
+		gravity_scale = grav_scale_default * 1.2
 	pass
 
 
@@ -404,7 +381,7 @@ func check_climb():
 
 func climb():
 	#print("Climbing!")
-	hover(max_walk_speed,speed)
+	hover(max_run_speed,speed)
 
 ## Walking
 func walk():

@@ -9,6 +9,7 @@ extends GPUParticles2D
 var spell_timer = 0.0
 var cast_timer = 0.0
 var is_spell_active = false
+var supersonic_speed = GlobalData.terminal_velocity * 1.5
 
 var active_spell = {
 	"name" : "Sonic Burst",
@@ -62,14 +63,15 @@ func _process(delta: float) -> void:
 
 func start_spell(spell):
 	if spell["name"] == "Sonic Burst":
-		dragon_node.current_speed = GlobalData.terminal_velocity
+		dragon_node.current_speed = supersonic_speed
 		dragon_node.apply_momentum()
 		dragon_node.is_flying = true
 		dragon_node.is_hovering = false
+		#dragon_node.terminal_velocity = supersonic_speed
 
 func continue_spell(spell):
 	if spell["name"] == "Sonic Burst" and dragon_node.is_flying:
-		dragon_node.current_speed = GlobalData.terminal_velocity
+		dragon_node.current_speed = supersonic_speed
 		dragon_node.apply_momentum()
 		dragon_node.is_hovering = false
 

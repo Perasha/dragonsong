@@ -1,14 +1,11 @@
-[gd_scene load_steps=43 format=3 uid="uid://dtiywd80fsyrn"]
+[gd_scene load_steps=40 format=3 uid="uid://dtiywd80fsyrn"]
 
 [ext_resource type="PackedScene" uid="uid://drn046xbx7cku" path="res://debug_hud.tscn" id="2_t6101"]
 [ext_resource type="Script" uid="uid://2absxauv5538" path="res://scripts/CameraZoom.gd" id="3_8g0ca"]
 [ext_resource type="Texture2D" uid="uid://bi6mddcerkp4c" path="res://Sprites/looking_marker.png" id="3_mdveq"]
-[ext_resource type="PackedScene" uid="uid://cuitsn06hqik7" path="res://player/animated_body.tscn" id="4_2sriv"]
 [ext_resource type="PackedScene" uid="uid://uap2fumrw2bw" path="res://tests/noodle_body.tscn" id="4_6jdpt"]
 [ext_resource type="PackedScene" uid="uid://b0n2m1kv2cdx1" path="res://dragon_player.tscn" id="5_4kaof"]
-[ext_resource type="PackedScene" uid="uid://dklrupfggup4q" path="res://player/dragon_3D/dragon_model.blend" id="6_2sriv"]
 [ext_resource type="Script" uid="uid://djpubhctp6wmu" path="res://scripts/camera_marker.gd" id="6_gcil1"]
-[ext_resource type="Script" uid="uid://0vjgvtna8udf" path="res://player/dragon_3D/dragon_model_script.gd" id="7_7xaw5"]
 [ext_resource type="Texture2D" uid="uid://dg2cduwhunwxt" path="res://Sprites/point_light.webp" id="7_sw31v"]
 [ext_resource type="Script" uid="uid://5s1s4paeqnsv" path="res://Weather/weather_manager.gd" id="9_7ekg2"]
 [ext_resource type="Script" uid="uid://cimk5tdxjhoy4" path="res://Entities/entity_manager.gd" id="9_mdveq"]
@@ -115,15 +112,8 @@ polygon = PackedVector2Array(-1685, -1372, 2094, -1468, 2058, 1643, -1744, 1476)
 uv = PackedVector2Array(-258.5, -62, 2.5, -63, 1.5, 93, -265.5, 87)
 
 [node name="NoodleBody" parent="." node_paths=PackedStringArray("dragon_node") instance=ExtResource("4_6jdpt")]
-visible = false
 z_index = 0
 dragon_node = NodePath("../dragon")
-
-[node name="AnimatedBody" parent="." node_paths=PackedStringArray("dragon_node", "camera_marker") instance=ExtResource("4_2sriv")]
-visible = false
-position = Vector2(2075, 1278)
-dragon_node = NodePath("../dragon")
-camera_marker = NodePath("../dragon/Camera_Marker")
 
 [node name="RigidBody2D" type="RigidBody2D" parent="."]
 position = Vector2(2369, 1245)
@@ -140,46 +130,10 @@ gravity_scale = 0.5
 speed = 25.0
 turn_radius = 0.01
 dampen_base = 0.15
-grav_scale_default = 1.2
+grav_scale_default = 1.1
 wingbeat_strength = 15.0
 stored_jump_multiplier = 0.5
 jump_strength_base = 2.0
-
-[node name="3D Assets" type="SubViewportContainer" parent="dragon"]
-offset_left = -910.0
-offset_top = -1144.0
-offset_right = 890.0
-offset_bottom = 656.0
-
-[node name="SubViewport" type="SubViewport" parent="dragon/3D Assets"]
-transparent_bg = true
-handle_input_locally = false
-size = Vector2i(1800, 1800)
-render_target_update_mode = 4
-
-[node name="ColorRect" type="ColorRect" parent="dragon/3D Assets/SubViewport"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Camera3D" type="Camera3D" parent="dragon/3D Assets/SubViewport"]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 21.451576, 3.2266412, 0)
-projection = 1
-size = 30.141
-
-[node name="dragon_model" parent="dragon/3D Assets/SubViewport" node_paths=PackedStringArray("dragon_node") instance=ExtResource("6_2sriv")]
-transform = Transform3D(0.39999995, 0, 0, 0, 0.39999998, 0, 0, 0, 0.39999998, 0, 0.16124547, 0.053691864)
-script = ExtResource("7_7xaw5")
-dragon_node = NodePath("../../..")
-wing_membrane_offset = Vector3(1.915, -0.38, 0)
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="dragon/3D Assets/SubViewport"]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 5.2678995, 7.225566)
-
-[node name="Skeleton3D" type="Skeleton3D" parent="dragon/3D Assets/SubViewport"]
-animate_physical_bones = false
 
 [node name="LookMarker" type="Sprite2D" parent="dragon"]
 visible = false
@@ -435,7 +389,7 @@ script = ExtResource("19_sl5eo")
 [node name="chunk" type="Node2D" parent="Map"]
 
 [node name="Mountain" type="StaticBody2D" parent="Map/chunk"]
-modulate = Color(0.101960786, 0.101960786, 0.101960786, 1)
+modulate = Color(0.06053035, 0.06053035, 0.060530342, 1)
 position = Vector2(-4122.25, 1632.25)
 physics_material_override = SubResource("PhysicsMaterial_mdveq")
 
@@ -447,7 +401,7 @@ uv = PackedVector2Array(-1.5425415, -0.7045593, -350.36307, 5.1416016, -761.5820
 script = ExtResource("19_ld413")
 
 [node name="CaveCovers" type="Node2D" parent="Map/chunk"]
-modulate = Color(0.101960786, 0.101960786, 0.101960786, 1)
+modulate = Color(0.05882353, 0.05882353, 0.05882353, 1)
 z_index = 2
 
 [node name="CaveBottom" type="Area2D" parent="Map/chunk/CaveCovers"]
