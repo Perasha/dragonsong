@@ -256,51 +256,59 @@ var reset = false
 #		reset = false
 @export_category("Wingbeat Parameters")
 @export var wingbeat_strength = 200.00
-@export var afterburner_amount = 6.0
 @export var stored_jump_multiplier = 1.0
 @export var jump_strength_base = 2.0
 @export var max_jump_strength = 4.0
+@export var afterburner_multiplier = 0.45
+@export var afterburner_duration_multiplier = 0.97
+@export var wingbeat_reset_num = 5
+
+var afterburner_amount = 6.0
 
 func wingbeat():
 	## Lifting us up ever so slightly
 	#print(flight_direction.y)
 	if not direction_x and flight_direction.y < 0.4:
 		#print("Flying upwards")
-		flight_direction.y -= (stored_jump-2) / 9
+		#print((stored_jump-3) / 15)
+		flight_direction.y -= (stored_jump-jump_strength_base) / 15
 	
 	stored_jump *= stored_jump_multiplier
 	var wingbeat_force = 0.0
 	
 	#print(terminal_velocity)
-	if current_speed < terminal_velocity:
-		## Adding an "afterburner" to continually apply force after we do a wingbeat.
-		
-		
-		wingbeat_afterburner = (stored_jump * afterburner_amount)
-		
+	if current_speed < terminal_velocity:		
 		#var speed_reduction = current_speed / 10
 		#print("Current speed: ", speed_reduction)
 		#print("Afterburner: ", wingbeat_afterburner)
 		#print("Wingbeat Force: ", wingbeat_strength * stored_jump)
 		#print("Speed-reduced wingbeat force: ", (wingbeat_strength * stored_jump) - speed_reduction)
+		## Adding an "afterburner" to continually apply force after we do a wingbeat.
+		wingbeat_afterburner = (stored_jump * afterburner_amount)
+		print("Afterburner: ", wingbeat_afterburner)
 		
 		wingbeat_force = (wingbeat_strength * stored_jump)# - speed_reduction
-		#print("Modified Wingbeat Force: ", wingbeat_force)
-		if wingbeat_force < 0:
-			wingbeat_force = 0
+		print("Wingbeat Force: ", wingbeat_force)
+		#if wingbeat_force < 0:
+		#	wingbeat_force = 0
 		## I uh... don't know what values to shift.
 		#print("Final Wingbeat Force: ", wingbeat_force)
-		if is_gliding:
-			current_speed += wingbeat_force# / int((distance_moved / 20) + 1)
-		else:
-			wingbeat_force *= 1.25
-			current_speed += wingbeat_force# / int((distance_moved / 10) + 1)
+		#if is_gliding:
+		if current_speed > (terminal_velocity * 0.5):
+			wingbeat_force *= 0.5
+			wingbeat_afterburner *= 0.5
+		print("Speed-reduced Wingbeat Force: ", wingbeat_force)
+		current_speed += wingbeat_force# / int((distance_moved / 20) + 1)
+		#else:
+		#	wingbeat_force *= 1.25
+		#	current_speed += wingbeat_force# / int((distance_moved / 10) + 1)
 		#current_speed -= speed_reduction
+	
 	if current_speed > terminal_velocity:
 		current_speed = terminal_velocity
 	
 	on_wingbeat_cooldown = true
-	var new_wait_time = 0.11 * (stored_jump * stored_jump)
+	var new_wait_time = 0.08 * (stored_jump * stored_jump)
 	#print(new_wait_time)
 	wingbeat_clock.wait_time = new_wait_time
 	wingbeat_clock.start()
@@ -315,22 +323,28 @@ func wingbeat():
 func apply_momentum():
 	linear_velocity.x = (current_speed * flight_direction.x)
 	linear_velocity.y = (current_speed * flight_direction.y)
-	if flight_direction.y < 0:
-		gravity_scale = grav_scale_default / 1.5
+	if is_gliding:
+		if flight_direction.y < 0:
+			gravity_scale = grav_scale_default / 1.5
+		else:
+			gravity_scale = grav_scale_default * 1.2
 	else:
-		gravity_scale = grav_scale_default * 1.2
+		if flight_direction.y < 0:
+			gravity_scale = grav_scale_default / 2.0
+		else:
+			gravity_scale = grav_scale_default * 1.5
 	pass
 
 
 ## Flying
 func fly():
-	if just_jumped and current_speed <= terminal_velocity and not on_wingbeat_cooldown:
+	if just_jumped and current_speed <= terminal_velocity and wingbeat_afterburner < wingbeat_reset_num:# and not on_wingbeat_cooldown:
 		wingbeat()
 		#print("Continue")
 	## Adding our afterburner force. This'll slowly go down long after we do the wingbeat, but it's to push us further for a bit longer.
 	if wingbeat_afterburner > 1:
-		wingbeat_afterburner /= 1.04
-		current_speed += wingbeat_afterburner * 0.6
+		wingbeat_afterburner *= afterburner_duration_multiplier
+		current_speed += wingbeat_afterburner * afterburner_multiplier
 		
 	if current_speed >= 20:
 		apply_momentum()

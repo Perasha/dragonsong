@@ -148,7 +148,7 @@ func _process(delta: float) -> void:
 	
 	## Sprite Manipulation
 	
-	##Flip the sprites to their respective
+	## Flip the sprites to their respective
 	for node in anchor_sprites:
 		node.scale.x = new_scale.x
 		node.scale.y = new_scale.y

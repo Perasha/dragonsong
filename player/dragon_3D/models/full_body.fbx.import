@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://d04gywa38jsox"
-path="res://.godot/imported/wings.fbx-b9c8d16b1bffc13fb552919ea2599f2f.scn"
+uid="uid://g118tgrv67do"
+path="res://.godot/imported/full_body.fbx-7dc1976cc50f91ee4111cac76ed190be.scn"
 
 [deps]
 
-source_file="res://player/dragon_3D/models/wings.fbx"
-dest_files=["res://.godot/imported/wings.fbx-b9c8d16b1bffc13fb552919ea2599f2f.scn"]
+source_file="res://player/dragon_3D/models/full_body.fbx"
+dest_files=["res://.godot/imported/full_body.fbx-7dc1976cc50f91ee4111cac76ed190be.scn"]
 
 [params]
 
@@ -21,12 +21,12 @@ nodes/root_scale=1.0
 nodes/import_as_skeleton_bones=false
 nodes/use_name_suffixes=true
 nodes/use_node_type_suffixes=true
-meshes/ensure_tangents=false
+meshes/ensure_tangents=true
 meshes/generate_lods=true
 meshes/create_shadow_meshes=true
-meshes/light_baking=0
+meshes/light_baking=1
 meshes/lightmap_texel_size=0.2
-meshes/force_disable_compression=true
+meshes/force_disable_compression=false
 skins/use_named_skins=true
 animation/import=true
 animation/fps=30
