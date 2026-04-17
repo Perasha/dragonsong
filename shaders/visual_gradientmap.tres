@@ -1,4 +1,4 @@
-[gd_resource type="VisualShader" load_steps=4 format=3 uid="uid://spo78r2ag2ij"]
+[gd_resource type="VisualShader" format=3 uid="uid://spo78r2ag2ij"]
 
 [ext_resource type="Gradient" uid="uid://gpced6r1yv0a" path="res://shaders/gradient_map_test.tres" id="1_qsjh8"]
 
@@ -10,24 +10,6 @@ output_port_for_preview = 0
 texture = SubResource("GradientTexture2D_ltema")
 
 [resource]
-code = "shader_type canvas_item;
-render_mode blend_mix;
-
-uniform sampler2D tex_frg_2;
-
-
-
-void fragment() {
-// Texture2D:2
-	vec4 n_out2p0 = texture(tex_frg_2, UV);
-
-
-// Output:0
-	COLOR.rgb = vec3(n_out2p0.xyz);
-
-
-}
-"
 mode = 1
 flags/light_only = false
 nodes/vertex/0/position = Vector2(620, 180)

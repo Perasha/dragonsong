@@ -1,4 +1,4 @@
-[gd_resource type="ParticleProcessMaterial" load_steps=7 format=3 uid="uid://dxkiyew0ggn1d"]
+[gd_resource type="ParticleProcessMaterial" format=3 uid="uid://dxkiyew0ggn1d"]
 
 [sub_resource type="Gradient" id="Gradient_a880q"]
 interpolation_mode = 2

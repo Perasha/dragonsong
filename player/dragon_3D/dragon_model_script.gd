@@ -1,7 +1,16 @@
 extends Node3D
 
 enum {LEFT, RIGHT}
+@export_category("Key Nodes")
+@export var dragon_node : RigidBody2D
+@export var tail_spring : SpringBoneSimulator3D
 
+@export_category("Spine Poses")
+@export var spine_rest : PackedScene
+@export var spine_up : PackedScene
+@export var spine_down : PackedScene
+
+@export_category("Wing Poses")
 @export var wing_dive : PackedScene
 @export var wing_flap_top : PackedScene
 #@export var wing_flap_mid : PackedScene
@@ -9,13 +18,18 @@ enum {LEFT, RIGHT}
 @export var wing_folded : PackedScene
 @export var wing_glide : PackedScene
 
-@export var dragon_node : RigidBody2D
-
 @onready var flight_rotation_timer = get_node("FlightPositionChange")
 var is_flight_pos_timer_enabled = false
 
 ## Body
 @onready var body = get_node("body")
+@onready var spine = get_node("body/BodyArmature/Skeleton3D")
+var tail_bones = []
+
+## Body Poses
+@onready var spine_rest_pose = spine_rest.instantiate().get_node("BodyArmature/Skeleton3D")
+@onready var spine_up_pose = spine_up.instantiate().get_node("BodyArmature/Skeleton3D")
+@onready var spine_down_pose = spine_down.instantiate().get_node("BodyArmature/Skeleton3D")
 
 ## Legs
 @onready var HindLeg_L = get_node("body/HindlegL")
@@ -26,17 +40,13 @@ var is_flight_pos_timer_enabled = false
 ## Wings
 @onready var wing_skeleton = get_node("wings/Armature_R/Skeleton3D")
 
-	## Wing Poses
+## Wing Poses
 @onready var wing_up_pose = wing_flap_top.instantiate().get_node("Armature_R/Skeleton3D")
 @onready var wing_dive_pose = wing_dive.instantiate().get_node("Armature_R/Skeleton3D")
 @onready var wing_glide_pose = wing_glide.instantiate().get_node("Armature_R/Skeleton3D")
 @onready var wing_folded_pose = wing_folded.instantiate().get_node("Armature_R/Skeleton3D")
 @onready var wing_down_pose = wing_flap_bottom.instantiate().get_node("Armature_R/Skeleton3D")
 
-## Tail
-#@onready var tail = get_node("tail/TailArmature/Skeleton3D")
-#var tail_dist_constraints = []
-#var tail_bone_iterations
 
 #@onready var Membrane_L = get_node("wings/Membrane")
 #@onready var Deltoid_L = get_node("Deltoid")
@@ -50,6 +60,7 @@ var is_flight_pos_timer_enabled = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	#	pass
 	#print(get_children())
 	
 	#tail_bone_iterations = tail.get_bone_count() - 1
@@ -70,40 +81,64 @@ func _ready() -> void:
 
 var last_x_direction = 0.0
 
-var target_pose# = wing_folded_pose
+var target_wing_pose# = wing_folded_pose
+var target_spine_pose
 var target_z_rotation = 0.0
 
 var target_rotation_left = 0
 var target_rotation_right = 180
 var target_rotation = 0.0
 var facing = LEFT
+
+var prev_flight_direction = Vector2(0,0)
+var flight_dir_accel = Vector2(0,0)
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	#target_pose = wing_folded_pose
-	if dragon_node.is_flap_held:
-		target_pose = wing_up_pose
-	elif dragon_node.is_flying:
-		if is_flight_pos_timer_enabled == false:
-			flight_rotation_timer.start()
-			is_flight_pos_timer_enabled = true
-		if dragon_node.wingbeat_afterburner > dragon_node.wingbeat_reset_num:
-			target_pose = wing_down_pose
-		elif dragon_node.is_flap_held:
-			target_pose = wing_up_pose
-		elif dragon_node.is_gliding: 
-			target_pose = wing_glide_pose
+	#target_wing_pose = wing_folded_pose
+	#target_spine_pose = spine_rest_pose
+	#tail_spring
+	if dragon_node.is_flying:
+		## This will add some spring-iness to the tail as we fly. If we were doing this in 3D we
+		## probably wouldn't need to buuuuuut... here we are.
+		
+		## We're grabbing our Flight Direction, and detecting the amount of change between it and the previous time we checked.
+		flight_dir_accel = (prev_flight_direction - dragon_node.flight_direction) * 8
+		#print("Flight Direction change X:", prev_flight_direction - dragon_node.flight_direction)
+		
+		tail_spring.external_force.x = flight_dir_accel.x
+		tail_spring.external_force.y = flight_dir_accel.y
+		
+		if dragon_node.is_flap_held:
+			target_wing_pose = wing_up_pose
 		else:
-			target_pose = wing_dive_pose
-		HindLeg_L.rotation_degrees.x = -30
-		HindLeg_R.rotation_degrees.x = -30
-		ForeLeg_L.rotation_degrees.x = -30
-		ForeLeg_R.rotation_degrees.x = -30
+			if is_flight_pos_timer_enabled == false:
+				flight_rotation_timer.start()
+				is_flight_pos_timer_enabled = true
+			if dragon_node.wingbeat_afterburner > dragon_node.wingbeat_reset_num:
+				target_wing_pose = wing_down_pose
+			elif dragon_node.is_flap_held:
+				target_wing_pose = wing_up_pose
+			elif dragon_node.is_gliding: 
+				target_wing_pose = wing_glide_pose
+			else:
+				target_wing_pose = wing_dive_pose
+			HindLeg_L.rotation_degrees.x = -30
+			HindLeg_R.rotation_degrees.x = -30
+			ForeLeg_L.rotation_degrees.x = -30
+			ForeLeg_R.rotation_degrees.x = -30
+			
+			#if dragon_node.direction_y == 1:
+			#	target_spine_pose = spine_down_pose
+			#if dragon_node.direction_y == -1:
+			#	target_spine_pose = spine_up_pose
 	else:
 		if is_flight_pos_timer_enabled == true:
 			flight_rotation_timer.stop()
 			is_flight_pos_timer_enabled = false
 			target_z_rotation = 0
-		target_pose = wing_folded_pose
+		tail_spring.external_force = Vector3(0,0,0)
+		target_wing_pose = wing_folded_pose
+		#target_spine_pose = spine_rest_pose
 		HindLeg_L.rotation_degrees.x = -90
 		HindLeg_R.rotation_degrees.x = -90
 		ForeLeg_L.rotation_degrees.x = -90
@@ -149,31 +184,34 @@ func _process(delta: float) -> void:
 		#if rotation_degrees.y == target_rotation_right:
 		#	rotation.x = dragon_node.flight_direction.angle()
 		
-	## Setting our Wing poses	
-	change_wing_pose(target_pose)
-	
+	## Setting our new poses	
+	change_pose(target_wing_pose,wing_skeleton)
+	#change_pose(target_spine_pose,spine)
 	## Tail Movement
 	#tail_IK()
 	#Membrane_L.rotation_degrees.z -= 4
 	#print(rotation_degrees.y)
+	prev_flight_direction = dragon_node.flight_direction
 	
 	#var new_rotation = Quaternion()
 	#var prev_rotation = Quaternion()
-## The pose is passed in as the skeleton that we need.
-func change_wing_pose(new_pose):
-	for bone in wing_skeleton.get_bone_count():
-		var prev_rotation = wing_skeleton.get_bone_pose_rotation(bone)
-		var new_rotation = prev_rotation.slerp(new_pose.get_bone_pose_rotation(bone),0.15)
-		#wing_skeleton.set_bone_pose_position(bone,new_pose.get_bone_pose_position(bone))
-		wing_skeleton.set_bone_pose_rotation(bone,new_rotation)
-		#print(wing_skeleton.get_bone_pose_position(bone))
-		#print(wing_skeleton.get_bone_pose_rotation(bone))
-	
 ## Slightly wobble on the Z axis as we fly.
 func _on_flight_position_change_timeout() -> void:
 	target_z_rotation = randi_range(-50,50)
 	flight_rotation_timer.wait_time = randf_range(0.5,10)
 	#target_body_rotation.z = deg_to_rad(randi_range(-50,50))
+
+## The pose is passed in as the skeleton that we need.
+func change_pose(new_pose,skeleton):
+	#print(skeleton.name)
+	#print(new_pose)
+	for bone in skeleton.get_bone_count():
+		#print(bone)
+		#print(skeleton.get_bone_pose_rotation(bone))
+		var prev_rotation = skeleton.get_bone_pose_rotation(bone)
+		#print(prev_rotation)
+		var new_rotation = prev_rotation.slerp(new_pose.get_bone_pose_rotation(bone),0.15)
+		skeleton.set_bone_pose_rotation(bone,new_rotation)
 
 #func tail_IK():
 	### Basic Spine IK
