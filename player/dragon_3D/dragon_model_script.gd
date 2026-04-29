@@ -94,6 +94,8 @@ var prev_flight_direction = Vector2(0,0)
 var flight_dir_accel = Vector2(0,0)
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	#position.z = dragon_node.position.x
+	#position.y = dragon_node.position.y
 	#target_wing_pose = wing_folded_pose
 	#target_spine_pose = spine_rest_pose
 	#tail_spring

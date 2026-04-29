@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://b0n2m1kv2cdx1"]
+[gd_scene format=3 uid="uid://b0n2m1kv2cdx1"]
 
 [ext_resource type="Script" uid="uid://cqu0w22jdjbs4" path="res://player/dragon_controller.gd" id="1_urtjn"]
 [ext_resource type="Script" uid="uid://csdttjcujdw6f" path="res://scripts/direction_pointer.gd" id="5_vgkb3"]
@@ -15,7 +15,7 @@
 friction = 0.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_p6rrk"]
-radius = 20.07255
+radius = 21.052439
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gilsg"]
 
@@ -169,7 +169,7 @@ hue_variation_max = -2.2351742e-08
 turbulence_enabled = true
 collision_mode = 2
 
-[node name="dragon" type="RigidBody2D" groups=["player"]]
+[node name="dragon" type="RigidBody2D" unique_id=539998597 groups=["player"]]
 collision_layer = 2
 mass = 0.001
 physics_material_override = SubResource("PhysicsMaterial_0ucct")
@@ -184,52 +184,52 @@ stored_jump_multiplier = 0.1
 jump_strength_base = 3.0
 max_jump_strength = 6.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-19, -45)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2117568773]
+position = Vector2(-3.999998, -46.999992)
 rotation = 1.5708
 scale = Vector2(4.135, 4.13)
 shape = SubResource("CircleShape2D_p6rrk")
 
-[node name="FloorCheck" type="RayCast2D" parent="."]
+[node name="FloorCheck" type="RayCast2D" parent="." unique_id=1557629680]
 position = Vector2(40, 45)
 target_position = Vector2(-111.165, 0)
 hit_from_inside = true
 
-[node name="Direction Pointer" type="Area2D" parent="."]
+[node name="Direction Pointer" type="Area2D" parent="." unique_id=474065640]
 monitorable = false
 priority = -2
 script = ExtResource("5_vgkb3")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Direction Pointer"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Direction Pointer" unique_id=1027823174]
 z_index = 10
 shape = SubResource("RectangleShape2D_gilsg")
 debug_color = Color(1, 1, 1, 0.15294118)
 
-[node name="wingbeat_clock" type="Timer" parent="."]
+[node name="wingbeat_clock" type="Timer" parent="." unique_id=2085525034]
 wait_time = 0.25
 one_shot = true
 
-[node name="Presence" parent="." instance=ExtResource("6_ju2y0")]
+[node name="Presence" parent="." unique_id=1253322666 instance=ExtResource("6_ju2y0")]
 visible = false
 
-[node name="ClimbDetector" type="RayCast2D" parent="."]
+[node name="ClimbDetector" type="RayCast2D" parent="." unique_id=1578879567]
 position = Vector2(-42.000004, -32)
 scale = Vector2(0.99999994, 0.99999994)
 target_position = Vector2(-65, 0)
 
-[node name="InteractArea" type="Area2D" parent="."]
+[node name="InteractArea" type="Area2D" parent="." unique_id=436593249]
 position = Vector2(-45.000008, 0)
 scale = Vector2(1.5199994, 0.8400002)
 collision_layer = 0
 collision_mask = 4
 script = ExtResource("7_1tael")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractArea" unique_id=793797945]
 position = Vector2(-30.5, 0)
 shape = SubResource("RectangleShape2D_vx2fw")
 debug_color = Color(0.53309363, 0.41185114, 1, 0.41960785)
 
-[node name="Bite" type="AnimatedSprite2D" parent="."]
+[node name="Bite" type="AnimatedSprite2D" parent="." unique_id=1788264281]
 visible = false
 position = Vector2(-111, 0)
 rotation = -1.5707964
@@ -238,10 +238,10 @@ sprite_frames = SubResource("SpriteFrames_xso8i")
 frame = 4
 frame_progress = 1.0
 
-[node name="Resources" type="Node" parent="."]
+[node name="Resources" type="Node" parent="." unique_id=1561155304]
 script = ExtResource("6_j86p3")
 
-[node name="SpellEffect" type="GPUParticles2D" parent="."]
+[node name="SpellEffect" type="GPUParticles2D" parent="." unique_id=1138390242]
 z_index = 10
 position = Vector2(-13, -8)
 emitting = false
@@ -251,7 +251,7 @@ randomness = 1.0
 process_material = SubResource("ParticleProcessMaterial_5i4j3")
 script = ExtResource("9_5i4j3")
 
-[node name="CastEffect" type="GPUParticles2D" parent="SpellEffect"]
+[node name="CastEffect" type="GPUParticles2D" parent="SpellEffect" unique_id=1264926084]
 z_index = 10
 emitting = false
 amount = 32
@@ -260,7 +260,7 @@ randomness = 1.0
 fixed_fps = 60
 process_material = SubResource("ParticleProcessMaterial_1tael")
 
-[node name="BurstEffect" type="GPUParticles2D" parent="SpellEffect"]
+[node name="BurstEffect" type="GPUParticles2D" parent="SpellEffect" unique_id=628697899]
 z_index = 10
 emitting = false
 amount = 32
@@ -272,37 +272,37 @@ randomness = 1.0
 fixed_fps = 60
 process_material = SubResource("ParticleProcessMaterial_cvsob")
 
-[node name="ProgressBar" type="ProgressBar" parent="SpellEffect"]
+[node name="ProgressBar" type="ProgressBar" parent="SpellEffect" unique_id=1025736982]
 offset_left = -80.0
 offset_top = -137.0
 offset_right = 74.0
 offset_bottom = -110.0
 
-[node name="BreathWeapon" type="Area2D" parent="."]
+[node name="BreathWeapon" type="Area2D" parent="." unique_id=267394411]
 collision_layer = 0
 collision_mask = 4
 script = ExtResource("11_cvsob")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="BreathWeapon"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BreathWeapon" unique_id=165526011]
 position = Vector2(-565.5, -28)
 shape = SubResource("RectangleShape2D_p6rrk")
 debug_color = Color(0.9732967, 0, 0.43835706, 0.41960785)
 
-[node name="FireMote" parent="BreathWeapon" instance=ExtResource("12_p6rrk")]
+[node name="FireMote" parent="BreathWeapon" unique_id=221752180 instance=ExtResource("12_p6rrk")]
 position = Vector2(-93, 0)
 emitting = false
 amount = 256
 lifetime = 1.0
 process_material = SubResource("ParticleProcessMaterial_p6rrk")
 
-[node name="FireMote2" parent="BreathWeapon" instance=ExtResource("12_p6rrk")]
+[node name="FireMote2" parent="BreathWeapon" unique_id=337859905 instance=ExtResource("12_p6rrk")]
 position = Vector2(-485, 0)
 emitting = false
 amount = 256
 lifetime = 1.0
 process_material = SubResource("ParticleProcessMaterial_p6rrk")
 
-[node name="FireMote3" parent="BreathWeapon" instance=ExtResource("12_p6rrk")]
+[node name="FireMote3" parent="BreathWeapon" unique_id=1458676258 instance=ExtResource("12_p6rrk")]
 position = Vector2(-219, 14)
 rotation = -0.15158321
 emitting = false
@@ -310,7 +310,7 @@ amount = 256
 lifetime = 1.0
 process_material = SubResource("ParticleProcessMaterial_p6rrk")
 
-[node name="FireMote4" parent="BreathWeapon" instance=ExtResource("12_p6rrk")]
+[node name="FireMote4" parent="BreathWeapon" unique_id=1143223145 instance=ExtResource("12_p6rrk")]
 position = Vector2(-503, 24)
 rotation = -0.15158321
 emitting = false
@@ -318,7 +318,7 @@ amount = 256
 lifetime = 1.0
 process_material = SubResource("ParticleProcessMaterial_p6rrk")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=621255774]
 visible = false
 position = Vector2(6, -107)
 scale = Vector2(6, 6)

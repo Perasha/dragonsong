@@ -54,42 +54,42 @@ func _process(delta: float) -> void:
 	prev_pos = current_pos
 	current_pos = position
 	
-	if GlobalData.option_hold_to_look:
-		if Input.is_action_pressed("look"):
-			is_looking = true
-		else:
-			is_looking = false
-	else:
-		if Input.is_action_just_pressed("look"):
-			if is_looking == true:
-				is_looking = false
-			else:
-				is_looking = true
+	#if GlobalData.option_hold_to_look:
+		#if Input.is_action_pressed("look"):
+			#is_looking = true
+		#else:
+			#is_looking = false
+	#else:
+		#if Input.is_action_just_pressed("look"):
+			#if is_looking == true:
+				#is_looking = false
+			#else:
+				#is_looking = true
+	#
+	#if look_marker.visible and is_looking == false:
+		#look_marker.hide()
+	#elif not look_marker.visible and is_looking == true:
+		#look_marker.show()
 	
-	if look_marker.visible and is_looking == false:
-		look_marker.hide()
-	elif not look_marker.visible and is_looking == true:
-		look_marker.show()
-	
-	if is_looking:
-		weight = 0.01
+	#if is_looking:
+		#weight = 0.01
 		#print("looking!")
-		#print(position)
-		#print(get_viewport().get_mouse_position())
-		#var viewport_dimensions: Vector2 = get_viewport().get_visible_rect().size
-		new_position = (get_viewport().get_mouse_position() - (viewport_dimensions / 2))
-		if camera_node.current_zoom_level == GROUND:
-			new_position *= 1.5
-		elif camera_node.current_zoom_level == NEAR:
-			new_position *= 2
-		elif camera_node.current_zoom_level == FAR:
-			new_position *= 3
-		else:
-			new_position *= 5
-		#print(new_position)
-		#weight = 0.05
-	
-	
+		##print(position)
+		##print(get_viewport().get_mouse_position())
+		##var viewport_dimensions: Vector2 = get_viewport().get_visible_rect().size
+		#new_position = (get_viewport().get_mouse_position() - (viewport_dimensions / 2))
+		#if camera_node.current_zoom_level == GROUND:
+			#new_position *= 1.5
+		#elif camera_node.current_zoom_level == NEAR:
+			#new_position *= 2
+		#elif camera_node.current_zoom_level == FAR:
+			#new_position *= 3
+		#else:
+			#new_position *= 5
+		##print(new_position)
+		##weight = 0.05
+	#else:
+		
 	#elif dragon_node.is_flying:
 	#var distance_threshold = viewport_dimensions / (camera_node.zoom * 2)
 	#distance_threshold.y *= 1.5
@@ -114,7 +114,7 @@ func _process(delta: float) -> void:
 	## Find an Anchor within a Distance
 	## Move our marker to that Anchor
 		
-	if camera_node.current_zoom_level == MAX and raycast_anchor.is_colliding() and dragon_node.is_flying:
+	if raycast_anchor.is_colliding() and dragon_node.is_flying: #camera_node.current_zoom_level == MAX and 
 		
 		## Getting our angle for the raycaster; the higher speed, the more we angle it outwards
 		## Get this by dividing our Current Speed by Terminal Velocity
@@ -131,28 +131,28 @@ func _process(delta: float) -> void:
 	elif not dragon_node.is_flying:
 		#weight = 0.009
 		new_position.y -= 200
-		
+			
 	## Constraining our new_position to the margins we set!
 	## We probably don't need to, but I want to manually normalize our new_position to our margin_constraint
 	## So, for X and for Y, (vector.x / vector's length) multiplied by our margin value!
 	## Dividing the X by the vector's total length is how we normalize. 
 	## Then, we just take that fraction and multiply it by the length that we actually want. And we can do that in two directions!
 	## This hypothetically should create an oval, otherwise it'd make a circle :D
-	
+		
 	## Now; as the zoom level DECREASES, we need the margin to INCREASE.
 	screen_constraint = screen_margin / (1.0 + camera_node.zoom.x) * margin_multiplier
-	#print("Screen Constraint: ", screen_constraint)
-	
-	#new_position = Vector2((new_position.x / new_position.length()) * screen_constraint.x,(new_position.y / new_position.length()) * screen_constraint.y)
-	new_position = new_position.clamp(-screen_constraint,screen_constraint)
-	#print("Distance Threshold: ", distance_threshold)
-	#print("New Position: ", new_position)
+		#print("Screen Constraint: ", screen_constraint)
 		
-	#else:
-	#	new_position = Vector2(0,0)
-	#	weight = 0.05
-	
+		#new_position = Vector2((new_position.x / new_position.length()) * screen_constraint.x,(new_position.y / new_position.length()) * screen_constraint.y)
+	new_position = new_position.clamp(-screen_constraint,screen_constraint)
+		#print("Distance Threshold: ", distance_threshold)
+		#print("New Position: ", new_position)
+			
+		#else:
+		#	new_position = Vector2(0,0)
+		#	weight = 0.05
+		
 	position = lerp(position, new_position, weight)
-	
+		
 	dist_moved = prev_pos.distance_to(current_pos)
 	#print(dist_moved * 0.01)

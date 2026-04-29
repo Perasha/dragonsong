@@ -6,7 +6,6 @@
 [ext_resource type="PackedScene" uid="uid://uap2fumrw2bw" path="res://tests/noodle_body.tscn" id="4_6jdpt"]
 [ext_resource type="PackedScene" uid="uid://b0n2m1kv2cdx1" path="res://dragon_player.tscn" id="5_4kaof"]
 [ext_resource type="Script" uid="uid://djpubhctp6wmu" path="res://scripts/camera_marker.gd" id="6_gcil1"]
-[ext_resource type="Texture2D" uid="uid://dg2cduwhunwxt" path="res://Sprites/point_light.webp" id="7_sw31v"]
 [ext_resource type="Script" uid="uid://0vjgvtna8udf" path="res://player/dragon_3D/dragon_model_script.gd" id="8_m1ry6"]
 [ext_resource type="Script" uid="uid://5s1s4paeqnsv" path="res://Weather/weather_manager.gd" id="9_7ekg2"]
 [ext_resource type="PackedScene" uid="uid://vg4527j848b8" path="res://player/dragon_3D/keyframes/dive_2.fbx" id="9_caqs3"]
@@ -50,9 +49,14 @@ radius = 47.93
 [sub_resource type="CircleShape2D" id="CircleShape2D_pejub"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_7ekg2"]
-radius = 180.67
+radius = 32.37
 
 [sub_resource type="SphereMesh" id="SphereMesh_m1ry6"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_caqs3"]
+albedo_color = Color(0, 0, 1, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_0oli0"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0oli0"]
 albedo_color = Color(0, 1, 1, 1)
@@ -164,10 +168,10 @@ bind/16/bone = -1
 bind/16/pose = Transform3D(-0.9157942, -1.3191525e-06, -5.979223e-07, -1.2804781e-13, -0.3780709, 0.83411103, -1.4483348e-06, 0.834111, 0.3780711, 7.837672e-09, -0.007818523, -0.004955826)
 
 [sub_resource type="JointLimitationCone3D" id="JointLimitationCone3D_hcy15"]
-angle = 1.4987142
+angle = 1.1334168
 
 [sub_resource type="JointLimitationCone3D" id="JointLimitationCone3D_rc4ga"]
-angle = 2.4214697
+angle = 2.3483405
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_1jbre"]
 _surfaces = [{
@@ -479,14 +483,16 @@ shader = ExtResource("34_anmmy")
 visible = false
 camera_node = NodePath("../Camera2D")
 
-[node name="Camera2D" type="Camera2D" parent="." unique_id=640085947 node_paths=PackedStringArray("cam_marker")]
+[node name="Camera2D" type="Camera2D" parent="." unique_id=640085947 node_paths=PackedStringArray("cam_marker", "camera_3d", "head_target")]
 position = Vector2(2175, 1197)
 zoom = Vector2(0.5, 0.5)
 script = ExtResource("3_8g0ca")
 cam_marker = NodePath("../dragon/Camera_Marker")
+camera_3d = NodePath("../dragon/SubViewport/SubViewport/Camera3D")
 smoothing_enabled = true
 default_weight = 0.01
 smoothing_weight_modifier = 0.5
+head_target = NodePath("../dragon/SubViewport/SubViewport/HeadTarget")
 
 [node name="Marker" type="CollisionShape2D" parent="Camera2D" unique_id=761511921]
 shape = SubResource("CircleShape2D_prg60")
@@ -560,20 +566,10 @@ scale = Vector2(82.68, 82.68)
 shape = SubResource("CircleShape2D_pejub")
 debug_color = Color(0.95686275, 0, 0.5411765, 0.16862746)
 
-[node name="Far" type="Area2D" parent="dragon" unique_id=1736256516 groups=["cam_zoom_lvl"]]
-visible = false
-position = Vector2(-21, -47)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="dragon/Far" unique_id=1100835947]
-scale = Vector2(177.925, 177.925)
-shape = SubResource("CircleShape2D_pejub")
-debug_color = Color(0.95686275, 0, 0.5411765, 0.16862746)
-
 [node name="RayCastAnchor" type="RayCast2D" parent="dragon" unique_id=575900801]
 target_position = Vector2(0, 10000)
 
 [node name="Camera_Marker" type="Node2D" parent="dragon" unique_id=700303303 node_paths=PackedStringArray("look_marker")]
-visible = false
 script = ExtResource("6_gcil1")
 look_marker = NodePath("../LookMarker")
 raycast_max_angle = 60.0
@@ -583,22 +579,14 @@ margin_multiplier = 2.0
 shape = SubResource("CircleShape2D_7ekg2")
 debug_color = Color(0.78039217, 0.1254902, 1, 0.21176471)
 
-[node name="PointLight2D" type="PointLight2D" parent="dragon" unique_id=132894424]
-visible = false
-position = Vector2(-351, -226)
-range_layer_max = 1
-shadow_enabled = true
-shadow_color = Color(0, 0, 0, 1)
-shadow_filter = 1
-texture = ExtResource("7_sw31v")
-texture_scale = 9.97
-
 [node name="SubViewport" type="SubViewportContainer" parent="dragon" unique_id=604074464]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_left = -2096.0
+offset_top = -2178.0
+offset_right = -296.0
+offset_bottom = -378.0
+scale = Vector2(2.33, 2.33)
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="SubViewport" type="SubViewport" parent="dragon/SubViewport" unique_id=742194296]
 transparent_bg = true
@@ -607,26 +595,24 @@ size = Vector2i(1800, 1800)
 render_target_update_mode = 4
 
 [node name="Camera3D" type="Camera3D" parent="dragon/SubViewport/SubViewport" unique_id=510187997]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 33.130283, 3.2266412, 0)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 33.130283, 4.566117, -0.36533356)
 keep_aspect = 0
 projection = 1
-size = 30.141
+size = 65.170135
 far = 50.0
 
-[node name="LookTarget" type="Node3D" parent="dragon/SubViewport/SubViewport" unique_id=1995032773]
-transform = Transform3D(40, 0, 0, 0, -4.7683716e-06, 39.999996, 0, -39.999996, -4.7683716e-06, -3.2376504, 0.56480646, 1.9633427)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="dragon/SubViewport/SubViewport/LookTarget" unique_id=1787138968]
-transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0, 0, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="dragon/SubViewport/SubViewport/Camera3D" unique_id=1139394821]
+visible = false
 mesh = SubResource("SphereMesh_m1ry6")
-surface_material_override/0 = SubResource("StandardMaterial3D_0oli0")
+surface_material_override/0 = SubResource("StandardMaterial3D_caqs3")
 
 [node name="HeadTarget" type="Node3D" parent="dragon/SubViewport/SubViewport" unique_id=1555147269]
-transform = Transform3D(40, 0, 0, 0, -4.7683716e-06, 39.999996, 0, -39.999996, -4.7683716e-06, -0.032598972, 3.0503616, 7.3167934)
+transform = Transform3D(40, 0, 0, 0, -4.7683716e-06, 39.999996, 0, -39.999996, -4.7683716e-06, 0, 4.021732, 6.6938043)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="dragon/SubViewport/SubViewport/HeadTarget" unique_id=1748167442]
 transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0, 0, 0)
-mesh = SubResource("SphereMesh_m1ry6")
+visible = false
+mesh = SubResource("SphereMesh_0oli0")
 
 [node name="dragon_model" type="Node3D" parent="dragon/SubViewport/SubViewport" unique_id=1218378711 node_paths=PackedStringArray("dragon_node", "tail_spring")]
 transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 4.645811, 0)
@@ -641,6 +627,15 @@ wing_flap_top = ExtResource("10_m1ry6")
 wing_flap_bottom = ExtResource("11_0oli0")
 wing_folded = ExtResource("12_caqs3")
 wing_glide = ExtResource("14_m1ry6")
+
+[node name="LookTarget" type="Node3D" parent="dragon/SubViewport/SubViewport/dragon_model" unique_id=1995032773]
+transform = Transform3D(100, 0, 0, 0, -1.1920929e-05, 99.99999, 0, -99.99999, -1.1920929e-05, -0.13097882, 10.886601, 6.980772)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="dragon/SubViewport/SubViewport/dragon_model/LookTarget" unique_id=1787138968]
+transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0, 0, 0)
+visible = false
+mesh = SubResource("SphereMesh_m1ry6")
+surface_material_override/0 = SubResource("StandardMaterial3D_0oli0")
 
 [node name="body" type="Node3D" parent="dragon/SubViewport/SubViewport/dragon_model" unique_id=1540154499]
 
@@ -789,38 +784,55 @@ surface_material_override/0 = ExtResource("17_caqs3")
 surface_material_override/1 = ExtResource("18_m1ry6")
 
 [node name="FABRIK3D" type="FABRIK3D" parent="dragon/SubViewport/SubViewport/dragon_model/body/BodyArmature/Skeleton3D" unique_id=993148333]
+influence = 0.514
+mutable_bone_axes = false
+max_iterations = 6
+min_distance = 0.0
 angular_delta_limit = 3.141592653589793
 deterministic = true
-setting_count = 1
-settings/0/target_node = NodePath("../../../../../HeadTarget")
-settings/0/root_bone_name = "Neck_0"
-settings/0/root_bone = 13
-settings/0/end_bone_name = "Head_end"
-settings/0/end_bone = 18
+setting_count = 2
+settings/0/target_node = NodePath("../../../../LookTarget")
+settings/1/target_node = NodePath("../../../../../HeadTarget")
+settings/0/root_bone_name = "Neck_1"
+settings/0/root_bone = 14
+settings/0/end_bone_name = "Neck_3"
+settings/0/end_bone = 16
 settings/0/extend_end_bone = false
-settings/0/joint_count = 6
+settings/0/joint_count = 3
+settings/1/root_bone_name = "Neck_0"
+settings/1/root_bone = 13
+settings/1/end_bone_name = "Head_end"
+settings/1/end_bone = 18
+settings/1/extend_end_bone = false
+settings/1/joint_count = 6
 settings/0/joints/0/rotation_axis = 3
-settings/0/joints/0/limitation = ExtResource("19_m1ry6")
-settings/0/joints/0/limitation/right_axis = 0
-settings/0/joints/0/limitation/rotation_offset = Quaternion(0, 0, 0, 1)
+settings/0/joints/0/limitation = null
 settings/0/joints/1/rotation_axis = 3
-settings/0/joints/1/limitation = ExtResource("19_m1ry6")
-settings/0/joints/1/limitation/right_axis = 0
-settings/0/joints/1/limitation/rotation_offset = Quaternion(0, 0, 0, 1)
+settings/0/joints/1/limitation = null
 settings/0/joints/2/rotation_axis = 3
-settings/0/joints/2/limitation = ExtResource("19_m1ry6")
-settings/0/joints/2/limitation/right_axis = 0
-settings/0/joints/2/limitation/rotation_offset = Quaternion(0, 0, 0, 1)
-settings/0/joints/3/rotation_axis = 3
-settings/0/joints/3/limitation = SubResource("JointLimitationCone3D_hcy15")
-settings/0/joints/3/limitation/right_axis = 0
-settings/0/joints/3/limitation/rotation_offset = Quaternion(0, 0, 0, 1)
-settings/0/joints/4/rotation_axis = 3
-settings/0/joints/4/limitation = SubResource("JointLimitationCone3D_rc4ga")
-settings/0/joints/4/limitation/right_axis = 0
-settings/0/joints/4/limitation/rotation_offset = Quaternion(0, 0, 0, 1)
-settings/0/joints/5/rotation_axis = 3
-settings/0/joints/5/limitation = null
+settings/0/joints/2/limitation = null
+settings/1/joints/0/rotation_axis = 3
+settings/1/joints/0/limitation = ExtResource("19_m1ry6")
+settings/1/joints/0/limitation/right_axis = 0
+settings/1/joints/0/limitation/rotation_offset = Quaternion(0, 0, 0, 1)
+settings/1/joints/1/rotation_axis = 3
+settings/1/joints/1/limitation = ExtResource("19_m1ry6")
+settings/1/joints/1/limitation/right_axis = 0
+settings/1/joints/1/limitation/rotation_offset = Quaternion(0, 0, 0, 1)
+settings/1/joints/2/rotation_axis = 3
+settings/1/joints/2/limitation = ExtResource("19_m1ry6")
+settings/1/joints/2/limitation/right_axis = 0
+settings/1/joints/2/limitation/rotation_offset = Quaternion(0, 0, 0, 1)
+settings/1/joints/3/rotation_axis = 3
+settings/1/joints/3/limitation = SubResource("JointLimitationCone3D_hcy15")
+settings/1/joints/3/limitation/right_axis = 0
+settings/1/joints/3/limitation/rotation_offset = Quaternion(0, 0, 0, 1)
+settings/1/joints/4/rotation_axis = 3
+settings/1/joints/4/limitation = SubResource("JointLimitationCone3D_rc4ga")
+settings/1/joints/4/limitation/right_axis = 0
+settings/1/joints/4/limitation/rotation_offset = Quaternion(0, 0, 0, 1)
+settings/1/joints/5/rotation_axis = 3
+settings/1/joints/5/limitation = null
 
 [node name="SpringBoneSimulator3D" type="SpringBoneSimulator3D" parent="dragon/SubViewport/SubViewport/dragon_model/body/BodyArmature/Skeleton3D" unique_id=743907042]
 setting_count = 1
