@@ -17,6 +17,8 @@ var zoomSpeed = 1.2
 #@export_range(1,100) var smoothing_distance : int = 8
 @export var defaultZoomLevel = 0.6 #0.65
 @export var default_zoom_factor = 3000
+@onready var viewport_dimensions: Vector2 = get_viewport().get_visible_rect().size
+@onready var screen_margin = viewport_dimensions
 var zoom_factor = 3000
 var minZoom = 0.05
 var maxZoom = 1.0
@@ -37,8 +39,8 @@ var weight = default_weight
 
 @export var smoothing_weight_modifier = 1.0
 
-@export_category("3D Tracking")
-@export var head_target : Node3D
+#@export_category("3D Tracking")
+#@export var head_target : Node3D
 
 func _ready():
 	current_zoom_level = GROUND
@@ -63,8 +65,11 @@ var is_looking = false
 
 @export_category("Edge Margins")
 @export var on_screen_offset: Vector2 = Vector2(0.5, -5.0)
-@export var screen_margin: float = 4.0
+#@export var screen_margin: float = 4.0
 @export var smoothing_speed: float = 8.0
+@export var margin_multiplier = 1.0
+
+var screen_constraint = Vector2(0,0)
 
 @warning_ignore("unused_parameter")
 func _process(delta):
@@ -83,44 +88,7 @@ func _process(delta):
 			else:
 				is_looking = true
 	
-	#if look_marker.visible and is_looking == false:
-	#	look_marker.hide()
-	#elif not look_marker.visible and is_looking == true:
-	#	look_marker.show()
 	
-	#if dragon_node != null:
-	#check_zoom()
-	max_hold = dragon_node.distance_moved * 1.5
-	#Here, we're getting our direction inputs again.
-	# We use this to add to a hold_count value, 
-	# and essentially slowly push our camera in that direction if it's held there.
-	direction.x = Input.get_axis("ui_left", "ui_right")
-	direction.y = Input.get_axis("ui_up", "ui_down")
-	
-	#held_count += direction
-	held_count += (direction) * 5
-	held_count += held_count.direction_to(Vector2(0,0))
-	#print(held_count)
-	
-	if abs(held_count.y) > max_hold_y:
-		if held_count.y < 0: held_count.y = -max_hold_y
-		else: held_count.y = max_hold_y
-	if abs(held_count.x) > max_hold:
-		if held_count.x < 0: held_count.x = -max_hold
-		else: held_count.x = max_hold
-	
-	#print(held_count)
-	#print("Held Count:", held_count)
-	#anticipated_direction = Vector2(1.0,1.0) * (direction * direction)
-	#print(direction)
-	#print(anticipated_direction)
-	##ZOOM CHANGING
-	#new_zoom = set_zoom_level(zoom_levels[current_zoom_level])
-	#print(zoom_levels[current_zoom_level])
-	#new_zoom.x = zoom_levels[current_zoom_level]
-	#new_zoom.y = new_zoom.x
-	#if not cam_marker.is_looking:
-		#print("Resetting Zoom!")
 	zoom = lerp(zoom, new_zoom, weight)
 	#print(zoom)
 	
@@ -129,28 +97,17 @@ func _process(delta):
 	
 	camera_target = cam_marker.global_position
 	
-	#if dragon_node.is_flying:
-		#smoothing_enabled = false
-	#else:
-		#smoothing_enabled = true
-	
 	if smoothing_enabled:
 		var smoothing_weight = (cam_marker.dist_moved * 0.01) * smoothing_weight_modifier#0.03#pow(log(1.2),2)
 		if smoothing_weight < 0.03: smoothing_weight = 0.03
-		#position = lerp(position, new_position, pow(-weight*delta,3))
-		#print("Weight: ", smoothing_weight)
-		#print("Calculated Weight: ", pow(-weight*delta,2))
-		#print("Distance Behind Dragon: ", position.distance_to(dragon_node.position))
-		#print("Distance to Target Position: ", position.distance_to(dragon_node.position))
 		camera_position = lerp(global_position, camera_target, smoothing_weight)
 	else:
 		camera_position = camera_target
 	
-	## Make the head look at our camera target.
-	head_target.position.z = cam_marker.position.x * -1
-	head_target.position.y = (cam_marker.position.y * -1) + 5
-	#head_target.position.z = dragon_node.flight_direction.x * -8
-	#head_target.position.y = (dragon_node.flight_direction.y * -8) + 5
+	## Now; as the zoom level DECREASES, we need the margin to INCREASE.
+	screen_constraint = (screen_margin / (1.0 + zoom.x) * margin_multiplier)# * dragon_node.position
+	print(screen_constraint)
+	camera_position = camera_position.clamp(-screen_constraint,screen_constraint)
 	
 	global_position = camera_position
 	if is_looking:
