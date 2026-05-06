@@ -20,6 +20,7 @@ func _process(delta: float) -> void:
 	
 	var target_global_position: Vector2 = get_parent().global_position
 	var viewport_dimensions: Vector2 = get_viewport().get_visible_rect().size
+	## Convert global position to screen coordinates
 	var screen_coordinates: Vector2 = (target_global_position - camera_node.global_position) * camera_node.zoom + (viewport_dimensions * 0.5)
 	var screen_inset_rectangle: Rect2 = Rect2(Vector2.ZERO, viewport_dimensions).grow(-screen_margin)
 	
@@ -34,6 +35,7 @@ func _process(delta: float) -> void:
 		var clamped_y = clamp(screen_coordinates.y, screen_margin, viewport_dimensions.y - screen_margin)
 		var clamped_screen_coords: Vector2 = Vector2(clamped_x, clamped_y)
 		
+		## Convert the screen margin to global coordinates
 		target_display_position = camera_node.global_position + (clamped_screen_coords - viewport_dimensions * 0.5) / camera_node.zoom
 		
 		var vector_to_target: Vector2 = target_global_position - target_display_position
