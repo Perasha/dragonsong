@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://c2hwxc628wepk"]
+
+[ext_resource type="Script" uid="uid://duc35evpxtc0q" path="res://objects/object_data.gd" id="1_o6483"]
+[ext_resource type="Texture2D" uid="uid://csy4bc5amtghr" path="res://objects/sprites/coin.png" id="2_kmayk"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_8g0ca"]
+rough = true
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_t6101"]
+size = Vector2(36, 28)
+
+[node name="collectible_item" type="RigidBody2D" unique_id=1501650754 groups=["collectible", "object"]]
+collision_layer = 4
+physics_material_override = SubResource("PhysicsMaterial_8g0ca")
+lock_rotation = true
+script = ExtResource("1_o6483")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=952043561]
+shape = SubResource("RectangleShape2D_t6101")
+
+[node name="sprite" type="Sprite2D" parent="." unique_id=956827194]
+scale = Vector2(4, 4)
+texture = ExtResource("2_kmayk")

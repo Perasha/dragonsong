@@ -52,7 +52,7 @@ func _physics_process(delta: float) -> void:
 	else: wing_node.flip_v = false
 	
 	if not dragon_node.is_hovering:
-		if dragon_node.is_gliding:
+		if dragon_node.is_gliding or dragon_node.direction_x != 0:
 			wing_node.texture = wing_glide_sprite
 		else:
 			wing_node.texture = wing_folded_sprite
@@ -60,7 +60,7 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_pressed("flap"):
 		wing_node.texture = wing_up_sprite
 	#wing_node.texture = wing_down_sprite
-	if dragon_node.just_jumped or dragon_node.on_wingbeat_cooldown:
+	if dragon_node.just_jumped or dragon_node.wingbeat_afterburner > dragon_node.wingbeat_reset_num:
 		wing_node.texture = wing_down_sprite
 		if flip_v:
 			wing_node.position.y = -20
@@ -92,14 +92,14 @@ func _physics_process(delta: float) -> void:
 	#print(flip_h)
 	if dragon_node.flight_direction.x < 0:
 		facing = LEFT
-		InteractNode.position.x = -72
+		InteractNode.position.x = -50
 		ClimbDetector.position.x = -42
 		ClimbDetector.target_position.x = -65
 		BiteAnimNode.position.x = -112
 		BiteAnimNode.flip_v = false
 	else:
 		facing = RIGHT
-		InteractNode.position.x = 72
+		InteractNode.position.x = 50
 		ClimbDetector.position.x = 42
 		ClimbDetector.target_position.x = 65
 		BiteAnimNode.position.x = 112

@@ -80,12 +80,6 @@ func _physics_process(delta: float) -> void:
 	current_position = position
 	gravity_scale = grav_scale_default
 	
-	#if position.y < 0:
-		#max_fly_speed = max_fly_speed_base * (-position.y / 3000)
-		#if max_fly_speed < max_fly_speed_base:
-			#max_fly_speed = max_fly_speed_base
-	#else:
-		#max_fly_speed = max_fly_speed_base
 	## Here, we take the X and Y of our Linear Velocity and combine it into a total speed value.
 	## And uh, we needed the Pythoreum Theorum for it.
 	current_speed = pow(abs(linear_velocity.x),2) + pow(abs(linear_velocity.y),2)
@@ -117,7 +111,6 @@ func _physics_process(delta: float) -> void:
 	direction_y = Input.get_axis("move_up", "move_down")
 	
 	## Disabling Stalling to instead modify our direction_y based on our speed
-	#print("Old FD_Dampen: ", fd_dampen)
 	fd_dampen = (1.0 - (current_speed / terminal_velocity))
 	#fd_dampen = fd_dampen ** 10
 	fd_dampen *= 0.011
@@ -267,51 +260,29 @@ var afterburner_amount = 6.0
 
 func wingbeat():
 	## Lifting us up ever so slightly
-	#print(flight_direction.y)
 	if not direction_x and flight_direction.y < 0.4:
-		#print("Flying upwards")
-		#print((stored_jump-3) / 15)
 		flight_direction.y -= (stored_jump-jump_strength_base) / 15
 	
 	stored_jump *= stored_jump_multiplier
 	var wingbeat_force = 0.0
 	
-	#print(terminal_velocity)
-	if current_speed < terminal_velocity:		
-		#var speed_reduction = current_speed / 10
-		#print("Current speed: ", speed_reduction)
-		#print("Afterburner: ", wingbeat_afterburner)
-		#print("Wingbeat Force: ", wingbeat_strength * stored_jump)
-		#print("Speed-reduced wingbeat force: ", (wingbeat_strength * stored_jump) - speed_reduction)
+	if current_speed < terminal_velocity:
 		## Adding an "afterburner" to continually apply force after we do a wingbeat.
 		wingbeat_afterburner = (stored_jump * afterburner_amount)
 		print("Afterburner: ", wingbeat_afterburner)
 		
 		wingbeat_force = (wingbeat_strength * stored_jump)# - speed_reduction
 		print("Wingbeat Force: ", wingbeat_force)
-		#if wingbeat_force < 0:
-		#	wingbeat_force = 0
-		## I uh... don't know what values to shift.
-		#print("Final Wingbeat Force: ", wingbeat_force)
-		#if is_gliding:
 		if current_speed > (terminal_velocity * 0.5):
 			wingbeat_force *= 0.5
 			wingbeat_afterburner *= 0.5
 		print("Speed-reduced Wingbeat Force: ", wingbeat_force)
-		current_speed += wingbeat_force# / int((distance_moved / 20) + 1)
-		#else:
-		#	wingbeat_force *= 1.25
-		#	current_speed += wingbeat_force# / int((distance_moved / 10) + 1)
-		#current_speed -= speed_reduction
+		current_speed += wingbeat_force
 	
 	if current_speed > terminal_velocity:
 		current_speed = terminal_velocity
 	
 	on_wingbeat_cooldown = true
-	var new_wait_time = 0.08 * (stored_jump * stored_jump)
-	#print(new_wait_time)
-	wingbeat_clock.wait_time = new_wait_time
-	wingbeat_clock.start()
 	
 ## SUPER IMPORTANT!
 		## Here, we're actually dividing our current speed among our new directions.

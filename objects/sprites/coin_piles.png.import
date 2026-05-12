@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cmmo63c1xnvw0"
-path="res://.godot/imported/icon.png-a93127317d784657ddd434e8bee172a6.ctex"
+uid="uid://c7t8cpscse01c"
+path="res://.godot/imported/coin_piles.png-17727550554593e76c4c85c6d19c0f93.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/shader_library/icon.png"
-dest_files=["res://.godot/imported/icon.png-a93127317d784657ddd434e8bee172a6.ctex"]
+source_file="res://objects/sprites/coin_piles.png"
+dest_files=["res://.godot/imported/coin_piles.png-17727550554593e76c4c85c6d19c0f93.ctex"]
 
 [params]
 

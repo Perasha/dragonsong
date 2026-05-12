@@ -21,7 +21,7 @@ radius = 21.052439
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gilsg"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vx2fw"]
-size = Vector2(93, 90)
+size = Vector2(165.7896, 133.09525)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ju2y0"]
 atlas = ExtResource("7_to7sl")
@@ -186,7 +186,7 @@ jump_strength_base = 3.0
 max_jump_strength = 6.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2117568773]
-position = Vector2(-3.999998, -46.999992)
+position = Vector2(0, -47)
 rotation = 1.5708
 scale = Vector2(4.135, 4.13)
 shape = SubResource("CircleShape2D_p6rrk")
@@ -216,14 +216,14 @@ scale = Vector2(0.99999994, 0.99999994)
 target_position = Vector2(-65, 0)
 
 [node name="InteractArea" type="Area2D" parent="." unique_id=436593249]
-position = Vector2(-45.000008, 0)
 scale = Vector2(1.5199994, 0.8400002)
 collision_layer = 0
 collision_mask = 4
 script = ExtResource("7_1tael")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="InteractArea" unique_id=793797945]
-position = Vector2(-30.5, 0)
+position = Vector2(0, -21.547613)
+scale = Vector2(0.9999996, 0.99999946)
 shape = SubResource("RectangleShape2D_vx2fw")
 debug_color = Color(0.53309363, 0.41185114, 1, 0.41960785)
 

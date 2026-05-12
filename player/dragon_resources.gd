@@ -8,8 +8,11 @@ var health = max_health
 @export var attack_speed = 10
 var attack_cooldown = 0
 
+var collected_items = 0
+var inventory_size = 10
+
 @onready var dragon_node = get_parent()
-@onready var presence_node = get_parent().get_node("Presence")
+#@onready var presence_node = get_parent().get_node("Presence")
 
 @onready var initial_speed = {
 	"max_jump_strength" : dragon_node.max_jump_strength,
