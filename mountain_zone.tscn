@@ -8,11 +8,9 @@
 [ext_resource type="Script" uid="uid://djpubhctp6wmu" path="res://scripts/camera_marker.gd" id="6_gcil1"]
 [ext_resource type="Script" uid="uid://g0binnspch07" path="res://objects/object_manager.gd" id="7_t6101"]
 [ext_resource type="Script" uid="uid://dbcx8lweqxchg" path="res://Maps/chunk_data.gd" id="9_gcil1"]
-[ext_resource type="Script" uid="uid://duc35evpxtc0q" path="res://objects/object_data.gd" id="10_8g0ca"]
 [ext_resource type="PackedScene" uid="uid://c2hwxc628wepk" path="res://objects/item.tscn" id="11_4kaof"]
-[ext_resource type="PackedScene" uid="uid://055gk0wf3t0j" path="res://ParticleEffects/key_frag_effect.tscn" id="12_gcil1"]
+[ext_resource type="PackedScene" uid="uid://cbx48pgeqys0b" path="res://objects/item_pile.tscn" id="12_gcil1"]
 [ext_resource type="Script" uid="uid://gjagu28rh2pe" path="res://ui/thought_animator.gd" id="12_mmmpg"]
-[ext_resource type="Texture2D" uid="uid://c7t8cpscse01c" path="res://objects/sprites/coin_piles.png" id="14_12f22"]
 [ext_resource type="Script" uid="uid://bvxkyx0ds2l6i" path="res://scripts/health_bar.gd" id="15_7ekg2"]
 [ext_resource type="PackedScene" uid="uid://bks7gor6yrlx6" path="res://pause_menu.tscn" id="16_prg60"]
 [ext_resource type="Script" uid="uid://bfpmv7tl4iuxw" path="res://scripts/fragments_found.gd" id="18_fqjxk"]
@@ -37,12 +35,6 @@ radius = 32.37
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_mdveq"]
 friction = 0.25
 rough = true
-
-[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_8g0ca"]
-rough = true
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_t6101"]
-size = Vector2(100, 100)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_k8o1j"]
 
@@ -103,6 +95,7 @@ z_index = 0
 dragon_node = NodePath("../dragon")
 
 [node name="dragon" parent="." unique_id=657267410 instance=ExtResource("5_4kaof")]
+unique_name_in_owner = true
 z_index = 1
 position = Vector2(2135, 1244)
 collision_layer = 4
@@ -614,76 +607,61 @@ uv = PackedVector2Array(-152, -48.000004, -144, -48.000004, -144, -24.000004, -1
 
 [node name="objects" type="Node" parent="Map/chunk" unique_id=375692476]
 
-[node name="coin" parent="Map/chunk/objects" unique_id=1501650754 instance=ExtResource("11_4kaof")]
-position = Vector2(1804, 1107)
+[node name="collectible_item" parent="Map/chunk/objects" unique_id=1501650754 instance=ExtResource("11_4kaof")]
+position = Vector2(1686, 1305)
+size = 6
 
-[node name="KeyFragEffect" parent="Map/chunk/objects/coin" unique_id=50842703 instance=ExtResource("12_gcil1")]
-scale = Vector2(3.12, 3.12)
+[node name="collectible_item2" parent="Map/chunk/objects" unique_id=625549676 instance=ExtResource("11_4kaof")]
+position = Vector2(2707, 1131)
+size = 2
 
-[node name="coin2" parent="Map/chunk/objects" unique_id=478153524 instance=ExtResource("11_4kaof")]
-position = Vector2(1970, 977)
+[node name="collectible_item3" parent="Map/chunk/objects" unique_id=1196244832 instance=ExtResource("11_4kaof")]
+position = Vector2(2430, 1168)
+size = 16
 
-[node name="KeyFragEffect" parent="Map/chunk/objects/coin2" unique_id=1771260182 instance=ExtResource("12_gcil1")]
-scale = Vector2(3.12, 3.12)
+[node name="collectible_item4" parent="Map/chunk/objects" unique_id=2106295249 instance=ExtResource("11_4kaof")]
+position = Vector2(1742, 1290)
+size = 16
 
-[node name="coin3" parent="Map/chunk/objects" unique_id=1638823788 instance=ExtResource("11_4kaof")]
-position = Vector2(2538, 1073)
+[node name="collectible_item5" parent="Map/chunk/objects" unique_id=446798257 instance=ExtResource("11_4kaof")]
+position = Vector2(1783, 1285)
+size = 16
 
-[node name="KeyFragEffect" parent="Map/chunk/objects/coin3" unique_id=252198205 instance=ExtResource("12_gcil1")]
-scale = Vector2(3.12, 3.12)
+[node name="collectible_item6" parent="Map/chunk/objects" unique_id=2017746644 instance=ExtResource("11_4kaof")]
+position = Vector2(1699, 1208)
+size = 16
 
-[node name="coin4" parent="Map/chunk/objects" unique_id=370950309 instance=ExtResource("11_4kaof")]
-position = Vector2(2419, 1122)
+[node name="collectible_item7" parent="Map/chunk/objects" unique_id=168766584 instance=ExtResource("11_4kaof")]
+position = Vector2(1755, 1201)
+size = 16
 
-[node name="KeyFragEffect" parent="Map/chunk/objects/coin4" unique_id=682848088 instance=ExtResource("12_gcil1")]
-scale = Vector2(3.12, 3.12)
+[node name="item_pile" parent="Map/chunk/objects" unique_id=808326120 instance=ExtResource("12_gcil1")]
+position = Vector2(4220, 1330)
+size = 16
 
-[node name="coin5" parent="Map/chunk/objects" unique_id=1665838482 instance=ExtResource("11_4kaof")]
-position = Vector2(1675, 1304)
+[node name="item_pile5" parent="Map/chunk/objects" unique_id=315606956 instance=ExtResource("12_gcil1")]
+position = Vector2(14898, -10783)
+size = 3
 
-[node name="KeyFragEffect" parent="Map/chunk/objects/coin5" unique_id=944978420 instance=ExtResource("12_gcil1")]
-scale = Vector2(3.12, 3.12)
+[node name="item_pile6" parent="Map/chunk/objects" unique_id=2008057116 instance=ExtResource("12_gcil1")]
+position = Vector2(19285, -9262)
+size = 6
 
-[node name="coin6" parent="Map/chunk/objects" unique_id=1246070600 instance=ExtResource("11_4kaof")]
-position = Vector2(1379, 1182)
+[node name="item_pile7" parent="Map/chunk/objects" unique_id=1365504923 instance=ExtResource("12_gcil1")]
+position = Vector2(-6843, 911)
+size = 3
 
-[node name="KeyFragEffect" parent="Map/chunk/objects/coin6" unique_id=1740535972 instance=ExtResource("12_gcil1")]
-scale = Vector2(3.12, 3.12)
+[node name="item_pile4" parent="Map/chunk/objects" unique_id=1500362648 instance=ExtResource("12_gcil1")]
+position = Vector2(13934, -114)
+size = 3
 
-[node name="coin7" parent="Map/chunk/objects" unique_id=2105106661 instance=ExtResource("11_4kaof")]
-position = Vector2(1037, 1236)
+[node name="item_pile2" parent="Map/chunk/objects" unique_id=1183754422 instance=ExtResource("12_gcil1")]
+position = Vector2(5438, 2192)
+size = 6
 
-[node name="KeyFragEffect" parent="Map/chunk/objects/coin7" unique_id=1986564012 instance=ExtResource("12_gcil1")]
-scale = Vector2(3.12, 3.12)
-
-[node name="coin8" parent="Map/chunk/objects" unique_id=243695797 instance=ExtResource("11_4kaof")]
-position = Vector2(744, 1213)
-
-[node name="KeyFragEffect" parent="Map/chunk/objects/coin8" unique_id=1024611290 instance=ExtResource("12_gcil1")]
-scale = Vector2(3.12, 3.12)
-
-[node name="coin9" parent="Map/chunk/objects" unique_id=2132008573 instance=ExtResource("11_4kaof")]
-position = Vector2(980, 1089)
-
-[node name="KeyFragEffect" parent="Map/chunk/objects/coin9" unique_id=1306245109 instance=ExtResource("12_gcil1")]
-scale = Vector2(3.12, 3.12)
-
-[node name="item_pile" type="RigidBody2D" parent="Map/chunk/objects" unique_id=808326120 groups=["gatherable", "item_pile", "object"]]
-position = Vector2(986, 814)
-collision_layer = 4
-physics_material_override = SubResource("PhysicsMaterial_8g0ca")
-lock_rotation = true
-script = ExtResource("10_8g0ca")
-size = 4
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Map/chunk/objects/item_pile" unique_id=1082584899]
-shape = SubResource("RectangleShape2D_t6101")
-
-[node name="sprite" type="Sprite2D" parent="Map/chunk/objects/item_pile" unique_id=1534317818]
-scale = Vector2(4, 4)
-texture = ExtResource("14_12f22")
-region_enabled = true
-region_rect = Rect2(64, 32, 64, 32)
+[node name="item_pile3" parent="Map/chunk/objects" unique_id=1054614227 instance=ExtResource("12_gcil1")]
+position = Vector2(995, 2295)
+size = 3
 
 [node name="chunk2" type="Node2D" parent="Map" unique_id=1534835046]
 position = Vector2(36256, 0)

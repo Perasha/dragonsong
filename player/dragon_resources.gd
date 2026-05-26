@@ -4,12 +4,14 @@ extends Node
 #var stamina = stamina_max
 @export var max_health = 100.0
 var health = max_health
+var health_to_int = 0
 
 @export var attack_speed = 10
 var attack_cooldown = 0
 
 var collected_items = 0
-var inventory_size = 10
+var inventory_size = 40
+var remaining_inventory = inventory_size
 
 @onready var dragon_node = get_parent()
 #@onready var presence_node = get_parent().get_node("Presence")
@@ -21,6 +23,25 @@ var inventory_size = 10
 }
 
 var injury_multiplier = 1.0
+
+func _process(delta: float) -> void:
+	if dragon_node.is_flying:
+		if dragon_node.direction_x or dragon_node.direction_y:
+			health_update(-0.001)
+		if dragon_node.is_gliding:
+			health_update(-0.002)
+		if dragon_node.is_hovering:
+			health_update(-0.005)
+		if dragon_node.just_jumped:
+			health_update(-0.05)
+
+func inventory_update(value):
+	collected_items += value
+	if collected_items < 0:
+		collected_items = 0
+	remaining_inventory = inventory_size - collected_items
+	print("Collected items: ", collected_items)
+	print("Remaining Inventory: ", remaining_inventory)
 
 func health_update(value):
 	#print(health)
@@ -41,6 +62,7 @@ func health_update(value):
 		dragon_node.max_jump_strength = 0
 		dragon_node.hover_speed = 0
 		health = 0
+	#health = float(int(health * 100) / 100)
 	
 
 

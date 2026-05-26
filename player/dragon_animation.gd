@@ -92,14 +92,14 @@ func _physics_process(delta: float) -> void:
 	#print(flip_h)
 	if dragon_node.flight_direction.x < 0:
 		facing = LEFT
-		InteractNode.position.x = -50
+		InteractNode.position.x = -100
 		ClimbDetector.position.x = -42
 		ClimbDetector.target_position.x = -65
 		BiteAnimNode.position.x = -112
 		BiteAnimNode.flip_v = false
 	else:
 		facing = RIGHT
-		InteractNode.position.x = 50
+		InteractNode.position.x = 100
 		ClimbDetector.position.x = 42
 		ClimbDetector.target_position.x = 65
 		BiteAnimNode.position.x = 112

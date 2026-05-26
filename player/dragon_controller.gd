@@ -13,7 +13,7 @@ var terminal_velocity = 2000.00
 @onready var wingbeat_clock = get_node("wingbeat_clock")
 var wingbeat_timer_min = 0.25
 @onready var resources = get_node("Resources")
-#@onready var interact_field = get_node("InteractArea")
+@onready var interact_field = get_node("InteractArea")
 @onready var climb_detector = get_node("ClimbDetector")
 #@onready var GlobalData = get_parent()
 #@onready var dive_toggler = get_node("DiveToggler")
@@ -62,6 +62,7 @@ var dampen_glide = dampen_base / 6.0#0.05
 
 var flight_direction = Vector2(0.0,0.0)
 var max_glide_height = 0.0
+var flap_hold_timer = 0
 
 func _ready() -> void:
 	jump_strength = jump_strength_base
@@ -102,23 +103,40 @@ func _physics_process(delta: float) -> void:
 		if jump_strength <= max_jump_strength:
 			jump_strength += 0.1
 	if Input.is_action_just_released("flap"):
-		#is_hovering = false
+		if GlobalData.hover_unlocked == false:
+			is_hovering = false
 		just_jumped = true
-		is_flap_held = false
+		#is_flap_held = false
 		stored_jump = jump_strength
-	
+		#flap_hold_timer = 0
 	direction_x = Input.get_axis("move_left", "move_right")
 	direction_y = Input.get_axis("move_up", "move_down")
+	if not GlobalData.hover_unlocked and is_hovering:
+		direction_x = 0
+		direction_y = 0
+	#print(direction_x, " ", direction_y)
+	if direction_x != 0.0: #current_speed < 1000 and 
+		flight_direction.y -= 0.008
 	
 	## Disabling Stalling to instead modify our direction_y based on our speed
 	fd_dampen = (1.0 - (current_speed / terminal_velocity))
 	#fd_dampen = fd_dampen ** 10
 	fd_dampen *= 0.011
+	if fd_dampen < 0.001:
+		fd_dampen = 0.001
 	#print("Stalling Test: ", fd_dampen)
 	#print(fd_dampen)
 	if is_gliding:
 		fd_dampen *= 0.25
 	flight_direction.y += fd_dampen	
+	
+	#if is_flap_held:
+	#	flap_hold_timer += 1
+	#	print(flap_hold_timer)
+		#var speed_reduction = (flap_hold_timer / 10)
+		#current_speed -= speed_reduction * speed_reduction
+		#flight_direction *= 0.5
+		#current_speed *= 0.99
 	
 	## If option_hold_to_glide is on, then you need to hold to fold in wings. Otherwise, it's a toggle.
 	## Some players might prefer one way or the other so it's a good option to have.
@@ -143,6 +161,7 @@ func _physics_process(delta: float) -> void:
 		if Input.is_action_pressed("Glide"):
 			is_running = true
 	## And here's the same thing for Hovering
+	#if GlobalData.hover_unlocked:
 	if Input.is_action_just_pressed("Hover"):
 		if not GlobalData.option_hold_to_hover:
 			if is_hovering == true:
@@ -157,6 +176,9 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_released("Hover"):
 		if GlobalData.option_hold_to_hover:
 			is_hovering = false
+	
+	if not GlobalData.hover_unlocked and distance_moved <= 5 and is_hovering:
+		is_hovering = false
 	
 	if is_hovering and not is_grounded:
 		is_flying = true
@@ -186,19 +208,20 @@ func _physics_process(delta: float) -> void:
 			
 			if GlobalData.option_hover_leave:
 				is_hovering = true
-			else:
+			elif GlobalData.option_glide_leave:
 				## If Glide on Fly is true:
 				is_gliding = true
 	
 		## If we're hovering, manually set flight_direction so that we have an easy transition
 		elif is_hovering:
 			is_hovering = false
-			## If Glide on Fly is true:
-			is_gliding = true
+			if GlobalData.option_glide_leave:
+				is_gliding = true
 			wingbeat()
 	
 	if is_grounded:
 		is_flying = false
+		wingbeat_afterburner = 0.0
 	
 	if not is_flying and not is_grounded:
 		if distance_moved > 18 or just_jumped:

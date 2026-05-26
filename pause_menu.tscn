@@ -1,19 +1,19 @@
-[gd_scene load_steps=2 format=3 uid="uid://bks7gor6yrlx6"]
+[gd_scene format=3 uid="uid://bks7gor6yrlx6"]
 
 [ext_resource type="Script" uid="uid://dnwog7r8e5n51" path="res://scripts/pause_menu.gd" id="1_hdmo1"]
 
-[node name="PauseMenu" type="CanvasLayer"]
+[node name="PauseMenu" type="CanvasLayer" unique_id=1967570053]
 process_mode = 3
 script = ExtResource("1_hdmo1")
 
-[node name="MenuButton" type="Button" parent="."]
+[node name="MenuButton" type="Button" parent="." unique_id=1748158724]
 offset_left = 14.0
 offset_top = 18.0
 offset_right = 110.0
 offset_bottom = 49.0
 text = "Main Menu"
 
-[node name="MainMenu" type="VBoxContainer" parent="."]
+[node name="MainMenu" type="VBoxContainer" parent="." unique_id=1662352885]
 visible = false
 anchors_preset = 8
 anchor_left = 0.5
@@ -27,27 +27,27 @@ offset_bottom = 20.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Resume" type="Button" parent="MainMenu"]
+[node name="Resume" type="Button" parent="MainMenu" unique_id=1901502421]
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Resume"
 
-[node name="Options" type="Button" parent="MainMenu"]
+[node name="Options" type="Button" parent="MainMenu" unique_id=569943559]
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Options"
 
-[node name="Controls" type="Button" parent="MainMenu"]
+[node name="Controls" type="Button" parent="MainMenu" unique_id=258531966]
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Controls"
 
-[node name="Exit" type="Button" parent="MainMenu"]
+[node name="Exit" type="Button" parent="MainMenu" unique_id=1611487887]
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Exit"
 
-[node name="OptionsMenu" type="VBoxContainer" parent="."]
+[node name="OptionsMenu" type="VBoxContainer" parent="." unique_id=390298277]
 visible = false
 anchors_preset = 8
 anchor_left = 0.5
@@ -61,29 +61,32 @@ offset_bottom = 46.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Back" type="Button" parent="OptionsMenu"]
+[node name="Back" type="Button" parent="OptionsMenu" unique_id=1146176968]
 layout_mode = 2
 size_flags_horizontal = 0
 text = "Back"
 
-[node name="HoldGlide" type="CheckButton" parent="OptionsMenu"]
+[node name="HoldGlide" type="CheckButton" parent="OptionsMenu" unique_id=1729836392]
 layout_mode = 2
 text = "Hold to Glide"
 
-[node name="HoldHover" type="CheckButton" parent="OptionsMenu"]
+[node name="HoldHover" type="CheckButton" parent="OptionsMenu" unique_id=1308415268]
 layout_mode = 2
 text = "Hold to Hover"
 
-[node name="HoldLook" type="CheckButton" parent="OptionsMenu"]
+[node name="HoldLook" type="CheckButton" parent="OptionsMenu" unique_id=1666733161]
 layout_mode = 2
 text = "Hold to Look"
 
-[node name="HoverLeave" type="CheckButton" parent="OptionsMenu"]
+[node name="HoverLeave" type="CheckButton" parent="OptionsMenu" unique_id=627188500]
 layout_mode = 2
-button_pressed = true
 text = "Automatically Hover when taking off"
 
-[node name="ControlsMenu" type="Control" parent="."]
+[node name="GlideLeave" type="CheckButton" parent="OptionsMenu" unique_id=363492265]
+layout_mode = 2
+text = "Automatically Glide when taking off"
+
+[node name="ControlsMenu" type="Control" parent="." unique_id=200383640]
 visible = false
 layout_mode = 3
 anchors_preset = 8
@@ -98,7 +101,7 @@ offset_bottom = 119.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Back2" type="Button" parent="ControlsMenu"]
+[node name="Back2" type="Button" parent="ControlsMenu" unique_id=1499121180]
 layout_mode = 0
 offset_left = 126.0
 offset_top = -46.0
@@ -108,7 +111,7 @@ size_flags_horizontal = 0
 size_flags_vertical = 0
 text = "Back"
 
-[node name="Label" type="Label" parent="ControlsMenu"]
+[node name="Label" type="Label" parent="ControlsMenu" unique_id=1823839895]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -123,60 +126,60 @@ grow_horizontal = 2
 grow_vertical = 0
 text = "Shift + Ctrl + X: Debug Menu"
 
-[node name="FlyingMovement" type="VBoxContainer" parent="ControlsMenu"]
+[node name="FlyingMovement" type="VBoxContainer" parent="ControlsMenu" unique_id=1792412884]
 layout_mode = 0
 offset_left = 129.0
 offset_top = -11.0
 offset_right = 469.0
 offset_bottom = 227.0
 
-[node name="Flying" type="Label" parent="ControlsMenu/FlyingMovement"]
+[node name="Flying" type="Label" parent="ControlsMenu/FlyingMovement" unique_id=1799835024]
 layout_mode = 2
 text = "Flying"
 uppercase = true
 
-[node name="PitchUp" type="Label" parent="ControlsMenu/FlyingMovement"]
+[node name="PitchUp" type="Label" parent="ControlsMenu/FlyingMovement" unique_id=670007486]
 layout_mode = 2
 text = "W: Pitch Up"
 
-[node name="TurnLeft" type="Label" parent="ControlsMenu/FlyingMovement"]
+[node name="TurnLeft" type="Label" parent="ControlsMenu/FlyingMovement" unique_id=1262703378]
 layout_mode = 2
 text = "A: Turn Left"
 
-[node name="PitchDown" type="Label" parent="ControlsMenu/FlyingMovement"]
+[node name="PitchDown" type="Label" parent="ControlsMenu/FlyingMovement" unique_id=321794545]
 layout_mode = 2
 text = "S: Pitch Down"
 
-[node name="TurnRight" type="Label" parent="ControlsMenu/FlyingMovement"]
+[node name="TurnRight" type="Label" parent="ControlsMenu/FlyingMovement" unique_id=525200675]
 layout_mode = 2
 text = "D: Turn Right
 "
 
-[node name="Flap" type="Label" parent="ControlsMenu/FlyingMovement"]
+[node name="Flap" type="Label" parent="ControlsMenu/FlyingMovement" unique_id=493210874]
 layout_mode = 2
 text = "Spacebar: Flap wings (hold for stronger flap)"
 
-[node name="Glide" type="Label" parent="ControlsMenu/FlyingMovement"]
+[node name="Glide" type="Label" parent="ControlsMenu/FlyingMovement" unique_id=2004648528]
 layout_mode = 2
 text = "Left Shift: Glide"
 
-[node name="Hover" type="Label" parent="ControlsMenu/FlyingMovement"]
+[node name="Hover" type="Label" parent="ControlsMenu/FlyingMovement" unique_id=981806256]
 layout_mode = 2
 text = "Left Ctrl: Hover"
 
-[node name="GroundedMovement" type="VBoxContainer" parent="ControlsMenu"]
+[node name="GroundedMovement" type="VBoxContainer" parent="ControlsMenu" unique_id=113510951]
 layout_mode = 0
 offset_left = 473.0
 offset_top = -11.0
 offset_right = 594.0
 offset_bottom = 227.0
 
-[node name="Walking" type="Label" parent="ControlsMenu/GroundedMovement"]
+[node name="Walking" type="Label" parent="ControlsMenu/GroundedMovement" unique_id=854811070]
 layout_mode = 2
 text = "Walking"
 uppercase = true
 
-[node name="MoveUp" type="Label" parent="ControlsMenu/GroundedMovement"]
+[node name="MoveUp" type="Label" parent="ControlsMenu/GroundedMovement" unique_id=1260677530]
 layout_mode = 2
 text = "A: Move Left
 D: Move Right
@@ -193,4 +196,5 @@ Spacebar: Jump"
 [connection signal="toggled" from="OptionsMenu/HoldHover" to="." method="_on_hold_hover_toggled"]
 [connection signal="toggled" from="OptionsMenu/HoldLook" to="." method="_on_hold_look_toggled"]
 [connection signal="toggled" from="OptionsMenu/HoverLeave" to="." method="_on_hover_leave_toggled"]
+[connection signal="toggled" from="OptionsMenu/GlideLeave" to="." method="_on_glide_leave_toggled"]
 [connection signal="pressed" from="ControlsMenu/Back2" to="." method="_on_back_pressed"]

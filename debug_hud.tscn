@@ -1,13 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://drn046xbx7cku"]
+[gd_scene format=3 uid="uid://drn046xbx7cku"]
 
 [ext_resource type="Script" uid="uid://qjsxqgxvq6s8" path="res://scripts/debug_hud.gd" id="1_ubd1e"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_darle"]
 
-[node name="HUD" type="CanvasLayer"]
+[node name="HUD" type="CanvasLayer" unique_id=856838014]
 script = ExtResource("1_ubd1e")
 
-[node name="DistanceMoved" type="Label" parent="."]
+[node name="DistanceMoved" type="Label" parent="." unique_id=1846543276]
+modulate = Color(0.5972951, 0.7833097, 1, 1)
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -22,7 +23,7 @@ text = "0.0
 "
 label_settings = SubResource("LabelSettings_darle")
 
-[node name="POV_Label" type="Label" parent="DistanceMoved"]
+[node name="POV_Label" type="Label" parent="DistanceMoved" unique_id=1905070257]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -38,7 +39,8 @@ text = "Position:"
 label_settings = SubResource("LabelSettings_darle")
 horizontal_alignment = 2
 
-[node name="Position" type="Label" parent="."]
+[node name="Position" type="Label" parent="." unique_id=1256658838]
+modulate = Color(0.5972951, 0.7833097, 1, 1)
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -52,7 +54,7 @@ size_flags_vertical = 0
 text = "0.0"
 label_settings = SubResource("LabelSettings_darle")
 
-[node name="DISTMOV_Label" type="Label" parent="Position"]
+[node name="DISTMOV_Label" type="Label" parent="Position" unique_id=1573936414]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -68,7 +70,8 @@ text = "Distance Moved:"
 label_settings = SubResource("LabelSettings_darle")
 horizontal_alignment = 2
 
-[node name="Speed" type="Label" parent="."]
+[node name="Speed" type="Label" parent="." unique_id=1264229535]
+modulate = Color(0.5972951, 0.7833097, 1, 1)
 offset_left = 25.0
 offset_top = 132.0
 offset_right = 125.0
@@ -79,7 +82,8 @@ text = "Speed:
 "
 label_settings = SubResource("LabelSettings_darle")
 
-[node name="LinearVelocity" type="Label" parent="."]
+[node name="LinearVelocity" type="Label" parent="." unique_id=1759065502]
+modulate = Color(0.5972951, 0.7833097, 1, 1)
 offset_left = 25.0
 offset_top = 57.0
 offset_right = 143.0
@@ -90,7 +94,8 @@ text = "Linear Velocity:
 "
 label_settings = SubResource("LabelSettings_darle")
 
-[node name="FlightDirection" type="Label" parent="."]
+[node name="FlightDirection" type="Label" parent="." unique_id=957178861]
+modulate = Color(0.5972951, 0.7833097, 1, 1)
 offset_left = 26.0
 offset_top = 97.0
 offset_right = 144.0
@@ -100,7 +105,8 @@ size_flags_vertical = 0
 text = "Flight Direction:"
 label_settings = SubResource("LabelSettings_darle")
 
-[node name="Hovering" type="Label" parent="."]
+[node name="Hovering" type="Label" parent="." unique_id=1342407234]
+modulate = Color(0.5972951, 0.7833097, 1, 1)
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
@@ -114,7 +120,8 @@ size_flags_vertical = 0
 text = "Hovering:"
 label_settings = SubResource("LabelSettings_darle")
 
-[node name="GlideToggle" type="Label" parent="."]
+[node name="GlideToggle" type="Label" parent="." unique_id=1606859763]
+modulate = Color(0.5972951, 0.7833097, 1, 1)
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
@@ -128,7 +135,8 @@ size_flags_vertical = 0
 text = "Glide Toggle:"
 label_settings = SubResource("LabelSettings_darle")
 
-[node name="Stalling" type="Label" parent="."]
+[node name="Stalling" type="Label" parent="." unique_id=1487209059]
+modulate = Color(0.5972951, 0.7833097, 1, 1)
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
@@ -142,7 +150,8 @@ size_flags_vertical = 0
 text = "Is Stalling:"
 label_settings = SubResource("LabelSettings_darle")
 
-[node name="JumpStrength" type="Label" parent="."]
+[node name="JumpStrength" type="Label" parent="." unique_id=1073747289]
+modulate = Color(0.5972951, 0.7833097, 1, 1)
 offset_left = 26.0
 offset_top = 209.0
 offset_right = 149.0
@@ -152,7 +161,8 @@ size_flags_vertical = 0
 text = "Jump Strength:"
 label_settings = SubResource("LabelSettings_darle")
 
-[node name="Afterburner" type="Label" parent="."]
+[node name="Afterburner" type="Label" parent="." unique_id=1734832140]
+modulate = Color(0.5972951, 0.7833097, 1, 1)
 offset_left = 26.0
 offset_top = 178.0
 offset_right = 149.0
@@ -162,7 +172,8 @@ size_flags_vertical = 0
 text = "Afterburner:"
 label_settings = SubResource("LabelSettings_darle")
 
-[node name="Camera Scale" type="Label" parent="."]
+[node name="Camera Scale" type="Label" parent="." unique_id=1803454257]
+modulate = Color(0.5972951, 0.7833097, 1, 1)
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -178,7 +189,7 @@ text = "Camera Scale
 label_settings = SubResource("LabelSettings_darle")
 horizontal_alignment = 1
 
-[node name="Update" type="Timer" parent="."]
+[node name="Update" type="Timer" parent="." unique_id=491877971]
 wait_time = 0.1
 autostart = true
 

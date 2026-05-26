@@ -5,56 +5,30 @@ extends Area2D
 @onready var resources = dragon_node.get_node("Resources")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _physics_process(delta: float) -> void:
+func _process(delta: float) -> void:	
 	if dragon_node.resources.attack_cooldown != 0:
 		dragon_node.resources.attack_cooldown -= 1
-
-var is_grabbing = false
-var grabbed_entity : RigidBody2D
 
 func _input(event: InputEvent) -> void:
 	## COLLECT
 	if Input.is_action_just_pressed("Interact"):
-		for body in get_overlapping_bodies():
-			if body.is_in_group("collectible"):
-				print(body.name)
-				pick_up(body)
-				break
-			elif body.is_in_group("item_pile"):
-				gather(body)
-				break
+		if highlighted_object:
+			if highlighted_object.is_in_group("collectible"):
+				pick_up(highlighted_object)
+			elif highlighted_object.is_in_group("item_pile"):
+				gather(highlighted_object)
+			if get_tree().get_nodes_in_group("select_choice").size() >= 1:
+				highlighted_object = get_tree().get_nodes_in_group("select_choice")[0]
+				object_manager.highlight(highlighted_object,true)
 	## VOMIT
 	if Input.is_action_just_pressed("vomit"):
 		if resources.collected_items >= 1:
-			print("Vomitting")
+			#print("Vomitting")
 			var found_pile = null
-			for body in get_overlapping_bodies():
-				if body.is_in_group("item_pile"):
-					found_pile = body
-					break
+			if highlighted_object:
+				if highlighted_object.is_in_group("item_pile"):
+					found_pile = highlighted_object
 			vomit(found_pile)
-				
-		#if not is_grabbing and grabbed_entity == null:
-			#for body in get_overlapping_bodies():
-				#if body.is_in_group("object_grabbable"):# body.is_in_group("entity") or 
-					#print("grabbing ", body)
-					##entity_manager.grab_entity(body)
-					#body.sleeping = false
-					#body.grabbing_entity = dragon_node
-					#is_grabbing = true
-					#grabbed_entity = body
-					#print("Grabbing Entity", body.grabbing_entity)
-					#break
-					#
-		#elif is_grabbing:
-			##entity_manager.release_entity(grabbed_entity)
-			#if grabbed_entity.is_in_group("object_grabbable"):
-				#grabbed_entity.just_released = true
-			#print("Releasing")
-			#grabbed_entity.grabbing_entity = null
-			#grabbed_entity.sleeping = false
-			#is_grabbing = false
-			#grabbed_entity = null
 	
 	## BITE
 	if Input.is_action_just_pressed("bite") and dragon_node.resources.attack_cooldown == 0:
@@ -84,36 +58,106 @@ func _input(event: InputEvent) -> void:
 		##		pass
 			#pass
 		#pass
+	
+	if Input.is_action_just_pressed("select_next_object"):
+		selectable_object_count = get_tree().get_nodes_in_group("select_choice").size()-1
+		#print(selectable_objects.size())
+		cycle_selectable_objects(selectable_object_count)
 #func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 	#pass
 
+## When we have multiple objects selected, this is used to tab between them
+var highlighted_object = null
+var highlighted_object_index = 0
+var selectable_object_count = 0
+func cycle_selectable_objects(object_array):
+	if highlighted_object_index + 1 <= selectable_object_count:
+		highlighted_object_index += 1
+	else:
+		highlighted_object_index = 0
+	if not highlighted_object == null:
+		object_manager.highlight(highlighted_object,false)
+		print("Highlighted object: ", highlighted_object)
+	highlighted_object = get_tree().get_nodes_in_group("select_choice")[highlighted_object_index]
+	print("Highlighted object: ", highlighted_object)
+	object_manager.highlight(highlighted_object,true)
+
 @onready var thought_bubble = get_node("/root/Main/HUD/PlayerStats/Thought")#.get_node("%Thought")
 var item_pile = preload("res://objects/item_pile.tscn")
+var gather_amount = 10
+
+func thought_gather(amount,item_type):
+	thought_bubble.thought_start("+" + str(amount) + " " + str(item_type))
 
 func gather(object):
-	if (resources.collected_items + 1) <= resources.inventory_size:
-		resources.collected_items += 1
-		object.size -= 1
-		if object.size == 0:
-			object.queue_free()
+	print(object.size)
+	if resources.remaining_inventory >= 1:
+		var amount_to_collect# = gather_amount - object.size
+		if object.size >= gather_amount:
+			amount_to_collect = gather_amount
 		else:
-			object_manager.update_size(object)
+			amount_to_collect = object.size
+		
+		if amount_to_collect > resources.remaining_inventory:
+			amount_to_collect = resources.remaining_inventory
+		
+		print("Amount to collect: ", amount_to_collect)
+		resources.inventory_update(amount_to_collect)
+		object.size -= amount_to_collect
+		#thought_gather(amount_to_collect, object.type)
+		
+		if object.size <= 0:
+			#print(object)
+			object.remove_from_group("select_choice")
+			object.queue_free()
+			#print(object)
+		else:
+			object_manager.pile_update_size(object)
 	else:
 		thought_bubble.thought_start("You can't hold any more items.")
 
 func pick_up(object):
-	if (resources.collected_items + object.size) <= resources.inventory_size:
-		resources.collected_items += object.size
+	if object.size <= resources.remaining_inventory:
+		resources.inventory_update(object.size)
+		#thought_gather(object.size, object.type)
+		object.remove_from_group("select_choice")
 		object.queue_free()
 	else:
-		thought_bubble.thought_start("You can't hold any more items.")
+		thought_bubble.thought_start("You can't hold this item.")
 
+## Note: 
+## As of now, we dump *all* our inventory into one gold pile.
+## If the pile we have selected is already full or will be too full, we make ONE new one.
+## Consider adding functionality in the future that lets us make multiple piles all at once if we need to.
 func vomit(current_pile):
+	var create_pile = false
+	var amount_to_add = resources.collected_items
+	## If the size of the pile plus what we would add exceeds the max size,
+	## we overflow and create a new pile.	
 	if current_pile == null:
-		current_pile = item_pile.instantiate()
-		object_manager.add_object(dragon_node.position,current_pile)
-		current_pile.size = resources.collected_items
+		create_pile = true
 	else:
-		current_pile.size += resources.collected_items
-	object_manager.update_size(current_pile)
-	resources.collected_items = 0
+		if current_pile.size + resources.collected_items > object_manager.max_pile_size:
+			create_pile = true
+			amount_to_add = object_manager.max_pile_size - current_pile.size 
+			current_pile.size = object_manager.max_pile_size
+			object_manager.pile_update_size(current_pile)
+			## After adding to the current pile, update our inventory to get ready to make the *new* pile.
+			resources.inventory_update(-amount_to_add)
+			amount_to_add = resources.collected_items
+	
+		## If there is no pile selected OR that pile is already at max size, we're gonna make a new pile
+		if current_pile.size == object_manager.max_pile_size:
+			create_pile = true
+	
+	if create_pile:
+		GlobalData.created_piles += 1
+		current_pile = item_pile.instantiate()
+		current_pile.name = "player_pile_" + str(GlobalData.created_piles)
+		object_manager.add_object(dragon_node.position,current_pile)
+	
+	current_pile.size += amount_to_add
+	#resources.collected_items -= amount_to_add
+	
+	object_manager.pile_update_size(current_pile)
+	resources.inventory_update(-resources.collected_items)

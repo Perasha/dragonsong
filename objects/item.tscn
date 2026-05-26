@@ -1,23 +1,33 @@
 [gd_scene format=3 uid="uid://c2hwxc628wepk"]
 
 [ext_resource type="Script" uid="uid://duc35evpxtc0q" path="res://objects/object_data.gd" id="1_o6483"]
-[ext_resource type="Texture2D" uid="uid://csy4bc5amtghr" path="res://objects/sprites/coin.png" id="2_kmayk"]
+[ext_resource type="Material" uid="uid://bj7i6ijf4y4uq" path="res://shaders/outline_shader_material.tres" id="2_e8v2r"]
+[ext_resource type="Texture2D" uid="uid://bp0a204nn6i2j" path="res://objects/sprites/object_sprite_sheet.png" id="3_vi0cm"]
+[ext_resource type="PackedScene" uid="uid://055gk0wf3t0j" path="res://ParticleEffects/key_frag_effect.tscn" id="4_vi0cm"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_8g0ca"]
 rough = true
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_t6101"]
-size = Vector2(36, 28)
+size = Vector2(66, 62)
 
-[node name="collectible_item" type="RigidBody2D" unique_id=1501650754 groups=["collectible", "object"]]
+[node name="collectible_item" type="RigidBody2D" unique_id=1501650754 groups=["collectible", "interactable", "object"]]
 collision_layer = 4
 physics_material_override = SubResource("PhysicsMaterial_8g0ca")
 lock_rotation = true
 script = ExtResource("1_o6483")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=952043561]
+position = Vector2(0, 2)
 shape = SubResource("RectangleShape2D_t6101")
 
 [node name="sprite" type="Sprite2D" parent="." unique_id=956827194]
+material = ExtResource("2_e8v2r")
 scale = Vector2(4, 4)
-texture = ExtResource("2_kmayk")
+texture = ExtResource("3_vi0cm")
+region_enabled = true
+region_rect = Rect2(0, 0, 16, 16)
+
+[node name="KeyFragEffect" parent="." unique_id=1686674837 instance=ExtResource("4_vi0cm")]
+scale = Vector2(1.02, 1.02)
+amount = 1

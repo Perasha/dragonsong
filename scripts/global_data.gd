@@ -2,18 +2,20 @@ extends Node
 
 enum {IDLE,MOVE,GRABBED,DEAD}
 
+# Unlocks
+var hover_unlocked = false
+
 # Menu Toggles
 var option_hold_to_glide = false
 var option_hold_to_hover = false
 var option_hover_leave = false
+var option_glide_leave = false
 var option_hold_to_look = false
 
 @export var terminal_velocity = 3250.00
 
-var ambrette_town = {
-	"player_opinion" : 0,
-	"threats" : []
-}
+## Statistics
+var created_piles = 0
 
 var move_database = {
 	"strike" : {"range" : 200, "damage" : 1}

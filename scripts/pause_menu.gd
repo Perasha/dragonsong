@@ -72,3 +72,7 @@ func _on_menu_button_pressed() -> void:
 func _on_hold_look_toggled(toggled_on: bool) -> void:
 	GlobalData.option_hold_to_look = toggled_on
 	pass # Replace with function body.
+
+
+func _on_glide_leave_toggled(toggled_on: bool) -> void:
+	GlobalData.option_glide_leave = toggled_on
