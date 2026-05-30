@@ -6,7 +6,7 @@ extends RigidBody2D
 @export var max_run_speed = 400.00
 @export var max_fly_speed = 1250.00
 var max_fly_speed_base = GlobalData.terminal_velocity / 2.5#1.5
-var terminal_velocity = 2000.00
+#var GlobalData.terminal_velocity = 2000.00
 
 @onready var floor_check = get_node("FloorCheck")
 #@onready var sprite = get_node("Body") #Animator
@@ -66,8 +66,8 @@ var flap_hold_timer = 0
 
 func _ready() -> void:
 	jump_strength = jump_strength_base
-	terminal_velocity = GlobalData.terminal_velocity
-	#max_fly_speed_base = terminal_velocity
+	#terminal_velocity = GlobalData.terminal_velocity
+	#max_fly_speed_base = GlobalData.terminal_velocity
 	#max_fly_speed = max_fly_speed_base
 
 
@@ -119,7 +119,8 @@ func _physics_process(delta: float) -> void:
 		flight_direction.y -= 0.008
 	
 	## Disabling Stalling to instead modify our direction_y based on our speed
-	fd_dampen = (1.0 - (current_speed / terminal_velocity))
+	fd_dampen = (1.0 - (current_speed / GlobalData.terminal_velocity))
+	#print(fd_dampen)
 	#fd_dampen = fd_dampen ** 10
 	fd_dampen *= 0.011
 	if fd_dampen < 0.001:
@@ -128,15 +129,10 @@ func _physics_process(delta: float) -> void:
 	#print(fd_dampen)
 	if is_gliding:
 		fd_dampen *= 0.25
-	flight_direction.y += fd_dampen	
+	flight_direction.y += fd_dampen
 	
-	#if is_flap_held:
-	#	flap_hold_timer += 1
-	#	print(flap_hold_timer)
-		#var speed_reduction = (flap_hold_timer / 10)
-		#current_speed -= speed_reduction * speed_reduction
-		#flight_direction *= 0.5
-		#current_speed *= 0.99
+	#print("Flight Direction X, Modified:", direction_x * (76 / distance_moved))
+	#flight_direction = flight_direction.normalized()
 	
 	## If option_hold_to_glide is on, then you need to hold to fold in wings. Otherwise, it's a toggle.
 	## Some players might prefer one way or the other so it's a good option to have.
@@ -200,11 +196,13 @@ func _physics_process(delta: float) -> void:
 	
 	## This is our jump! If we flap once, it's just a jump. If we flap twice, and we're not on the ground, we start flying!	
 	if just_jumped:
-		if not is_grounded and not is_flying:
+		if not is_flying: #not is_grounded
+			print("Fly")
 			if flight_direction.y > 0:
 				flight_direction.y *= -1
 			wingbeat()
 			is_flying = true
+			#is_grounded = false
 			
 			if GlobalData.option_hover_leave:
 				is_hovering = true
@@ -224,10 +222,11 @@ func _physics_process(delta: float) -> void:
 		wingbeat_afterburner = 0.0
 	
 	if not is_flying and not is_grounded:
-		if distance_moved > 18 or just_jumped:
+		if distance_moved > 5 or just_jumped:
 			is_flying = true
 			## If Glide on Fly is true:
 			is_gliding = true
+			flight_direction = linear_velocity.normalized()
 	
 	## If we're on the ground, add some directly upward velocity if we flap our wings!
 	if just_jumped and is_grounded:
@@ -249,7 +248,7 @@ func _physics_process(delta: float) -> void:
 		walk()
 	if is_flying or is_hovering:
 		## This is just to make sure our speed never exceeds what we determine as Terminal Velocity. Otherwise... bad things
-		linear_velocity = linear_velocity.clamp(Vector2(-terminal_velocity,-terminal_velocity),Vector2(terminal_velocity,terminal_velocity))
+		linear_velocity = linear_velocity.clamp(Vector2(-GlobalData.terminal_velocity,-GlobalData.terminal_velocity),Vector2(GlobalData.terminal_velocity,GlobalData.terminal_velocity))
 	## Oh and finally, we calculate our distance moved!
 	distance_moved = previous_position.distance_to(current_position)
 	if just_jumped:
@@ -289,21 +288,21 @@ func wingbeat():
 	stored_jump *= stored_jump_multiplier
 	var wingbeat_force = 0.0
 	
-	if current_speed < terminal_velocity:
+	if current_speed < GlobalData.terminal_velocity:
 		## Adding an "afterburner" to continually apply force after we do a wingbeat.
 		wingbeat_afterburner = (stored_jump * afterburner_amount)
 		print("Afterburner: ", wingbeat_afterburner)
 		
 		wingbeat_force = (wingbeat_strength * stored_jump)# - speed_reduction
 		print("Wingbeat Force: ", wingbeat_force)
-		if current_speed > (terminal_velocity * 0.5):
+		if current_speed > (GlobalData.terminal_velocity * 0.5):
 			wingbeat_force *= 0.5
 			wingbeat_afterburner *= 0.5
 		print("Speed-reduced Wingbeat Force: ", wingbeat_force)
 		current_speed += wingbeat_force
 	
-	if current_speed > terminal_velocity:
-		current_speed = terminal_velocity
+	if current_speed > GlobalData.terminal_velocity:
+		current_speed = GlobalData.terminal_velocity
 	
 	on_wingbeat_cooldown = true
 	
@@ -332,7 +331,7 @@ func apply_momentum():
 
 ## Flying
 func fly():
-	if just_jumped and current_speed <= terminal_velocity and wingbeat_afterburner < wingbeat_reset_num:# and not on_wingbeat_cooldown:
+	if just_jumped and current_speed <= GlobalData.terminal_velocity and wingbeat_afterburner < wingbeat_reset_num:# and not on_wingbeat_cooldown:
 		wingbeat()
 		#print("Continue")
 	## Adding our afterburner force. This'll slowly go down long after we do the wingbeat, but it's to push us further for a bit longer.
