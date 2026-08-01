@@ -168,7 +168,6 @@ color_initial_ramp = SubResource("GradientTexture1D_n3dog")
 hue_variation_min = -2.2351742e-08
 hue_variation_max = -2.2351742e-08
 turbulence_enabled = true
-collision_mode = 2
 
 [node name="dragon" type="RigidBody2D" unique_id=539998597 groups=["player"]]
 collision_layer = 2

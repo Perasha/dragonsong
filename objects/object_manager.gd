@@ -18,7 +18,7 @@ var no_outline = Color(1,1,1,0)
 func _ready():	
 	dragon_node.get_node("InteractArea").body_entered.connect(_on_dragon_interact_body_entered)
 	dragon_node.get_node("InteractArea").body_exited.connect(_on_dragon_interact_body_exited)
-	for object in get_tree().get_nodes_in_group("object"):
+	for object in get_tree().get_nodes_in_group("interactable"):
 		#print(object.get_node("sprite").material.get_shader_parameter("line_color"))
 		object.get_node("sprite").material.set_shader_parameter("line_color",no_outline)
 	

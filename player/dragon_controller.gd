@@ -51,7 +51,8 @@ var wingbeat_afterburner = 0.0
 @export var hover_speed = 20.0
 
 var current_speed = 0.0
-@export var turn_radius = 0.1
+@export var turn_radius_base = 0.1
+var turn_radius = 0.1
 var fd_dampen = 0.0
 # Multiplier for our dampen value; this is proportional to our GRAVITY constant.
 @export var dampen_base = 0.3 
@@ -59,6 +60,7 @@ var dampen_glide = dampen_base / 6.0#0.05
 #var gravity = 150
 
 @export var grav_scale_default = 2.0
+@export var takeoff_speed = 1.0
 
 var flight_direction = Vector2(0.0,0.0)
 var max_glide_height = 0.0
@@ -115,7 +117,7 @@ func _physics_process(delta: float) -> void:
 		direction_x = 0
 		direction_y = 0
 	#print(direction_x, " ", direction_y)
-	if direction_x != 0.0: #current_speed < 1000 and 
+	if direction_x != 0.0 and flight_direction.y > 0: #current_speed < 1000 and 
 		flight_direction.y -= 0.008
 	
 	## Disabling Stalling to instead modify our direction_y based on our speed
@@ -156,6 +158,15 @@ func _physics_process(delta: float) -> void:
 		is_gliding = false
 		if Input.is_action_pressed("Glide"):
 			is_running = true
+			
+	## Trying out Slowing down again.
+	if Input.is_action_pressed("Slow_flight"):
+		pass
+		## Check our speed, and check our flight_direction.
+		## If this is *held*, 
+		is_gliding = true
+	if Input.is_action_just_released("Slow_flight"):
+		pass
 	## And here's the same thing for Hovering
 	#if GlobalData.hover_unlocked:
 	if Input.is_action_just_pressed("Hover"):
@@ -181,11 +192,11 @@ func _physics_process(delta: float) -> void:
 	
 	## If our wings are out, it's a bit harder to make sharp turns. But if they're in, we can make sharp turns!
 	if is_hovering:
-		turn_radius = 0.4
+		turn_radius = turn_radius_base * 4
 	elif is_gliding:
-		turn_radius = 0.03
+		turn_radius = turn_radius_base * 0.3
 	else:
-		turn_radius = 0.05
+		turn_radius = turn_radius_base * 0.5
 		
 	## This is where we use our turning radius. We incrementally will be adding this value to
 	## our Flight Direction every tick, which will go against the gravity that constantly pushes it down.
@@ -198,10 +209,11 @@ func _physics_process(delta: float) -> void:
 	if just_jumped:
 		if not is_flying: #not is_grounded
 			print("Fly")
-			if flight_direction.y > 0:
-				flight_direction.y *= -1
+			#if flight_direction.y > 0:
+			#	flight_direction.y *= -1 - takeoff_speed
 			wingbeat()
 			is_flying = true
+			is_gliding = false
 			#is_grounded = false
 			
 			if GlobalData.option_hover_leave:
@@ -209,7 +221,7 @@ func _physics_process(delta: float) -> void:
 			elif GlobalData.option_glide_leave:
 				## If Glide on Fly is true:
 				is_gliding = true
-	
+			
 		## If we're hovering, manually set flight_direction so that we have an easy transition
 		elif is_hovering:
 			is_hovering = false
@@ -222,10 +234,10 @@ func _physics_process(delta: float) -> void:
 		wingbeat_afterburner = 0.0
 	
 	if not is_flying and not is_grounded:
-		if distance_moved > 5 or just_jumped:
+		if distance_moved > 3 or just_jumped:
 			is_flying = true
-			## If Glide on Fly is true:
-			is_gliding = true
+			if GlobalData.option_glide_leave:
+				is_gliding = true
 			flight_direction = linear_velocity.normalized()
 	
 	## If we're on the ground, add some directly upward velocity if we flap our wings!
@@ -422,5 +434,6 @@ func _on_body_entered(body: Node) -> void:
 	#print(distance_moved)
 	if distance_moved > 20:
 		#resources.health_update(snappedf(-distance_moved / 200,0.01))
-		resources.health_update(snappedf(-distance_moved / 2,1.0))
+		var damage = snappedf(-distance_moved / 2,1.0)
+		resources.health_update(damage)
 	pass # Replace with function body.

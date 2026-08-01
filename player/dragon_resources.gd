@@ -56,6 +56,7 @@ func health_update(value):
 		dragon_node.max_fly_speed = injury_multiplier * initial_speed["max_fly_speed"]
 		dragon_node.max_jump_strength = (injury_multiplier * (initial_speed["max_jump_strength"] - dragon_node.jump_strength_base)) + dragon_node.jump_strength_base
 		dragon_node.max_fly_speed_base = dragon_node.max_fly_speed
+		health = snappedf(health,0.001)
 		#print("INJURY: ", max_fly_speed)
 	else:
 		dragon_node.max_fly_speed = 0
