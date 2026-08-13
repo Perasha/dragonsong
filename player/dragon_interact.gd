@@ -113,8 +113,9 @@ func gather(object):
 			#print(object)
 		else:
 			object_manager.pile_update_size(object)
+		thought_gather(amount_to_collect,object.type)
 	else:
-		thought_bubble.thought_start("You can't hold any more items.")
+		thought_bubble.thought_start("You can't hold any more items. Press V to empty your inventory.")
 
 func pick_up(object):
 	if object.size <= resources.remaining_inventory:
@@ -122,8 +123,9 @@ func pick_up(object):
 		#thought_gather(object.size, object.type)
 		object.remove_from_group("select_choice")
 		object.queue_free()
+		thought_gather(object.size,object.type)
 	else:
-		thought_bubble.thought_start("You can't hold this item.")
+		thought_bubble.thought_start("You can't hold this item. Press V to empty your inventory.")
 
 ## Note: 
 ## As of now, we dump *all* our inventory into one gold pile.

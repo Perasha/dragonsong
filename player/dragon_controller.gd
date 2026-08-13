@@ -27,10 +27,8 @@ var current_position = Vector2(0.0,0.0)
 var just_jumped = false
 var jump_strength = 0.0
 var stored_jump = 0.0
-#var is_running = false
 var direction_x
 var direction_y
-var is_stalling
 
 var is_flying = false
 var is_hovering = false
@@ -65,6 +63,10 @@ var dampen_glide = dampen_base / 6.0#0.05
 var flight_direction = Vector2(0.0,0.0)
 var max_glide_height = 0.0
 var flap_hold_timer = 0
+#var slow_force = Vector2(0,0)
+# Base = 150
+var stall_speed = 150
+var slow_speed = 500 ## We have to exceed this speed in order for us to Hover to slow down.
 
 func _ready() -> void:
 	jump_strength = jump_strength_base
@@ -113,6 +115,8 @@ func _physics_process(delta: float) -> void:
 		#flap_hold_timer = 0
 	direction_x = Input.get_axis("move_left", "move_right")
 	direction_y = Input.get_axis("move_up", "move_down")
+	#apply_force(Vector2(direction_x,direction_y) / 10)
+	
 	if not GlobalData.hover_unlocked and is_hovering:
 		direction_x = 0
 		direction_y = 0
@@ -159,33 +163,30 @@ func _physics_process(delta: float) -> void:
 		if Input.is_action_pressed("Glide"):
 			is_running = true
 			
-	## Trying out Slowing down again.
-	if Input.is_action_pressed("Slow_flight"):
-		pass
-		## Check our speed, and check our flight_direction.
-		## If this is *held*, 
-		is_gliding = true
-	if Input.is_action_just_released("Slow_flight"):
-		pass
 	## And here's the same thing for Hovering
 	#if GlobalData.hover_unlocked:
 	if Input.is_action_just_pressed("Hover"):
-		if not GlobalData.option_hold_to_hover:
-			if is_hovering == true:
-				is_hovering = false
-			else:
+		## If hovering isn't unlocked, then we need to exceed the Slow Speed in order to initiate Hovering to slow down.
+		if GlobalData.hover_unlocked or current_speed >= slow_speed:
+			if not GlobalData.option_hold_to_hover:
+				if is_hovering == true:
+					is_hovering = false
+				else:
+					is_hovering = true
+					is_gliding = false
+	if GlobalData.hover_unlocked:
+		if Input.is_action_pressed("Hover"):
+			if GlobalData.option_hold_to_hover:
 				is_hovering = true
 				is_gliding = false
-	if Input.is_action_pressed("Hover"):
-		if GlobalData.option_hold_to_hover:
-			is_hovering = true
-			is_gliding = false
-	if Input.is_action_just_released("Hover"):
-		if GlobalData.option_hold_to_hover:
-			is_hovering = false
+		if Input.is_action_just_released("Hover"):
+			if GlobalData.option_hold_to_hover:
+				is_hovering = false
 	
-	if not GlobalData.hover_unlocked and distance_moved <= 5 and is_hovering:
-		is_hovering = false
+	## Stop hovering if we don't have hovering unlocked *and* we're not going fast enough.
+	if not GlobalData.hover_unlocked and is_hovering:
+		if current_speed <= (stall_speed * 1.5):
+			is_hovering = false
 	
 	if is_hovering and not is_grounded:
 		is_flying = true
@@ -203,12 +204,11 @@ func _physics_process(delta: float) -> void:
 	flight_direction += Vector2(direction_x,direction_y) * turn_radius
 	## Oh and then we make sure that we don't actually go above 1 for either value because that would lead to ~problems~!
 	flight_direction = flight_direction.normalized()
-	
+	#flight_direction = linear_velocity
 	
 	## This is our jump! If we flap once, it's just a jump. If we flap twice, and we're not on the ground, we start flying!	
 	if just_jumped:
 		if not is_flying: #not is_grounded
-			print("Fly")
 			#if flight_direction.y > 0:
 			#	flight_direction.y *= -1 - takeoff_speed
 			wingbeat()
@@ -342,6 +342,7 @@ func apply_momentum():
 
 
 ## Flying
+var directional_force = Vector2(0,0)
 func fly():
 	if just_jumped and current_speed <= GlobalData.terminal_velocity and wingbeat_afterburner < wingbeat_reset_num:# and not on_wingbeat_cooldown:
 		wingbeat()
@@ -350,11 +351,12 @@ func fly():
 	if wingbeat_afterburner > 1:
 		wingbeat_afterburner *= afterburner_duration_multiplier
 		current_speed += wingbeat_afterburner * afterburner_multiplier
-		
-	if current_speed >= 20:
+	
+	if current_speed >= stall_speed:
 		apply_momentum()
+		#apply_force(slow_force)
 	else:
-		flight_direction.y = 1.0
+		flight_direction = linear_velocity.normalized()
 
 ## Hovering
 func hover(max_speed,acceleration):
@@ -371,13 +373,14 @@ func hover(max_speed,acceleration):
 			
 	# Stopping much more abruptly if we aren't trying to move,
 	# OR if one of the directions is directly opposite of another.
+	var hover_decceleration = 1 + (acceleration / 5750.0)
 	if direction_x == 0 and direction_y == 0:
-		linear_velocity /= 1 + (acceleration / 750.0)
+		linear_velocity /= hover_decceleration
 	else:
 		if (-direction_x > 0 and linear_velocity.x > 0) or (-direction_x < 0 and linear_velocity.x < 0):
-			linear_velocity.x /= 1 + (acceleration / 750.0)
+			linear_velocity.x /= hover_decceleration
 		if (-direction_y > 0 and linear_velocity.y > 0) or (-direction_y < 0 and linear_velocity.y < 0):
-			linear_velocity.y /= 1 + (acceleration / 750.0)
+			linear_velocity.y /= hover_decceleration
 	
 	# Steering Radius
 	linear_velocity += linear_velocity.direction_to(Vector2(0,0)) * 15
@@ -385,22 +388,14 @@ func hover(max_speed,acceleration):
 ## Climbing
 func check_climb():
 	#print("checking climb")
-	if climb_detector.is_colliding() and abs(direction_x) > 0.2:
+	if climb_detector.is_colliding():# and abs(direction_x) > 0.2:
 		is_climbing = true
 		is_flying = false
 		is_hovering = false
-		#else:
-		#	print("Grounded, no climbing")
-	
-	
-	#if abs(linear_velocity.x) > 50 and abs(flight_direction.x) == 1.0 and not is_grounded:
-	#	is_climbing = true
-		#gravity_scale = 0.0
 	pass
 
 func climb():
-	#print("Climbing!")
-	hover(max_run_speed,speed)
+	hover(max_run_speed,hover_speed)
 
 ## Walking
 func walk():

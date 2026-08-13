@@ -47,7 +47,7 @@ func _on_update_timeout() -> void:
 	glide_label.text = "Glide Toggle: " + str(dragon_node.is_gliding)
 	jump_str_label.text = "Jump Strength: " + str(dragon_node.jump_strength)
 	cam_scale_label.text = "Camera Scale\n" + str(camera_node.zoom)
-	stalling_label.text = "Is Stalling: " + str(dragon_node.is_stalling)
+	#stalling_label.text = "Momentum: " + str(dragon_node.travel_momentum)
 	afterbrn_label.text = "Afterburner: " + str(dragon_node.wingbeat_afterburner)
 	hover_label.text = "Hovering: " + str(dragon_node.is_hovering)
 	

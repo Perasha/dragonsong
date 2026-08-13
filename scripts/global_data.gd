@@ -9,10 +9,12 @@ var hover_unlocked = false
 var option_hold_to_glide = false
 var option_hold_to_hover = false
 var option_hover_leave = false
-var option_glide_leave = false
+var option_glide_leave = true
 var option_hold_to_look = false
 
 @export var terminal_velocity = 3250.00
+
+var tutorial_progress = 0
 
 ## Statistics
 var created_piles = 0
@@ -27,6 +29,19 @@ It feels like a piece of the key is nearby."""
 var Active_Quests = []
 
 var collected_keys = 0
+
+func _ready() -> void:
+	pass
+	#print(InputMap.get_actions())
+	#for action in InputMap.get_actions():
+		#print(action)
+		#if action.begins_with("ui_"):
+			#print(action, " is a built-in action.")
+		#else:
+			#user_inputs.append(action)
+	#print("User actions: ", user_inputs)
+	#
+	#print(InputMap.action_get_events("flap")[0])
 
 func test():
 	print("Complete!")

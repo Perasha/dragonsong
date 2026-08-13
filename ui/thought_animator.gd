@@ -24,7 +24,7 @@ func _process(delta: float) -> void:
 		fade_in(self,0.1)
 	
 	if speech_hide_timer > 0 and speechbubble_is_shown:
-		print(speech_hide_timer)
+		#print(speech_hide_timer)
 		speech_hide_timer -= 1
 	elif speech_hide_timer == 0 and speechbubble_is_shown:
 		speechbubble_is_shown = false
@@ -34,6 +34,8 @@ func thought_start(text):
 	show()
 	speechbubble_is_shown = true
 	fade_in(self,0.1)
+	print("Text: ", text)
+	print("Speech Bubble Label: ", speechbubble_label)
 	speechbubble_label.text = str(text)
 	speech_hide_timer = speech_hide_timer_max
 
