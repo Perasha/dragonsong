@@ -78,7 +78,7 @@ func cycle_selectable_objects(object_array):
 	if not highlighted_object == null:
 		object_manager.highlight(highlighted_object,false)
 		print("Highlighted object: ", highlighted_object)
-	highlighted_object = get_tree().get_nodes_in_group("select_choice")[highlighted_object_index]
+		highlighted_object = get_tree().get_nodes_in_group("select_choice")[highlighted_object_index]
 	print("Highlighted object: ", highlighted_object)
 	object_manager.highlight(highlighted_object,true)
 

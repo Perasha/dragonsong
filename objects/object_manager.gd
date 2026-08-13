@@ -52,6 +52,9 @@ func highlight(object,is_active):
 
 func _on_dragon_interact_body_entered(body: Node2D) -> void:
 	if body.is_in_group("interactable"):
+		if GlobalData.first_hovered_item == false:
+			get_node("/root/Main/HUD/PlayerStats/Thought").thought_start("Press E to pick up items.")
+			GlobalData.first_hovered_item = true
 		body.add_to_group("select_choice")
 		if not dragon_node.interact_field.highlighted_object == null:
 			highlight(dragon_node.interact_field.highlighted_object,false)

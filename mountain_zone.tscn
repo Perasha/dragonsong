@@ -14,8 +14,8 @@
 [ext_resource type="Script" uid="uid://bvxkyx0ds2l6i" path="res://scripts/health_bar.gd" id="15_7ekg2"]
 [ext_resource type="PackedScene" uid="uid://bks7gor6yrlx6" path="res://pause_menu.tscn" id="16_prg60"]
 [ext_resource type="Script" uid="uid://ol8uxm0akc8o" path="res://tutorial/tutorial_script.gd" id="17_cw5i7"]
+[ext_resource type="Script" uid="uid://mdtxtx4ny2qf" path="res://tutorial/basic_stage.gd" id="18_12f22"]
 [ext_resource type="Script" uid="uid://bfpmv7tl4iuxw" path="res://scripts/inventory.gd" id="18_fqjxk"]
-[ext_resource type="Script" uid="uid://dsau2gn2u18y1" path="res://tutorial/basic_quest.gd" id="19_fqjxk"]
 [ext_resource type="Script" uid="uid://1fpt8b2fc5dx" path="res://Maps/_map_collision_copy.gd" id="19_ld413"]
 [ext_resource type="Script" uid="uid://c376g4kols45m" path="res://Maps/map_manager.gd" id="19_sl5eo"]
 [ext_resource type="Texture2D" uid="uid://scg63yoxuewp" path="res://parallax_bg/bg_03.png" id="20_4kaof"]
@@ -45,7 +45,11 @@ radius = 433.72
 radius = 610.27
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_4e6kc"]
-radius = 306.6
+radius = 375.012
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_12f22"]
+radius = 2270.0
+height = 6720.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_k8o1j"]
 
@@ -108,7 +112,7 @@ dragon_node = NodePath("../dragon")
 [node name="dragon" parent="." unique_id=657267410 instance=ExtResource("5_4kaof")]
 unique_name_in_owner = true
 z_index = 1
-position = Vector2(16880, -9288)
+position = Vector2(17180, -9274)
 collision_layer = 4
 gravity_scale = 0.5
 speed = 25.0
@@ -799,60 +803,80 @@ metadata/_edit_use_anchors_ = true
 [node name="Tutorial" type="Node" parent="." unique_id=729438915]
 script = ExtResource("17_cw5i7")
 
-[node name="ground_movement" type="Area2D" parent="Tutorial" unique_id=887795367]
-position = Vector2(16866, -9165)
+[node name="1_ground_movement" type="Area2D" parent="Tutorial" unique_id=887795367 groups=["quest"]]
+position = Vector2(17137, -9182)
+collision_layer = 0
+collision_mask = 4
+script = ExtResource("18_12f22")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Tutorial/ground_movement" unique_id=1587529519]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Tutorial/1_ground_movement" unique_id=1587529519]
 shape = SubResource("CircleShape2D_12f22")
 debug_color = Color(0.5254902, 0.003921569, 0.91764706, 0.023529412)
 
-[node name="sprint" type="Area2D" parent="Tutorial" unique_id=1543368655]
-position = Vector2(15976, -9245)
+[node name="2_sprint" type="Area2D" parent="Tutorial" unique_id=1543368655 groups=["quest"]]
+position = Vector2(16244, -9231)
+collision_layer = 0
+collision_mask = 4
+script = ExtResource("18_12f22")
+stage = 1
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Tutorial/sprint" unique_id=2082912452]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Tutorial/2_sprint" unique_id=2082912452]
 shape = SubResource("CircleShape2D_12f22")
 debug_color = Color(0.5254902, 0.003921569, 0.91764706, 0.023529412)
 
-[node name="Climb" type="Area2D" parent="Tutorial" unique_id=686964583]
-position = Vector2(15248, -9987)
+[node name="3_climb" type="Area2D" parent="Tutorial" unique_id=686964583 groups=["quest"]]
+position = Vector2(15251, -9588)
+collision_layer = 0
+collision_mask = 4
+script = ExtResource("18_12f22")
+stage = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Tutorial/Climb" unique_id=399031543]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Tutorial/3_climb" unique_id=399031543]
 shape = SubResource("CircleShape2D_fqjxk")
 debug_color = Color(0.5254902, 0.003921569, 0.91764706, 0.023529412)
 
-[node name="Fly" type="Area2D" parent="Tutorial" unique_id=445115143]
+[node name="4_take_off" type="Area2D" parent="Tutorial" unique_id=445115143 groups=["quest"]]
 position = Vector2(14710, -10791)
+collision_layer = 0
+collision_mask = 4
+script = ExtResource("18_12f22")
+stage = 3
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Tutorial/Fly" unique_id=98010307]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Tutorial/4_take_off" unique_id=98010307]
+position = Vector2(-40, -20)
 shape = SubResource("CircleShape2D_4e6kc")
 debug_color = Color(0.5254902, 0.003921569, 0.91764706, 0.023529412)
 
-[node name="basic_movement" type="Node" parent="Tutorial" unique_id=818766536 groups=["quest"]]
-script = ExtResource("19_fqjxk")
-tasks = [{
-"completed": false,
-"id": 0,
-"key": "move_left"
-}, {
-"completed": false,
-"id": 1,
-"key": "move_right"
-}]
-conditions = [NodePath("../../dragon")]
-text = "Press A and D to move."
+[node name="5_fly" type="Area2D" parent="Tutorial" unique_id=399567461 groups=["quest"]]
+position = Vector2(12106, -11605)
+collision_layer = 0
+collision_mask = 4
+script = ExtResource("18_12f22")
+stage = 4
 
-[node name="sprinting" type="Node" parent="Tutorial" unique_id=1014715350 groups=["quest"]]
-script = ExtResource("19_fqjxk")
-tasks = [{
-"completed": false,
-"id": 0,
-"key": "Glide"
-}]
-text = "Hold SHIFT to run."
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Tutorial/5_fly" unique_id=900824668]
+shape = SubResource("CapsuleShape2D_12f22")
+debug_color = Color(0.5254902, 0.003921569, 0.91764706, 0.023529412)
 
 [node name="Timer" type="Timer" parent="Tutorial" unique_id=159950838]
 wait_time = 10.0
 autostart = true
+
+[node name="ActiveProgress" type="CanvasLayer" parent="Tutorial" unique_id=1769153102]
+
+[node name="ProgressBar" type="ProgressBar" parent="Tutorial/ActiveProgress" unique_id=915655903]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -134.0
+offset_top = 245.0
+offset_right = 134.0
+offset_bottom = 272.0
+grow_horizontal = 2
+grow_vertical = 2
+show_percentage = false
 
 [node name="TickTimer" type="Timer" parent="." unique_id=315169551]
 process_callback = 0

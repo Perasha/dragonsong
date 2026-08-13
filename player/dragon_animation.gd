@@ -10,6 +10,9 @@ extends Sprite2D
 @onready var wing_glide_sprite = preload("res://Sprites/wings_glide.png")
 @onready var wing_up_sprite = preload("res://Sprites/wings_up.png")
 @onready var wing_down_sprite = preload("res://Sprites/wings_down.png")
+
+@onready var main_sprite = preload("res://Sprites/DragonWingless.png")
+@onready var mid_flight_sprite = preload("res://Sprites/dragon_midflight.png")
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	pass # Replace with function body.
@@ -20,9 +23,21 @@ var wing_switch = false
 enum {LEFT, RIGHT}
 var facing = LEFT
 
+var flight_check_current = false
+var flight_check_prev = false
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 @warning_ignore("unused_parameter")
 func _physics_process(delta: float) -> void:
+	
+	flight_check_current = dragon_node.is_flying
+	if not flight_check_current == flight_check_prev:
+		if dragon_node.is_flying:
+			texture = mid_flight_sprite
+		else:
+			texture = main_sprite
+	flight_check_prev = flight_check_current
+	
 	if not dragon_node.is_hovering:
 		wing_node.position.y = 0.0
 	#elif wing_switch == false:

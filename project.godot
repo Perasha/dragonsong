@@ -29,10 +29,6 @@ EntityBehavior="*res://Entities/entity_behavior.gd"
 movie_writer/ogv/audio_quality=-0.1
 movie_writer/movie_file="C:/Users/mrdun/Documents/Coding Projects/Godot/Videos/DragonSong_MOV.avi"
 
-[editor_plugins]
-
-enabled=PackedStringArray()
-
 [global_group]
 
 entity=""
