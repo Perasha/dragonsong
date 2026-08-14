@@ -6,15 +6,19 @@ enum {IDLE,MOVE,GRABBED,DEAD}
 var hover_unlocked = false
 
 # Menu Toggles
-var option_hold_to_glide = false
+#var option_hold_to_glide = false
+var option_hold_to_dive = true
+var option_dive_leave = false
+
 var option_hold_to_hover = false
 var option_hover_leave = false
-var option_glide_leave = false
+
 var option_hold_to_look = false
 
 @export var terminal_velocity = 3250.00
 
 var first_hovered_item = false
+var first_full_inventory = false
 
 ## Statistics
 var created_piles = 0

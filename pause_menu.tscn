@@ -66,9 +66,10 @@ layout_mode = 2
 size_flags_horizontal = 0
 text = "Back"
 
-[node name="HoldGlide" type="CheckButton" parent="OptionsMenu" unique_id=1729836392]
+[node name="HoldDive" type="CheckButton" parent="OptionsMenu" unique_id=165099107]
 layout_mode = 2
-text = "Hold to Glide"
+button_pressed = true
+text = "Hold to Dive"
 
 [node name="HoldHover" type="CheckButton" parent="OptionsMenu" unique_id=1308415268]
 layout_mode = 2
@@ -192,7 +193,7 @@ Spacebar: Jump"
 [connection signal="pressed" from="MainMenu/Controls" to="." method="_on_controls_pressed"]
 [connection signal="pressed" from="MainMenu/Exit" to="." method="_on_exit_pressed"]
 [connection signal="pressed" from="OptionsMenu/Back" to="." method="_on_back_pressed"]
-[connection signal="toggled" from="OptionsMenu/HoldGlide" to="." method="_on_hold_glide_toggled"]
+[connection signal="toggled" from="OptionsMenu/HoldDive" to="." method="_on_hold_dive_toggled"]
 [connection signal="toggled" from="OptionsMenu/HoldHover" to="." method="_on_hold_hover_toggled"]
 [connection signal="toggled" from="OptionsMenu/HoldLook" to="." method="_on_hold_look_toggled"]
 [connection signal="toggled" from="OptionsMenu/HoverLeave" to="." method="_on_hover_leave_toggled"]

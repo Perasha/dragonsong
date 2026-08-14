@@ -36,6 +36,10 @@ func _process(delta: float) -> void:
 		is_spell_active = false
 		end_spell()
 	
+	if dragon_node.is_flying and dragon_node.just_jumped:
+		burst_node.emitting = true
+		pass
+	
 	if Input.is_action_pressed("cast_spell") and not is_spell_active:
 		cast_node.emitting = true
 		if cast_timer > 0:

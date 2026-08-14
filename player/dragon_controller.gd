@@ -50,11 +50,16 @@ var wingbeat_afterburner = 0.0
 
 var current_speed = 0.0
 @export var turn_radius_base = 0.1
+@export var glide_turn_radius = 0.5
 var turn_radius = 0.1
-var fd_dampen = 0.0
-# Multiplier for our dampen value; this is proportional to our GRAVITY constant.
-@export var dampen_base = 0.3 
-var dampen_glide = dampen_base / 6.0#0.05 
+
+## Flight Direction Dampening - this value gets added to our Y every frame.
+## The lower this number, the less gravity pulls us down.
+@export var fd_dampen = 0.0
+var minimum_damp = 0.001
+## 
+var dampen_base = 0.01 
+@export var dampen_glide = 0.003# = dampen_base / 6.0#0.05 
 #var gravity = 150
 
 @export var grav_scale_default = 2.0
@@ -67,6 +72,8 @@ var flap_hold_timer = 0
 # Base = 150
 var stall_speed = 150
 var slow_speed = 500 ## We have to exceed this speed in order for us to Hover to slow down.
+
+var recent_jump_strength = 0.0
 
 func _ready() -> void:
 	jump_strength = jump_strength_base
@@ -115,7 +122,6 @@ func _physics_process(delta: float) -> void:
 		#flap_hold_timer = 0
 	direction_x = Input.get_axis("move_left", "move_right")
 	direction_y = Input.get_axis("move_up", "move_down")
-	#apply_force(Vector2(direction_x,direction_y) / 10)
 	
 	if not GlobalData.hover_unlocked and is_hovering:
 		direction_x = 0
@@ -129,12 +135,16 @@ func _physics_process(delta: float) -> void:
 	#print(fd_dampen)
 	#fd_dampen = fd_dampen ** 10
 	fd_dampen *= 0.011
-	if fd_dampen < 0.001:
-		fd_dampen = 0.001
+	#if fd_dampen < minimum_damp:
+	#	fd_dampen = minimum_damp
 	#print("Stalling Test: ", fd_dampen)
 	#print(fd_dampen)
 	if is_gliding:
-		fd_dampen *= 0.25
+		fd_dampen = 0.25 / ((distance_moved * distance_moved))
+		#print("Alternative dampen changing: ", fd_dampen)
+	if fd_dampen < minimum_damp:
+		fd_dampen = minimum_damp
+	#print("Dampen: ", fd_dampen)
 	flight_direction.y += fd_dampen
 	
 	#print("Flight Direction X, Modified:", direction_x * (76 / distance_moved))
@@ -143,24 +153,30 @@ func _physics_process(delta: float) -> void:
 	## If option_hold_to_glide is on, then you need to hold to fold in wings. Otherwise, it's a toggle.
 	## Some players might prefer one way or the other so it's a good option to have.
 	if is_flying:
-		if Input.is_action_just_pressed("Glide"):
-			if not GlobalData.option_hold_to_glide:
-				if is_gliding == true:
-					is_gliding = false
-				else:
+		## Allowing a bit of flapping if our player is merely holding directional keys.
+		if current_speed <= max_fly_speed and is_gliding:
+			var force = Vector2(direction_x,direction_y).normalized() * 0.25
+			apply_force(force)
+			flight_direction.y -= fd_dampen#abs(direction_x) * 0.005
+			
+		if Input.is_action_just_pressed("Dive"):
+			if not GlobalData.option_hold_to_dive:
+				if is_gliding == false:
 					is_gliding = true
 					is_hovering = false
-		if Input.is_action_pressed("Glide"):
-			if GlobalData.option_hold_to_glide:
+				else:
+					is_gliding = false
+		if Input.is_action_pressed("Dive"):
+			if GlobalData.option_hold_to_dive:
+				is_gliding = false
+		if Input.is_action_just_released("Dive"):
+			if GlobalData.option_hold_to_dive:
 				is_gliding = true
 				is_hovering = false
-		if Input.is_action_just_released("Glide"):
-			if GlobalData.option_hold_to_glide:
-				is_gliding = false
 	else:
 		is_hovering = false
 		is_gliding = false
-		if Input.is_action_pressed("Glide"):
+		if Input.is_action_pressed("Dive"):
 			is_running = true
 			
 	## And here's the same thing for Hovering
@@ -187,6 +203,10 @@ func _physics_process(delta: float) -> void:
 	if not GlobalData.hover_unlocked and is_hovering:
 		if current_speed <= (stall_speed * 1.5):
 			is_hovering = false
+			if GlobalData.option_dive_leave:
+				is_gliding = false
+			else:
+				is_gliding = true
 	
 	if is_hovering and not is_grounded:
 		is_flying = true
@@ -195,9 +215,9 @@ func _physics_process(delta: float) -> void:
 	if is_hovering:
 		turn_radius = turn_radius_base * 4
 	elif is_gliding:
-		turn_radius = turn_radius_base * 0.3
+		turn_radius = glide_turn_radius
 	else:
-		turn_radius = turn_radius_base * 0.5
+		turn_radius = turn_radius_base
 		
 	## This is where we use our turning radius. We incrementally will be adding this value to
 	## our Flight Direction every tick, which will go against the gravity that constantly pushes it down.
@@ -213,19 +233,20 @@ func _physics_process(delta: float) -> void:
 			#	flight_direction.y *= -1 - takeoff_speed
 			wingbeat()
 			is_flying = true
-			is_gliding = false
+			is_gliding = true
 			#is_grounded = false
 			
 			if GlobalData.option_hover_leave:
 				is_hovering = true
-			elif GlobalData.option_glide_leave:
-				## If Glide on Fly is true:
-				is_gliding = true
+			elif GlobalData.option_dive_leave:
+				is_gliding = false
 			
 		## If we're hovering, manually set flight_direction so that we have an easy transition
 		elif is_hovering:
 			is_hovering = false
-			if GlobalData.option_glide_leave:
+			if GlobalData.option_dive_leave:
+				is_gliding = false
+			else:
 				is_gliding = true
 			wingbeat()
 	
@@ -236,7 +257,7 @@ func _physics_process(delta: float) -> void:
 	if not is_flying and not is_grounded:
 		if distance_moved > 3 or just_jumped:
 			is_flying = true
-			if GlobalData.option_glide_leave:
+			if not GlobalData.option_dive_leave:
 				is_gliding = true
 			flight_direction = linear_velocity.normalized()
 	
@@ -293,6 +314,8 @@ var reset = false
 var afterburner_amount = 6.0
 
 func wingbeat():
+	#print("Stored Jump: ", stored_jump)
+	recent_jump_strength = stored_jump
 	## Lifting us up ever so slightly
 	if not direction_x and flight_direction.y < 0.4:
 		flight_direction.y -= (stored_jump-jump_strength_base) / 15
@@ -303,14 +326,14 @@ func wingbeat():
 	if current_speed < GlobalData.terminal_velocity:
 		## Adding an "afterburner" to continually apply force after we do a wingbeat.
 		wingbeat_afterburner = (stored_jump * afterburner_amount)
-		print("Afterburner: ", wingbeat_afterburner)
+		#print("Afterburner: ", wingbeat_afterburner)
 		
 		wingbeat_force = (wingbeat_strength * stored_jump)# - speed_reduction
-		print("Wingbeat Force: ", wingbeat_force)
+		#print("Wingbeat Force: ", wingbeat_force)
 		if current_speed > (GlobalData.terminal_velocity * 0.5):
 			wingbeat_force *= 0.5
 			wingbeat_afterburner *= 0.5
-		print("Speed-reduced Wingbeat Force: ", wingbeat_force)
+		#print("Speed-reduced Wingbeat Force: ", wingbeat_force)
 		current_speed += wingbeat_force
 	
 	if current_speed > GlobalData.terminal_velocity:
@@ -360,6 +383,9 @@ func fly():
 
 ## Hovering
 func hover(max_speed,acceleration):
+	if is_climbing and is_running:
+		max_speed *= 1.2
+		acceleration *= 1.2
 	#print("Hovering: ", max_fly_speed)
 	gravity_scale = 0.0
 	#max_hover_speed = max_fly_speed / 1.25
@@ -388,7 +414,7 @@ func hover(max_speed,acceleration):
 ## Climbing
 func check_climb():
 	#print("checking climb")
-	if climb_detector.is_colliding():# and abs(direction_x) > 0.2:
+	if climb_detector.is_colliding() and abs(direction_x) > 0.2:
 		is_climbing = true
 		is_flying = false
 		is_hovering = false

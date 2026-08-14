@@ -28,10 +28,19 @@ func _on_resume_pressed() -> void:
 func _on_hold_hover_toggled(toggled_on: bool) -> void:
 	GlobalData.option_hold_to_hover = toggled_on
 
-func _on_hold_glide_toggled(toggled_on: bool) -> void:
+#func _on_hold_glide_toggled(toggled_on: bool) -> void:
+	##print(toggled_on)
+	##print(GlobalData.option_hold_to_glide)
+	#GlobalData.option_hold_to_glide = toggled_on
+	#GlobalData.option_hold_to_dive = !toggled_on
+	#hold_dive.button_pressed = !toggled_on
+
+func _on_hold_dive_toggled(toggled_on: bool) -> void:
 	#print(toggled_on)
 	#print(GlobalData.option_hold_to_glide)
-	GlobalData.option_hold_to_glide = toggled_on
+	GlobalData.option_hold_to_dive = toggled_on
+	#GlobalData.option_hold_to_glide = !toggled_on
+	#hold_glide.button_pressed = !toggled_on
 
 
 func _on_options_pressed() -> void:

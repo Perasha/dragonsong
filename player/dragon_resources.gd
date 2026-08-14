@@ -23,17 +23,26 @@ var remaining_inventory = inventory_size
 }
 
 var injury_multiplier = 1.0
+var exhaustion_rate_base = 0.001
+var exhaustion_rate = exhaustion_rate_base
 
 func _process(delta: float) -> void:
+	exhaustion_rate = exhaustion_rate_base
 	if dragon_node.is_flying:
-		if dragon_node.direction_x or dragon_node.direction_y:
-			health_update(-0.001)
 		if dragon_node.is_gliding:
-			health_update(-0.002)
-		if dragon_node.is_hovering:
-			health_update(-0.005)
+			exhaustion_rate *= 2
+		elif dragon_node.is_hovering:
+			exhaustion_rate *= 5
+		else:
+			exhaustion_rate = 0
+		
+		if dragon_node.direction_x or dragon_node.direction_y:
+			exhaustion_rate += exhaustion_rate_base
 		if dragon_node.just_jumped:
 			health_update(-0.05)
+	else:
+		exhaustion_rate = 0
+	health_update(-exhaustion_rate)
 
 func inventory_update(value):
 	collected_items += value

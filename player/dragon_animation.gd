@@ -22,6 +22,8 @@ var hover_reset = 20
 var wing_switch = false
 enum {LEFT, RIGHT}
 var facing = LEFT
+var is_flapping = false
+var is_flap_held = false
 
 var flight_check_current = false
 var flight_check_prev = false
@@ -29,6 +31,8 @@ var flight_check_prev = false
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 @warning_ignore("unused_parameter")
 func _physics_process(delta: float) -> void:
+	#is_flapping = false
+	is_flap_held = false
 	
 	flight_check_current = dragon_node.is_flying
 	if not flight_check_current == flight_check_prev:
@@ -38,7 +42,8 @@ func _physics_process(delta: float) -> void:
 			texture = main_sprite
 	flight_check_prev = flight_check_current
 	
-	if not dragon_node.is_hovering:
+	if not is_flapping:
+		#print("Reset wing position")
 		wing_node.position.y = 0.0
 	#elif wing_switch == false:
 	#	wing_node.texture = wing_up_sprite
@@ -65,40 +70,47 @@ func _physics_process(delta: float) -> void:
 	if flip_v: wing_node.flip_v = true
 	else: wing_node.flip_v = false
 	
-	if not dragon_node.is_hovering:
-		if dragon_node.is_gliding or dragon_node.direction_x != 0:
+	if not dragon_node.is_hovering and not is_flapping:
+		if dragon_node.is_gliding:# or dragon_node.direction_x != 0:
 			wing_node.texture = wing_glide_sprite
 		else:
 			wing_node.texture = wing_folded_sprite
 	
 	if Input.is_action_pressed("flap"):
-		wing_node.texture = wing_up_sprite
+		set_wing(UP)
+		is_flap_held = true
+		#wing_node.texture = wing_up_sprite
 	#wing_node.texture = wing_down_sprite
 	if dragon_node.just_jumped or dragon_node.wingbeat_afterburner > dragon_node.wingbeat_reset_num:
-		wing_node.texture = wing_down_sprite
-		if flip_v:
-			wing_node.position.y = -20
-		else:
-			wing_node.position.y = 20
+		set_wing(DOWN)
+		#wing_node.texture = wing_down_sprite
+		#if flip_v:
+			#wing_node.position.y = -20
+		#else:
+			#wing_node.position.y = 20
 		
 	## Hovering animation
 	# While we're hovering, wing_flap at a regular interval.
-	if dragon_node.is_hovering:
-		#print(hover_clock)
-		if hover_clock < hover_reset:
-			hover_clock += 1
+	if dragon_node.is_flying and not is_flap_held:
+		if dragon_node.is_hovering or (dragon_node.is_gliding and (abs(dragon_node.direction_x) == 1.0 or dragon_node.direction_y == -1.0)):
+			is_flapping = true
+			#print(hover_clock)
+			if hover_clock < hover_reset:
+				hover_clock += 1
+			else:
+				hover_clock = 0
+			#if hover_clock == (hover_reset / 2) and wing_switch == true:
+			#	wing_node.texture = wing_glide_sprite
+			#	wing_node.position.y = 0.0
+			if hover_clock == 0:
+				#print(wing_switch)
+				if wing_switch == true:
+					set_wing(UP)
+				elif wing_switch == false:
+					set_wing(DOWN)
+				wing_switch = not wing_switch
 		else:
-			hover_clock = 0
-		#if hover_clock == (hover_reset / 2) and wing_switch == true:
-		#	wing_node.texture = wing_glide_sprite
-		#	wing_node.position.y = 0.0
-		if hover_clock == 0:
-			print(wing_switch)
-			if wing_switch == true:
-				set_wing(UP)
-			elif wing_switch == false:
-				set_wing(DOWN)
-			wing_switch = not wing_switch
+			is_flapping = false
 	#print(flip_h)
 	if dragon_node.flight_direction.x < 0:
 		facing = LEFT
@@ -127,6 +139,7 @@ func _on_bite_animation_finished() -> void:
 	
 enum {UP, DOWN}
 func set_wing(position):
+	#print("Set Wing")
 	if position == UP:
 		wing_node.texture = wing_up_sprite
 		wing_node.position.y = 0.0
