@@ -39,10 +39,15 @@ var weight = 0.1
 # 1152 at 0.2 -> 2000
 
 func _process(delta: float) -> void:
+	#print("CAM MARKER PROCESS START -----------------------------------")
+	#print("HI hello there this is a test!")
+	#print("Cam Marker position: ", position)
 	prev_pos = current_pos
 	current_pos = position
 	#print(zoom_multipler())
-	var distance_lag = dragon_node.current_speed / zoom_multipler()
+	var distance_lag = snappedf(dragon_node.current_speed / zoom_multipler(),0.01)
+	#print("Distance Lag: ", distance_lag)
+	#snappedf(3.14159, 0.01)
 	if is_constrained:
 		distance_lag = max_distance_lag
 	## That distance lag is a vector line with a length.
@@ -52,16 +57,19 @@ func _process(delta: float) -> void:
 	
 	#print("Current Distance Lag: ", distance_lag)
 	#print("Maximum Distance Lag: ", max_distance_lag)
+	#print("Flight direction: ", dragon_node.flight_direction)
 	
 	#screen_constraint = (Vector2(viewport_dimensions.x,viewport_dimensions.y) / zoom_multipler()) * screen_margin_multiplier
 	#screen_constraint += Vector2(viewport_dimensions.x,viewport_dimensions.y)
 	new_position = dragon_node.flight_direction * distance_lag
-	weight = 0.008
+	#weight = 0.008
+	weight = dragon_node.fd_dampen + (.008 - dragon_node.fd_dampen)
 	if not dragon_node.is_flying:
 		new_position.y -= 200
 	
+	## This is what clamps our position to be within the screen margin we designate.
 	new_position = new_position.clamp(-(camera_node.screen_inset_rectangle.size / 2),(camera_node.screen_inset_rectangle.size / 2))
-	#print(new_position)
+	#("New Position", new_position)
 	position = lerp(position, new_position, weight)
 		
 	dist_moved = prev_pos.distance_to(current_pos)

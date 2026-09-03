@@ -13,7 +13,7 @@ extends CanvasLayer
 @onready var pos_label = get_node("Position")
 @onready var hover_label = get_node("Hovering")
 @onready var glide_label = get_node("GlideToggle")
-@onready var stalling_label = get_node("Stalling")
+@onready var fd_dampen_label = get_node("Flight Direction Dampen")
 @onready var jump_str_label = get_node("JumpStrength")
 @onready var afterbrn_label = get_node("Afterburner")
 
@@ -47,7 +47,7 @@ func _on_update_timeout() -> void:
 	glide_label.text = "Glide Toggle: " + str(dragon_node.is_gliding)
 	jump_str_label.text = "Jump Strength: " + str(dragon_node.jump_strength)
 	cam_scale_label.text = "Camera Scale\n" + str(camera_node.zoom)
-	#stalling_label.text = "Momentum: " + str(dragon_node.travel_momentum)
+	fd_dampen_label.text = "Flight Direction Dampen: " + str(snapped(dragon_node.fd_dampen, 0.001))
 	afterbrn_label.text = "Afterburner: " + str(dragon_node.wingbeat_afterburner)
 	hover_label.text = "Hovering: " + str(dragon_node.is_hovering)
 	

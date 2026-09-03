@@ -4,8 +4,8 @@ extends RigidBody2D
 #@export var jump_height = -400.00
 @export var max_walk_speed = 200.00
 @export var max_run_speed = 400.00
-@export var max_fly_speed = 1250.00
-var max_fly_speed_base = GlobalData.terminal_velocity / 2.5#1.5
+@export var max_fly_speed_base = 1600#GlobalData.terminal_velocity / 2.5#1.5
+var max_fly_speed = max_fly_speed_base
 #var GlobalData.terminal_velocity = 2000.00
 
 @onready var floor_check = get_node("FloorCheck")
@@ -56,7 +56,8 @@ var turn_radius = 0.1
 ## Flight Direction Dampening - this value gets added to our Y every frame.
 ## The lower this number, the less gravity pulls us down.
 @export var fd_dampen = 0.0
-var minimum_damp = 0.001
+var minimum_damp = 0.002
+@export var maximum_damp = 0.1
 ## 
 var dampen_base = 0.01 
 @export var dampen_glide = 0.003# = dampen_base / 6.0#0.05 
@@ -70,8 +71,11 @@ var max_glide_height = 0.0
 var flap_hold_timer = 0
 #var slow_force = Vector2(0,0)
 # Base = 150
-var stall_speed = 150
-var slow_speed = 500 ## We have to exceed this speed in order for us to Hover to slow down.
+
+#@export var slow_speed = 800 ## If we go slower than this, we start stalling/going down faster.
+#@export var slow_speed_gliding = 400
+var speed_range
+var dampen_range
 
 var recent_jump_strength = 0.0
 
@@ -83,6 +87,8 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	#print("DRAGON PHYSICS PROCESS START ---------------------------")
+	#print("Flight Direction: ", flight_direction)
 	just_jumped = false
 	is_running = false
 	is_climbing = false
@@ -105,7 +111,7 @@ func _physics_process(delta: float) -> void:
 	fd_dampen = dampen_base
 	if not is_hovering:
 		if not is_flying:
-			flight_direction.y = 1
+			flight_direction.y = 0
 		
 	check_climb()
 	## Now we get inputs. Our wing flap, then movement axes, then our wing-fold/dive.
@@ -130,34 +136,75 @@ func _physics_process(delta: float) -> void:
 	if direction_x != 0.0 and flight_direction.y > 0: #current_speed < 1000 and 
 		flight_direction.y -= 0.008
 	
-	## Disabling Stalling to instead modify our direction_y based on our speed
-	fd_dampen = (1.0 - (current_speed / GlobalData.terminal_velocity))
-	#print(fd_dampen)
-	#fd_dampen = fd_dampen ** 10
-	fd_dampen *= 0.011
-	#if fd_dampen < minimum_damp:
-	#	fd_dampen = minimum_damp
-	#print("Stalling Test: ", fd_dampen)
-	#print(fd_dampen)
-	if is_gliding:
-		fd_dampen = 0.25 / ((distance_moved * distance_moved))
-		#print("Alternative dampen changing: ", fd_dampen)
-	if fd_dampen < minimum_damp:
-		fd_dampen = minimum_damp
-	#print("Dampen: ", fd_dampen)
-	flight_direction.y += fd_dampen
-	
-	#print("Flight Direction X, Modified:", direction_x * (76 / distance_moved))
-	#flight_direction = flight_direction.normalized()
-	
 	## If option_hold_to_glide is on, then you need to hold to fold in wings. Otherwise, it's a toggle.
 	## Some players might prefer one way or the other so it's a good option to have.
 	if is_flying:
+		#if is_gliding:
+		#	speed_range = slow_speed_gliding
+		#else:
+		#	speed_range = slow_speed
+			#if is_flying:
+			#	direction_x = 0
+		#speed_range = 1000 #Maximum minus minimum speed. Yes we could just put 1600, fuck you
+		
+		## We're going to map our speed, inversely and exponentially, to our dampening value.
+		## Ideally, this means that as we gain speed, we'll smooth out our flight
+		## And as we slow down, we'll get closer to stalling.
+		
+		## So first, normalize our current speed by dividing it over our slow_speed.
+		fd_dampen = current_speed / GlobalData.terminal_velocity #slow_speed
+		if fd_dampen > 1.0:
+			fd_dampen = 1.0
+		#print("-----------------------------------------------------")
+		#print("Normalized Speed: ", fd_dampen)
+		## Then we invert the value,
+		fd_dampen = (fd_dampen * -1) + 1
+		#print("Inverted: ", fd_dampen)
+		## Now we exponentially map it between 0 and 1
+		fd_dampen = pow(fd_dampen,3)
+		#print("Squared: ", fd_dampen)
+		## And finally we convert it to our dampening range.
+		fd_dampen *= (maximum_damp - minimum_damp) + minimum_damp
+		#fd_dampen *= 0.025
+		#print("Converted Dampen Value: ", fd_dampen)
+		
+		
+		## Here, we essentially map our current speed to our dampening value, inversely and linearly.
+		## So, as our speed goes up, the dampening value goes down.
+		dampen_range = maximum_damp - minimum_damp
+		#fd_dampen = ((((current_speed * dampen_range) / speed_range) + minimum_damp) * -1) + maximum_damp
+		#print(fd_dampen)
+		#fd_dampen = pow(fd_dampen,3)
+		#fd_dampen = dampen_base
+		if is_gliding:
+		#	fd_dampen = dampen_glide
+			fd_dampen *= 0.15
+		#	pass
+			#fd_dampen = 0.25 / ((distance_moved * distance_moved))
+			#print("Alternative dampen changing: ", fd_dampen)
+		if fd_dampen < minimum_damp:
+			fd_dampen = minimum_damp
+		if fd_dampen > maximum_damp:
+			fd_dampen = maximum_damp
+		#print("Dampen: ", fd_dampen)
+		#print("Flight Direction A1: ", flight_direction)
+		flight_direction.y += fd_dampen
+		#print("Flight Direction modified: ", flight_direction)
+		#print(flight_direction.y + flight_direction.x)
+		#print("Flight Direction X, Modified:", direction_x * (76 / distance_moved))
+		#flight_direction = flight_direction.normalized()
+		
 		## Allowing a bit of flapping if our player is merely holding directional keys.
 		if current_speed <= max_fly_speed and is_gliding:
 			var force = Vector2(direction_x,direction_y).normalized() * 0.25
+			force.y *= 1.25
+			#print(force)
 			apply_force(force)
-			flight_direction.y -= fd_dampen#abs(direction_x) * 0.005
+			#flight_direction.y -= fd_dampen#abs(direction_x) * 0.005
+			#if flight_direction.y > 1:
+			#	flight_direction.y = 1.0
+			#if flight_direction.y < -1:
+			#	flight_direction.y = -1.0
 			
 		if Input.is_action_just_pressed("Dive"):
 			if not GlobalData.option_hold_to_dive:
@@ -176,14 +223,14 @@ func _physics_process(delta: float) -> void:
 	else:
 		is_hovering = false
 		is_gliding = false
-		if Input.is_action_pressed("Dive"):
+		if Input.is_action_pressed("Sprint"):
 			is_running = true
 			
 	## And here's the same thing for Hovering
 	#if GlobalData.hover_unlocked:
 	if Input.is_action_just_pressed("Hover"):
 		## If hovering isn't unlocked, then we need to exceed the Slow Speed in order to initiate Hovering to slow down.
-		if GlobalData.hover_unlocked or current_speed >= slow_speed:
+		if GlobalData.hover_unlocked or current_speed >= 500:
 			if not GlobalData.option_hold_to_hover:
 				if is_hovering == true:
 					is_hovering = false
@@ -199,14 +246,19 @@ func _physics_process(delta: float) -> void:
 			if GlobalData.option_hold_to_hover:
 				is_hovering = false
 	
+	## New test: a "immediately go down" button
+	#if Input.is_action_pressed("begin_landing"):
+	#	flight_direction.y += 0.05
+	
+	
 	## Stop hovering if we don't have hovering unlocked *and* we're not going fast enough.
-	if not GlobalData.hover_unlocked and is_hovering:
-		if current_speed <= (stall_speed * 1.5):
-			is_hovering = false
-			if GlobalData.option_dive_leave:
-				is_gliding = false
-			else:
-				is_gliding = true
+	#if not GlobalData.hover_unlocked and is_hovering:
+		#if current_speed <= (stall_speed * 1.5):
+			#is_hovering = false
+			#if GlobalData.option_dive_leave:
+				#is_gliding = false
+			#else:
+				#is_gliding = true
 	
 	if is_hovering and not is_grounded:
 		is_flying = true
@@ -221,16 +273,21 @@ func _physics_process(delta: float) -> void:
 		
 	## This is where we use our turning radius. We incrementally will be adding this value to
 	## our Flight Direction every tick, which will go against the gravity that constantly pushes it down.
+	#print("Flight Direction C1: ", flight_direction)
 	flight_direction += Vector2(direction_x,direction_y) * turn_radius
+	#print("Flight Direction C2: ", flight_direction)
 	## Oh and then we make sure that we don't actually go above 1 for either value because that would lead to ~problems~!
 	flight_direction = flight_direction.normalized()
 	#flight_direction = linear_velocity
+	#print("Flight Direction C3: ", flight_direction)
 	
 	## This is our jump! If we flap once, it's just a jump. If we flap twice, and we're not on the ground, we start flying!	
 	if just_jumped:
 		if not is_flying: #not is_grounded
-			#if flight_direction.y > 0:
-			#	flight_direction.y *= -1 - takeoff_speed
+			if flight_direction.y > 0:
+				flight_direction.y *= -1 - takeoff_speed
+				#print("Flight Direction B2: ", flight_direction)
+			#jump_strength += 40.0
 			wingbeat()
 			is_flying = true
 			is_gliding = true
@@ -260,6 +317,9 @@ func _physics_process(delta: float) -> void:
 			if not GlobalData.option_dive_leave:
 				is_gliding = true
 			flight_direction = linear_velocity.normalized()
+			#print("Flight Direction B3: ", flight_direction)
+		#else:
+			#print("Caught!")
 	
 	## If we're on the ground, add some directly upward velocity if we flap our wings!
 	if just_jumped and is_grounded:
@@ -312,13 +372,38 @@ var reset = false
 @export var wingbeat_reset_num = 5
 
 var afterburner_amount = 6.0
+var wingbeat_direction = Vector2()
+var wingbeat_slow_amount = 0.2 # Maximum: 0.3 Minimum: 0.15
+var wingbeat_slow_max = 0.25
+var wingbeat_slow_min = 0.12
 
 func wingbeat():
 	#print("Stored Jump: ", stored_jump)
 	recent_jump_strength = stored_jump
-	## Lifting us up ever so slightly
+	## Lifting us up ever so slightly if we aren't directionally moving
 	if not direction_x and flight_direction.y < 0.4:
 		flight_direction.y -= (stored_jump-jump_strength_base) / 15
+	#	print("Flight Direction B4: ", flight_direction)
+	
+	## Otherwise, depending on the strength of the jump, if we're moving,
+	## Try and face that direction.
+	if is_gliding and (direction_y or direction_x):
+		wingbeat_direction = flight_direction
+		## Only try and slow down if we're facing opposite directions of where we're going.
+		if (direction_x and flight_direction.x > 0) or (direction_x and flight_direction.x < 0):
+			wingbeat_direction.x = direction_x
+		if (direction_y and flight_direction.y > 0) or (direction_y and flight_direction.y < 0):
+			wingbeat_direction.y = direction_y
+			
+		wingbeat_direction = wingbeat_direction.normalized()
+		#print(flight_direction)
+		#apply_force(Vector2(direction_x,direction_y).normalized()*10)
+		print(stored_jump)
+		#Converting our Stored Jump into wingbeat_slow
+		wingbeat_slow_amount = (((stored_jump - wingbeat_slow_min) * (wingbeat_slow_max - wingbeat_slow_min)) / (max_jump_strength - jump_strength_base)) + wingbeat_slow_min
+		flight_direction = flight_direction.lerp(wingbeat_direction,wingbeat_slow_amount)
+		print(jump_strength / max_jump_strength)
+		#print(flight_direction)
 	
 	stored_jump *= stored_jump_multiplier
 	var wingbeat_force = 0.0
@@ -329,7 +414,7 @@ func wingbeat():
 		#print("Afterburner: ", wingbeat_afterburner)
 		
 		wingbeat_force = (wingbeat_strength * stored_jump)# - speed_reduction
-		#print("Wingbeat Force: ", wingbeat_force)
+		print("Wingbeat Force: ", wingbeat_force)
 		if current_speed > (GlobalData.terminal_velocity * 0.5):
 			wingbeat_force *= 0.5
 			wingbeat_afterburner *= 0.5
@@ -374,12 +459,9 @@ func fly():
 	if wingbeat_afterburner > 1:
 		wingbeat_afterburner *= afterburner_duration_multiplier
 		current_speed += wingbeat_afterburner * afterburner_multiplier
-	
-	if current_speed >= stall_speed:
-		apply_momentum()
-		#apply_force(slow_force)
-	else:
-		flight_direction = linear_velocity.normalized()
+	if current_speed <= 30:
+		flight_direction.y = 1
+	apply_momentum()
 
 ## Hovering
 func hover(max_speed,acceleration):

@@ -62,7 +62,8 @@ func _input(event: InputEvent) -> void:
 	if Input.is_action_just_pressed("select_next_object"):
 		selectable_object_count = get_tree().get_nodes_in_group("select_choice").size()-1
 		#print(selectable_objects.size())
-		cycle_selectable_objects(selectable_object_count)
+		if selectable_object_count >= 1:
+			cycle_selectable_objects(selectable_object_count)
 #func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 	#pass
 

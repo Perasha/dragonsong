@@ -135,27 +135,27 @@ size_flags_vertical = 0
 text = "Glide Toggle:"
 label_settings = SubResource("LabelSettings_darle")
 
-[node name="Stalling" type="Label" parent="." unique_id=1487209059]
+[node name="Flight Direction Dampen" type="Label" parent="." unique_id=1487209059]
 modulate = Color(0.5972951, 0.7833097, 1, 1)
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 25.0
-offset_top = -125.0
+offset_top = -480.0
 offset_right = 148.0
-offset_bottom = -102.0
+offset_bottom = -457.0
 grow_vertical = 0
 size_flags_horizontal = 6
 size_flags_vertical = 0
-text = "Is Stalling:"
+text = "Flight Direction Dampen:"
 label_settings = SubResource("LabelSettings_darle")
 
 [node name="JumpStrength" type="Label" parent="." unique_id=1073747289]
 modulate = Color(0.5972951, 0.7833097, 1, 1)
 offset_left = 26.0
-offset_top = 209.0
+offset_top = 241.0
 offset_right = 149.0
-offset_bottom = 232.0
+offset_bottom = 264.0
 size_flags_horizontal = 6
 size_flags_vertical = 0
 text = "Jump Strength:"
@@ -164,9 +164,9 @@ label_settings = SubResource("LabelSettings_darle")
 [node name="Afterburner" type="Label" parent="." unique_id=1734832140]
 modulate = Color(0.5972951, 0.7833097, 1, 1)
 offset_left = 26.0
-offset_top = 178.0
+offset_top = 210.0
 offset_right = 149.0
-offset_bottom = 201.0
+offset_bottom = 233.0
 size_flags_horizontal = 6
 size_flags_vertical = 0
 text = "Afterburner:"

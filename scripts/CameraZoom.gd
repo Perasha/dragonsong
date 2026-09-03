@@ -64,12 +64,15 @@ var max_hold = 50.0
 var max_hold_y = max_hold / 1.5
 
 var new_zoom : Vector2
+var smoothing_weight_min = 0.03
+var smoothing_weight = smoothing_weight_min
 
 var is_looking = false
 
 @export_category("Edge Margins")
 @export var on_screen_offset: Vector2 = Vector2(0.5, -5.0)
-@export var screen_margin = 50.0
+@export var screen_margin_y = 200.0
+@export var screen_margin_x = 400.0
 @export var smoothing_speed: float = 8.0
 @export var margin_multiplier = 1.0
 
@@ -78,6 +81,7 @@ var screen_constraint = Vector2(0,0)
 @warning_ignore("unused_parameter")
 func _process(delta):
 	update_margin()
+	#print("Position: ", position)
 	#camera_3d.position.x = position.x
 	#camera_3d.position.y = position.y
 	#print("Screen size: ", get_viewport().get_visible_rect().size)
@@ -104,7 +108,7 @@ func _process(delta):
 	camera_target = cam_marker.global_position
 	
 	if smoothing_enabled:
-		var smoothing_weight = (dragon_node.current_speed / GlobalData.terminal_velocity) * smoothing_weight_modifier#0.03#pow(log(1.2),2)
+		smoothing_weight = (dragon_node.current_speed / GlobalData.terminal_velocity) * smoothing_weight_modifier#0.03#pow(log(1.2),2)
 		#print("Smoothing weight: ", smoothing_weight)
 		if smoothing_weight < 0.03: 
 			smoothing_weight = 0.03
@@ -112,6 +116,17 @@ func _process(delta):
 		camera_position = lerp(global_position, camera_target, smoothing_weight)
 	else:
 		camera_position = camera_target
+	
+	#if not screen_inset_rectangle.has_point(dragon_pointer_debug.target_position + (screen_inset_rectangle.size / 2)):
+	#	print("Outside of bounds")
+		#smoothing_weight *= 30
+		## Normalize the distance_lag vector. 
+		#cam_marker.max_distance_lag = pow(dragon_pointer_debug.target_position.x,2) + pow(dragon_pointer_debug.target_position.y,2)
+		#cam_marker.max_distance_lag = sqrt(cam_marker.max_distance_lag)
+		#cam_marker.is_constrained = true
+	#else:
+		#smoothing_weight = smoothing_weight_min
+		#cam_marker.is_constrained = false
 	
 	## Now; as the zoom level DECREASES, we need the margin to INCREASE.
 	#screen_constraint = (screen_margin / (1.0 + zoom.x) * margin_multiplier) + abs(dragon_node.position)
@@ -141,22 +156,25 @@ func update_window():
 	defaultZoomLevel = get_viewport().get_visible_rect().size.x / 2800
 
 #var clamped_distance = 0.0
+var screen_size
 func update_margin():
-	screen_inset_rectangle = Rect2(Vector2.ZERO, get_viewport().get_visible_rect().size).grow(-screen_margin)
+	screen_size = get_viewport().get_visible_rect().size
+	#print(get_viewport().get_visible_rect().size.x)
+	#print(screen_margin_x)
+	screen_inset_rectangle = Rect2(Vector2.ZERO, get_viewport().get_visible_rect().size)#.grow(-screen_margin_x)
+	screen_inset_rectangle.size.y -= screen_size.y * screen_margin_y
+	screen_inset_rectangle.size.x -= screen_size.x * screen_margin_x
 	screen_inset_rectangle.size = screen_inset_rectangle.size / zoom
-	screen_inset_rectangle.size.y += screen_margin
+	#screen_inset_rectangle.size.y += screen_margin
+	## Testing out speed changing the margin
+	#screen_inset_rectangle.size.y -= (dragon_node.distance_moved * 2)
+	
+	
 	margin_debug.shape.size = screen_inset_rectangle.size
 	dragon_pointer_debug.target_position = -(global_position - dragon_node.global_position)
 	#print(margin_debug.shape.size)
 	#test_point = dragon_pointer_debug.target_position - (screen_inset_rectangle.size / 2)
 	#print("Screen Inset Rectangle: ", screen_inset_rectangle, " Target Position: ", dragon_pointer_debug.target_position)
-	#if not screen_inset_rectangle.has_point(dragon_pointer_debug.target_position + (screen_inset_rectangle.size / 2)):
-		## Normalize the distance_lag vector. 
-		#cam_marker.max_distance_lag = pow(dragon_pointer_debug.target_position.x,2) + pow(dragon_pointer_debug.target_position.y,2)
-		#cam_marker.max_distance_lag = sqrt(cam_marker.max_distance_lag)
-		#cam_marker.is_constrained = true
-	#else:
-		#cam_marker.is_constrained = false
 	#print("Dragon Position: ", dragon_node.position, "Debug Target Position: ", dragon_pointer_debug.target_position)
 
 func check_zoom() -> void:

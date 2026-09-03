@@ -65,7 +65,8 @@ cam_marker = NodePath("../dragon/Camera_Marker")
 smoothing_enabled = true
 default_weight = 0.01
 smoothing_weight_modifier = 0.25
-screen_margin = 200.0
+screen_margin_y = 0.35
+screen_margin_x = 0.35
 margin_multiplier = 0.795
 
 [node name="Marker" type="CollisionShape2D" parent="Camera2D" unique_id=761511921]
@@ -83,6 +84,7 @@ polygon = PackedVector2Array(-1685, -1372, 2094, -1468, 2058, 1643, -1744, 1476)
 uv = PackedVector2Array(-258.5, -62, 2.5, -63, 1.5, 93, -265.5, 87)
 
 [node name="ForegroundMix" type="Polygon2D" parent="Camera2D/Haze" unique_id=1426379917]
+visible = false
 z_index = -1
 scale = Vector2(5, 5)
 color = Color(1, 1, 1, 0)
@@ -90,6 +92,7 @@ polygon = PackedVector2Array(-1685, -1372, 2094, -1468, 2058, 1643, -1744, 1476)
 uv = PackedVector2Array(-258.5, -62, 2.5, -63, 1.5, 93, -265.5, 87)
 
 [node name="BackgroundMix" type="Polygon2D" parent="Camera2D/Haze" unique_id=766219118]
+visible = false
 z_index = -3
 position = Vector2(984.99994, 357.99997)
 scale = Vector2(5, 5)
@@ -110,7 +113,7 @@ dragon_node = NodePath("../dragon")
 [node name="dragon" parent="." unique_id=657267410 instance=ExtResource("5_4kaof")]
 unique_name_in_owner = true
 z_index = 1
-position = Vector2(16358, -10781)
+position = Vector2(16206, -10762)
 collision_layer = 4
 gravity_scale = 0.5
 speed = 25.0
@@ -124,6 +127,7 @@ stored_jump_multiplier = 1.2
 jump_strength_base = 1.5
 max_jump_strength = 5.0
 afterburner_multiplier = 0.25
+wingbeat_reset_num = 10
 
 [node name="LookMarker" type="Sprite2D" parent="dragon" unique_id=1678444032]
 visible = false

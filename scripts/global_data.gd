@@ -15,7 +15,7 @@ var option_hover_leave = false
 
 var option_hold_to_look = false
 
-@export var terminal_velocity = 3250.00
+@export var terminal_velocity = 2250.00
 
 var first_hovered_item = false
 var first_full_inventory = false
@@ -72,3 +72,6 @@ func array_swapback(array,index,debug_info):
 
 func constrain_distance(point,anchor,distance):
 	return ((point - anchor).normalized() * distance) + anchor
+
+#func exponential_conversion(key_value,initial_range : Vector2,end_range : Vector2,exponent):
+#	return ((end_range.y - initial_range.y) * pow(exponent,key_value - initial_range.x) + initial_range.y * pow(exponent,end_range.x - initial_range.x) - end_range.y) / (pow(exponent,end_range.x - initial_range.x) - 1)
