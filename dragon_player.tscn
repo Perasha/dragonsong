@@ -205,7 +205,7 @@ z_index = 10
 shape = SubResource("RectangleShape2D_gilsg")
 debug_color = Color(1, 1, 1, 0.15294118)
 
-[node name="wingbeat_clock" type="Timer" parent="." unique_id=2085525034]
+[node name="double_jump_clock" type="Timer" parent="." unique_id=2085525034]
 wait_time = 0.25
 one_shot = true
 
@@ -328,4 +328,4 @@ texture = ExtResource("11_p6rrk")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_entered" from="Direction Pointer" to="." method="_on_direction_pointer_body_entered"]
-[connection signal="timeout" from="wingbeat_clock" to="." method="_on_wingbeat_clock_timeout"]
+[connection signal="timeout" from="double_jump_clock" to="." method="_on_double_jump_clock_timeout"]

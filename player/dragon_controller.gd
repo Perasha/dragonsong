@@ -4,13 +4,13 @@ extends RigidBody2D
 #@export var jump_height = -400.00
 @export var max_walk_speed = 200.00
 @export var max_run_speed = 400.00
-@export var max_fly_speed_base = 1600#GlobalData.terminal_velocity / 2.5#1.5
+@export var max_fly_speed_base = 1200#GlobalData.terminal_velocity / 2.5#1.5
 var max_fly_speed = max_fly_speed_base
 #var GlobalData.terminal_velocity = 2000.00
 
 @onready var floor_check = get_node("FloorCheck")
 #@onready var sprite = get_node("Body") #Animator
-@onready var wingbeat_clock = get_node("wingbeat_clock")
+@onready var double_jump_clock = get_node("double_jump_clock")
 var wingbeat_timer_min = 0.25
 @onready var resources = get_node("Resources")
 @onready var interact_field = get_node("InteractArea")
@@ -42,7 +42,7 @@ var is_grounded = false
 #var option_hold_to_glide = false
 #var option_hold_to_hover = false
 
-var on_wingbeat_cooldown = false
+#var on_wingbeat_cooldown = false
 #@export var wingbeat_afterburner_base = 6.0
 var wingbeat_afterburner = 0.0
 
@@ -72,12 +72,14 @@ var flap_hold_timer = 0
 #var slow_force = Vector2(0,0)
 # Base = 150
 
-#@export var slow_speed = 800 ## If we go slower than this, we start stalling/going down faster.
+@export var slow_speed = 500 ## If we go slower than this, we start stalling/going down faster.
 #@export var slow_speed_gliding = 400
 var speed_range
 var dampen_range
 
 var recent_jump_strength = 0.0
+var is_slowing = false
+var double_jump_counter = 0
 
 func _ready() -> void:
 	jump_strength = jump_strength_base
@@ -89,6 +91,8 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	#print("DRAGON PHYSICS PROCESS START ---------------------------")
 	#print("Flight Direction: ", flight_direction)
+	is_flap_held = false
+	is_slowing = false
 	just_jumped = false
 	is_running = false
 	is_climbing = false
@@ -116,18 +120,32 @@ func _physics_process(delta: float) -> void:
 	check_climb()
 	## Now we get inputs. Our wing flap, then movement axes, then our wing-fold/dive.
 	if Input.is_action_pressed("flap"):
+		#double_jump_clock.start()
 		is_flap_held = true
 		if jump_strength <= max_jump_strength:
 			jump_strength += 0.1
+		if double_jump_counter >= 1 and is_flying:
+			is_slowing = true
 	if Input.is_action_just_released("flap"):
+		just_jumped = true
+		is_flap_held = false
+		#print("Just jumped: ", just_jumped)
+		#if not is_slowing:
+		#	double_jump_clock.start()
+		if is_flying:
+			pass
+			#double_jump_counter += 1
 		if GlobalData.hover_unlocked == false:
 			is_hovering = false
-		just_jumped = true
 		#is_flap_held = false
 		stored_jump = jump_strength
-		#flap_hold_timer = 0
+			#flap_hold_timer = 0
+		#else:
+		#	stop_slowing()
 	direction_x = Input.get_axis("move_left", "move_right")
 	direction_y = Input.get_axis("move_up", "move_down")
+	if Input.is_action_pressed("Sprint"):
+			is_running = true
 	
 	if not GlobalData.hover_unlocked and is_hovering:
 		direction_x = 0
@@ -195,16 +213,17 @@ func _physics_process(delta: float) -> void:
 		#flight_direction = flight_direction.normalized()
 		
 		## Allowing a bit of flapping if our player is merely holding directional keys.
+		if is_running:
+			max_fly_speed = max_fly_speed_base + max_run_speed
+		else:
+			max_fly_speed = max_fly_speed_base
 		if current_speed <= max_fly_speed and is_gliding:
 			var force = Vector2(direction_x,direction_y).normalized() * 0.25
 			force.y *= 1.25
+			if is_running:
+				force *= 1.25
 			#print(force)
 			apply_force(force)
-			#flight_direction.y -= fd_dampen#abs(direction_x) * 0.005
-			#if flight_direction.y > 1:
-			#	flight_direction.y = 1.0
-			#if flight_direction.y < -1:
-			#	flight_direction.y = -1.0
 			
 		if Input.is_action_just_pressed("Dive"):
 			if not GlobalData.option_hold_to_dive:
@@ -223,14 +242,16 @@ func _physics_process(delta: float) -> void:
 	else:
 		is_hovering = false
 		is_gliding = false
-		if Input.is_action_pressed("Sprint"):
-			is_running = true
-			
+
+	if is_slowing:
+		is_hovering = true
+		#is_flying = false
+	
 	## And here's the same thing for Hovering
 	#if GlobalData.hover_unlocked:
 	if Input.is_action_just_pressed("Hover"):
 		## If hovering isn't unlocked, then we need to exceed the Slow Speed in order to initiate Hovering to slow down.
-		if GlobalData.hover_unlocked or current_speed >= 500:
+		if GlobalData.hover_unlocked or current_speed >= slow_speed:
 			if not GlobalData.option_hold_to_hover:
 				if is_hovering == true:
 					is_hovering = false
@@ -246,19 +267,15 @@ func _physics_process(delta: float) -> void:
 			if GlobalData.option_hold_to_hover:
 				is_hovering = false
 	
-	## New test: a "immediately go down" button
-	#if Input.is_action_pressed("begin_landing"):
-	#	flight_direction.y += 0.05
-	
-	
 	## Stop hovering if we don't have hovering unlocked *and* we're not going fast enough.
-	#if not GlobalData.hover_unlocked and is_hovering:
-		#if current_speed <= (stall_speed * 1.5):
-			#is_hovering = false
-			#if GlobalData.option_dive_leave:
-				#is_gliding = false
-			#else:
-				#is_gliding = true
+	if not GlobalData.hover_unlocked and is_hovering:
+		if current_speed <= slow_speed:
+			stop_slowing()
+			is_hovering = false
+			if GlobalData.option_dive_leave:
+				is_gliding = false
+			else:
+				is_gliding = true
 	
 	if is_hovering and not is_grounded:
 		is_flying = true
@@ -339,9 +356,9 @@ func _physics_process(delta: float) -> void:
 		climb()
 	else:
 		walk()
-	if is_flying or is_hovering:
-		## This is just to make sure our speed never exceeds what we determine as Terminal Velocity. Otherwise... bad things
-		linear_velocity = linear_velocity.clamp(Vector2(-GlobalData.terminal_velocity,-GlobalData.terminal_velocity),Vector2(GlobalData.terminal_velocity,GlobalData.terminal_velocity))
+	#if is_flying or is_hovering:
+	#	## This is just to make sure our speed never exceeds what we determine as Terminal Velocity. Otherwise... bad things
+	#	linear_velocity = linear_velocity.clamp(Vector2(-GlobalData.terminal_velocity,-GlobalData.terminal_velocity),Vector2(GlobalData.terminal_velocity,GlobalData.terminal_velocity))
 	## Oh and finally, we calculate our distance moved!
 	distance_moved = previous_position.distance_to(current_position)
 	if just_jumped:
@@ -375,7 +392,7 @@ var afterburner_amount = 6.0
 var wingbeat_direction = Vector2()
 var wingbeat_slow_amount = 0.2 # Maximum: 0.3 Minimum: 0.15
 var wingbeat_slow_max = 0.25
-var wingbeat_slow_min = 0.12
+var wingbeat_slow_min = 0.16
 
 func wingbeat():
 	#print("Stored Jump: ", stored_jump)
@@ -387,7 +404,9 @@ func wingbeat():
 	
 	## Otherwise, depending on the strength of the jump, if we're moving,
 	## Try and face that direction.
-	if is_gliding and (direction_y or direction_x):
+	print("Directions: ", direction_x, ", ", direction_y)
+	if (direction_y or direction_x): #and is_gliding
+		print("Slowing down")
 		wingbeat_direction = flight_direction
 		## Only try and slow down if we're facing opposite directions of where we're going.
 		if (direction_x and flight_direction.x > 0) or (direction_x and flight_direction.x < 0):
@@ -398,11 +417,11 @@ func wingbeat():
 		wingbeat_direction = wingbeat_direction.normalized()
 		#print(flight_direction)
 		#apply_force(Vector2(direction_x,direction_y).normalized()*10)
-		print(stored_jump)
+		#print(stored_jump)
 		#Converting our Stored Jump into wingbeat_slow
 		wingbeat_slow_amount = (((stored_jump - wingbeat_slow_min) * (wingbeat_slow_max - wingbeat_slow_min)) / (max_jump_strength - jump_strength_base)) + wingbeat_slow_min
 		flight_direction = flight_direction.lerp(wingbeat_direction,wingbeat_slow_amount)
-		print(jump_strength / max_jump_strength)
+		#print(jump_strength / max_jump_strength)
 		#print(flight_direction)
 	
 	stored_jump *= stored_jump_multiplier
@@ -421,10 +440,10 @@ func wingbeat():
 		#print("Speed-reduced Wingbeat Force: ", wingbeat_force)
 		current_speed += wingbeat_force
 	
-	if current_speed > GlobalData.terminal_velocity:
-		current_speed = GlobalData.terminal_velocity
+	#if current_speed > GlobalData.terminal_velocity:
+	#	current_speed = GlobalData.terminal_velocity
 	
-	on_wingbeat_cooldown = true
+	#on_wingbeat_cooldown = true
 	
 ## SUPER IMPORTANT!
 		## Here, we're actually dividing our current speed among our new directions.
@@ -434,6 +453,8 @@ func wingbeat():
 		## And that's how we keep our momentum!
 		## And also, if we stall, we actually immediately drop our direction downward.
 func apply_momentum():
+	if current_speed > GlobalData.terminal_velocity:
+		current_speed = GlobalData.terminal_velocity
 	linear_velocity.x = (current_speed * flight_direction.x)
 	linear_velocity.y = (current_speed * flight_direction.y)
 	if is_gliding:
@@ -451,10 +472,29 @@ func apply_momentum():
 
 ## Flying
 var directional_force = Vector2(0,0)
+var slowdown_amount = 10.0
+@export var slowdown_factor = 0.5
+
 func fly():
-	if just_jumped and current_speed <= GlobalData.terminal_velocity and wingbeat_afterburner < wingbeat_reset_num:# and not on_wingbeat_cooldown:
-		wingbeat()
+	if just_jumped:
+		if wingbeat_afterburner < wingbeat_reset_num:# and not on_wingbeat_cooldown:
+			wingbeat()
 		#print("Continue")
+	
+	if (direction_y or direction_x) and is_flap_held and current_speed >= slow_speed: #and is_gliding
+		is_slowing = false
+				
+		### Only try and slow down if we're facing opposite directions of where we're going.
+		if (direction_x < 0 and flight_direction.x > 0) or (direction_x > 0 and flight_direction.x < 0):
+			is_slowing = true
+		if (direction_y < 0 and flight_direction.y > 0) or (direction_y > 0 and flight_direction.y < 0):
+			is_slowing = true
+		
+		if is_slowing:
+			slowdown_amount = pow(current_speed,slowdown_factor)
+			print(slowdown_amount)
+			current_speed -= slowdown_amount
+	
 	## Adding our afterburner force. This'll slowly go down long after we do the wingbeat, but it's to push us further for a bit longer.
 	if wingbeat_afterburner > 1:
 		wingbeat_afterburner *= afterburner_duration_multiplier
@@ -481,7 +521,7 @@ func hover(max_speed,acceleration):
 			
 	# Stopping much more abruptly if we aren't trying to move,
 	# OR if one of the directions is directly opposite of another.
-	var hover_decceleration = 1 + (acceleration / 5750.0)
+	var hover_decceleration = 1 + (acceleration / GlobalData.terminal_velocity)
 	if direction_x == 0 and direction_y == 0:
 		linear_velocity /= hover_decceleration
 	else:
@@ -521,16 +561,15 @@ func walk():
 	if is_grounded:
 		linear_velocity.x *= 0.95
 
-
-
-func _on_wingbeat_clock_timeout() -> void:
-	on_wingbeat_cooldown = false
-
 func _on_injure_button_up() -> void:
 	resources.health_update(-10)
 
 func _on_heal_button_up() -> void:
 	resources.health_update(10)
+
+func stop_slowing():
+	double_jump_counter = 0
+	is_slowing = false
 
 # Fall damage
 func _on_body_entered(body: Node) -> void:
@@ -539,4 +578,12 @@ func _on_body_entered(body: Node) -> void:
 		#resources.health_update(snappedf(-distance_moved / 200,0.01))
 		var damage = snappedf(-distance_moved / 2,1.0)
 		resources.health_update(damage)
+	pass # Replace with function body.
+
+
+func _on_double_jump_clock_timeout() -> void:
+	#double_jump_counter = 0
+	print("double jump timeout")
+	if not is_slowing:
+		stop_slowing()
 	pass # Replace with function body.

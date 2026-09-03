@@ -128,6 +128,7 @@ jump_strength_base = 1.5
 max_jump_strength = 5.0
 afterburner_multiplier = 0.25
 wingbeat_reset_num = 10
+slowdown_factor = 0.44
 
 [node name="LookMarker" type="Sprite2D" parent="dragon" unique_id=1678444032]
 visible = false
