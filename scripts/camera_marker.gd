@@ -61,6 +61,10 @@ func _process(delta: float) -> void:
 	
 	#screen_constraint = (Vector2(viewport_dimensions.x,viewport_dimensions.y) / zoom_multipler()) * screen_margin_multiplier
 	#screen_constraint += Vector2(viewport_dimensions.x,viewport_dimensions.y)
+	#if (dragon_node.flight_direction.x + dragon_node.flight_direction.y > 2) or (dragon_node.flight_direction.x + dragon_node.flight_direction.y < 2):
+	#	new_position = Vector2(0,0)
+	#	print("Exception caught")
+	#else:
 	new_position = dragon_node.flight_direction * distance_lag
 	#weight = 0.008
 	weight = dragon_node.fd_dampen + (.008 - dragon_node.fd_dampen)

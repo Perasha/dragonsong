@@ -137,14 +137,10 @@ label_settings = SubResource("LabelSettings_darle")
 
 [node name="Flight Direction Dampen" type="Label" parent="." unique_id=1487209059]
 modulate = Color(0.5972951, 0.7833097, 1, 1)
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 25.0
-offset_top = -480.0
-offset_right = 148.0
-offset_bottom = -457.0
-grow_vertical = 0
+offset_left = 23.0
+offset_top = 168.0
+offset_right = 216.0
+offset_bottom = 191.0
 size_flags_horizontal = 6
 size_flags_vertical = 0
 text = "Flight Direction Dampen:"

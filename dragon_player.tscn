@@ -15,8 +15,9 @@
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_0ucct"]
 friction = 0.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_p6rrk"]
-radius = 21.052439
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_cvsob"]
+radius = 14.026601
+height = 48.910416
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gilsg"]
 
@@ -185,10 +186,10 @@ jump_strength_base = 3.0
 max_jump_strength = 6.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2117568773]
-position = Vector2(0, -47)
+position = Vector2(-12, -19)
 rotation = 1.5708
 scale = Vector2(4.135, 4.13)
-shape = SubResource("CircleShape2D_p6rrk")
+shape = SubResource("CapsuleShape2D_cvsob")
 
 [node name="FloorCheck" type="RayCast2D" parent="." unique_id=1557629680]
 position = Vector2(40, 45)

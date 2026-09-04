@@ -42,6 +42,8 @@ func _process(delta: float) -> void:
 			health_update(-0.05)
 	else:
 		exhaustion_rate = 0
+	if dragon_node.is_running:
+		exhaustion_rate *= 1.5
 	health_update(-exhaustion_rate)
 
 func inventory_update(value):

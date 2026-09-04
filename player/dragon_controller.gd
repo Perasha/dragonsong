@@ -5,6 +5,7 @@ extends RigidBody2D
 @export var max_walk_speed = 200.00
 @export var max_run_speed = 400.00
 @export var max_fly_speed_base = 1200#GlobalData.terminal_velocity / 2.5#1.5
+#@export var max_fly_speed_run_base = 1800
 var max_fly_speed = max_fly_speed_base
 #var GlobalData.terminal_velocity = 2000.00
 
@@ -145,7 +146,7 @@ func _physics_process(delta: float) -> void:
 	direction_x = Input.get_axis("move_left", "move_right")
 	direction_y = Input.get_axis("move_up", "move_down")
 	if Input.is_action_pressed("Sprint"):
-			is_running = true
+		is_running = true
 	
 	if not GlobalData.hover_unlocked and is_hovering:
 		direction_x = 0
@@ -214,7 +215,7 @@ func _physics_process(delta: float) -> void:
 		
 		## Allowing a bit of flapping if our player is merely holding directional keys.
 		if is_running:
-			max_fly_speed = max_fly_speed_base + max_run_speed
+			max_fly_speed *= 1.8
 		else:
 			max_fly_speed = max_fly_speed_base
 		if current_speed <= max_fly_speed and is_gliding:
@@ -291,6 +292,22 @@ func _physics_process(delta: float) -> void:
 	## This is where we use our turning radius. We incrementally will be adding this value to
 	## our Flight Direction every tick, which will go against the gravity that constantly pushes it down.
 	#print("Flight Direction C1: ", flight_direction)
+	
+	## Error Checking
+	if flight_direction.y > 1:
+		flight_direction.y = 1
+	if flight_direction.x > 1:
+		flight_direction.x = 1
+	if flight_direction.y < -1:
+		flight_direction.y = -1
+	if flight_direction.x < -1:
+		flight_direction.x = -1
+	
+	if flight_direction.y == null or flight_direction.y == NAN:
+		flight_direction.y = 0
+	if flight_direction.x == null or flight_direction.x == NAN:
+		flight_direction.x = 0
+	
 	flight_direction += Vector2(direction_x,direction_y) * turn_radius
 	#print("Flight Direction C2: ", flight_direction)
 	## Oh and then we make sure that we don't actually go above 1 for either value because that would lead to ~problems~!
@@ -499,6 +516,10 @@ func fly():
 	if wingbeat_afterburner > 1:
 		wingbeat_afterburner *= afterburner_duration_multiplier
 		current_speed += wingbeat_afterburner * afterburner_multiplier
+	
+	if current_speed <= slow_speed * 0.34:
+		flight_direction.x += direction_x * 0.5
+	
 	if current_speed <= 30:
 		flight_direction.y = 1
 	apply_momentum()
