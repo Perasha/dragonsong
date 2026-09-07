@@ -30,7 +30,7 @@ var flight_check_prev = false
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 @warning_ignore("unused_parameter")
-func _physics_process(delta: float) -> void:
+func _process(delta: float) -> void:
 	#is_flapping = false
 	is_flap_held = false
 	
@@ -111,6 +111,7 @@ func _physics_process(delta: float) -> void:
 				wing_switch = not wing_switch
 		else:
 			is_flapping = false
+	
 	#print(flip_h)
 	if dragon_node.flight_direction.x < 0:
 		facing = LEFT
@@ -137,7 +138,7 @@ func _on_bite_animation_finished() -> void:
 	BiteAnimNode.hide()
 	pass # Replace with function body.
 	
-enum {UP, DOWN}
+enum {UP, DOWN, GLIDE, REST}
 func set_wing(position):
 	#print("Set Wing")
 	if position == UP:
@@ -149,4 +150,8 @@ func set_wing(position):
 			wing_node.position.y = -20
 		else:
 			wing_node.position.y = 20
+	if position == GLIDE:
+		pass
+	if position == REST:
+		pass
 	pass
