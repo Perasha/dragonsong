@@ -1,0 +1,14 @@
+[remap]
+
+importer="image"
+type="Image"
+uid="uid://bma3cerdkyen1"
+path="res://.godot/imported/test_01.png-5cd2d83657db15fb1f59a9437c879c2f.image"
+
+[deps]
+
+source_file="res://Maps/Chunks/test_01.png"
+dest_files=["res://.godot/imported/test_01.png-5cd2d83657db15fb1f59a9437c879c2f.image"]
+
+[params]
+
