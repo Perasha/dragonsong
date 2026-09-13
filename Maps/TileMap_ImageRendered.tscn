@@ -2,9 +2,12 @@
 
 [ext_resource type="Script" uid="uid://btv6ya4y5x8ds" path="res://Maps/map_generator.gd" id="1_m8lg0"]
 [ext_resource type="Image" uid="uid://bma3cerdkyen1" path="res://Maps/Chunks/test_01.png" id="2_lu47l"]
+[ext_resource type="TileSet" uid="uid://du35uj3exwf6j" path="res://Maps/testing_tileset.tres" id="3_h5ki1"]
 
 [node name="Map" type="Node2D" unique_id=1554016425]
 script = ExtResource("1_m8lg0")
-chunk_img = ExtResource("2_lu47l")
+chunk_img_test = ExtResource("2_lu47l")
 
 [node name="Tiles" type="TileMapLayer" parent="." unique_id=915429071]
+position = Vector2(8, 0)
+tile_set = ExtResource("3_h5ki1")
