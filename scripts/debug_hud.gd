@@ -19,6 +19,8 @@ extends CanvasLayer
 
 @onready var cam_scale_label = get_node("Camera Scale")
 
+@onready var health_bracket_label = get_node("HealthBracket")
+
 #@onready var stamina_bar = get_node("Stamina")
 #@onready var stamina_label = get_node("Stamina/Label")
 
@@ -50,6 +52,7 @@ func _on_update_timeout() -> void:
 	fd_dampen_label.text = "Flight Direction Dampen: " + str(snapped(dragon_node.fd_dampen, 0.001))
 	afterbrn_label.text = "Afterburner: " + str(dragon_node.wingbeat_afterburner)
 	hover_label.text = "Hovering: " + str(dragon_node.is_hovering)
+	#health_bracket_label.text = "Health Bracket " + str(dragon_resources.current_bracket)
 	
 	#stamina_bar.value = dragon_resources.stamina
 	#stamina_label.text = str(snapped(dragon_resources.stamina,0.01))

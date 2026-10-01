@@ -1,11 +1,11 @@
-[gd_scene load_steps=35 format=3 uid="uid://cg4csi2ar0re7"]
+[gd_scene format=3 uid="uid://cg4csi2ar0re7"]
 
 [ext_resource type="Script" uid="uid://cqu0w22jdjbs4" path="res://player/dragon_controller.gd" id="1_ysuy2"]
 [ext_resource type="Texture2D" uid="uid://cbj5kmqjsr7ck" path="res://Sprites/DragonWingless.png" id="2_62rqu"]
 [ext_resource type="Script" uid="uid://ct4lehwag4jqw" path="res://player/dragon_animation.gd" id="3_wxscx"]
 [ext_resource type="Texture2D" uid="uid://6d5k318sfh03" path="res://Sprites/wings_folded.png" id="4_tpvdn"]
 [ext_resource type="Script" uid="uid://csdttjcujdw6f" path="res://scripts/direction_pointer.gd" id="5_nd38a"]
-[ext_resource type="PackedScene" uid="uid://v3g8grpgtqyr" path="res://presence.tscn" id="6_86167"]
+[ext_resource type="PackedScene" uid="uid://v3g8grpgtqyr" path="res://archive/presence.tscn" id="6_86167"]
 [ext_resource type="Script" uid="uid://j6bf53um2w80" path="res://player/dragon_interact.gd" id="7_kcjrr"]
 [ext_resource type="Texture2D" uid="uid://dus3vnh373g2c" path="res://Sprites/circle01.png" id="8_the6d"]
 [ext_resource type="Script" uid="uid://c1eborn8rg0gt" path="res://player/dragon_resources.gd" id="9_g0dxp"]

@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://t4lpjh5cfegf"]
+
+[ext_resource type="Texture2D" uid="uid://d4ca6k4ce1j6q" path="res://Sprites/terrain_Pieces/Snowcap_3.png" id="1_wnsn8"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_bee4v"]
+rough = true
+
+[node name="SnowMountainTop_1" type="StaticBody2D" unique_id=1707666357]
+scale = Vector2(1.5, 1.5)
+physics_material_override = SubResource("PhysicsMaterial_bee4v")
+
+[node name="MountainBody" type="Sprite2D" parent="." unique_id=1729038480]
+position = Vector2(116, -24)
+texture = ExtResource("1_wnsn8")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." unique_id=136909923]
+position = Vector2(66, -43.333313)
+polygon = PackedVector2Array(-34.666664, 15.999979, 92.66667, 5.999977, 175.33334, 18.666645, 142.66667, 28.666645, 60.66667, 23.999979, -81.333336, 25.999979)
+one_way_collision = true
+one_way_collision_margin = 47.6

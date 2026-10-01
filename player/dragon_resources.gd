@@ -21,10 +21,28 @@ var remaining_inventory = inventory_size
 	"max_fly_speed" : dragon_node.max_fly_speed_base,
 	"hover_speed" : dragon_node.hover_speed
 }
+## These will be used for visuals only. 
+## As health gets lower, more visual effects can be apparent.
+var health_brackets = {
+	"5": [0,20],
+	"4": [21,40],
+	"3": [41,60],
+	"2": [61,80],
+	"1": [81,100],
+}
 
 var injury_multiplier = 1.0
 var exhaustion_rate_base = 0.001
 var exhaustion_rate = exhaustion_rate_base
+
+func _ready() -> void:
+	## Do all our setup for the health bullshit here. So that we're not trying to update everything during the damn game.
+	## 1) Create our Health Brackets
+	## 2) Create our Max Speed for each bracket
+	## 3) Create our Max Jump Strength for each bracket
+	## 4) Create our Max Fly Speed Base for each bracket
+	pass
+
 
 func _process(delta: float) -> void:
 	exhaustion_rate = exhaustion_rate_base
@@ -55,12 +73,15 @@ func inventory_update(value):
 	print("Remaining Inventory: ", remaining_inventory)
 
 func health_update(value):
+	#current_bracket = health_
 	#print(health)
 	#print(value)
 	health += value
 	dragon_node.hover_speed = initial_speed["hover_speed"]
 	if health > max_health:
 		health = max_health
+	
+	
 	
 	if health > 0:
 		injury_multiplier = health / max_health

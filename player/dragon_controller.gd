@@ -171,9 +171,12 @@ func _physics_process(delta: float) -> void:
 		## And as we slow down, we'll get closer to stalling.
 		
 		## So first, normalize our current speed by dividing it over our slow_speed.
+		#print("Current Speed: ", current_speed)
 		fd_dampen = current_speed / GlobalData.terminal_velocity #slow_speed
 		if fd_dampen > 1.0:
-			fd_dampen = 1.0
+			fd_dampen = 0.99
+		if fd_dampen <= 0.0:
+			fd_dampen = 0.01
 		#print("-----------------------------------------------------")
 		#print("Normalized Speed: ", fd_dampen)
 		## Then we invert the value,
@@ -203,11 +206,21 @@ func _physics_process(delta: float) -> void:
 			#print("Alternative dampen changing: ", fd_dampen)
 		if fd_dampen < minimum_damp:
 			fd_dampen = minimum_damp
-		if fd_dampen > maximum_damp:
+		if fd_dampen > maximum_damp:# or fd_dampen == INF:
 			fd_dampen = maximum_damp
+		
 		#print("Dampen: ", fd_dampen)
 		#print("Flight Direction A1: ", flight_direction)
 		flight_direction.y += fd_dampen
+		
+		#if is_inf(flight_direction.x) or is_nan(flight_direction.x):
+		#	print("OH")
+		#	flight_direction.x = 0.0
+		#if is_inf(flight_direction.y) or is_nan(flight_direction.y):
+		#	print("OH")
+		#	flight_direction.y = -1.0
+		#print(1 / 0)
+		#if flight_direction.y == inf or 
 		#print("Flight Direction modified: ", flight_direction)
 		#print(flight_direction.y + flight_direction.x)
 		#print("Flight Direction X, Modified:", direction_x * (76 / distance_moved))
@@ -303,10 +316,14 @@ func _physics_process(delta: float) -> void:
 	if flight_direction.x < -1:
 		flight_direction.x = -1
 	
-	if flight_direction.y == null or flight_direction.y == NAN:
-		flight_direction.y = 0
-	if flight_direction.x == null or flight_direction.x == NAN:
-		flight_direction.x = 0
+	if is_inf(flight_direction.x) or is_nan(flight_direction.x) or flight_direction.x == null:
+		#print("OH - X")
+		flight_direction.x = 0.0
+	if is_inf(flight_direction.y) or is_nan(flight_direction.y) or flight_direction.y == null:
+		#print("OH - Y")
+		flight_direction.y = -1.0
+	
+	#print("Flight direction:", flight_direction)
 	
 	flight_direction += Vector2(direction_x,direction_y) * turn_radius
 	#print("Flight Direction C2: ", flight_direction)
@@ -397,10 +414,10 @@ var reset = false
 #		reset_physics_interpolation.call_deferred()
 #		reset = false
 @export_category("Wingbeat Parameters")
-@export var wingbeat_strength = 200.00
+@export var wingbeat_strength = 100.00
 @export var stored_jump_multiplier = 1.0
-@export var jump_strength_base = 2.0
-@export var max_jump_strength = 4.0
+@export var jump_strength_base = 3.0
+@export var max_jump_strength = 6.0
 @export var afterburner_multiplier = 0.45
 @export var afterburner_duration_multiplier = 0.97
 @export var wingbeat_reset_num = 5
@@ -408,22 +425,24 @@ var reset = false
 var afterburner_amount = 6.0
 var wingbeat_direction = Vector2()
 var wingbeat_slow_amount = 0.2 # Maximum: 0.3 Minimum: 0.15
-var wingbeat_slow_max = 0.25
-var wingbeat_slow_min = 0.16
+const wingbeat_slow_max = 0.25
+const wingbeat_slow_min = 0.16
 
 func wingbeat():
+	#print("WINGBEAT ===============================================================================================")
+	#print("Flight Direction: ", flight_direction)
 	#print("Stored Jump: ", stored_jump)
 	recent_jump_strength = stored_jump
 	## Lifting us up ever so slightly if we aren't directionally moving
 	if not direction_x and flight_direction.y < 0.4:
 		flight_direction.y -= (stored_jump-jump_strength_base) / 15
-	#	print("Flight Direction B4: ", flight_direction)
+		#print("Flight Direction B4: ", flight_direction)
 	
 	## Otherwise, depending on the strength of the jump, if we're moving,
 	## Try and face that direction.
-	print("Directions: ", direction_x, ", ", direction_y)
+	#print("Directions: ", direction_x, ", ", direction_y)
 	if (direction_y or direction_x): #and is_gliding
-		print("Slowing down")
+		#print("Slowing down")
 		wingbeat_direction = flight_direction
 		## Only try and slow down if we're facing opposite directions of where we're going.
 		if (direction_x and flight_direction.x > 0) or (direction_x and flight_direction.x < 0):
@@ -432,14 +451,24 @@ func wingbeat():
 			wingbeat_direction.y = direction_y
 			
 		wingbeat_direction = wingbeat_direction.normalized()
-		#print(flight_direction)
+		#print("wingbeat_direction: ", wingbeat_direction)
 		#apply_force(Vector2(direction_x,direction_y).normalized()*10)
-		#print(stored_jump)
-		#Converting our Stored Jump into wingbeat_slow
+		##Converting our Stored Jump into wingbeat_slow
+		#print("stored_jump: ", stored_jump)
+		#print("wingbeat_slow_min: ", wingbeat_slow_min)
+		#print("wingbeat_slow_max: ", wingbeat_slow_max)
+		#print("max_jump_strength: ", max_jump_strength)
+		#print("jump_strength_base: ", jump_strength_base)
+		#print("--- Slowdown Calculation --")
+		#print("A: ", (stored_jump - wingbeat_slow_min))
+		#print("B: ", (wingbeat_slow_max - wingbeat_slow_min))
+		#print("C: ", (max_jump_strength - jump_strength_base))
 		wingbeat_slow_amount = (((stored_jump - wingbeat_slow_min) * (wingbeat_slow_max - wingbeat_slow_min)) / (max_jump_strength - jump_strength_base)) + wingbeat_slow_min
+		#print("Slowdown amount: ", wingbeat_slow_amount)
+		
 		flight_direction = flight_direction.lerp(wingbeat_direction,wingbeat_slow_amount)
 		#print(jump_strength / max_jump_strength)
-		#print(flight_direction)
+		#print("Slow Down Direction: ", flight_direction)
 	
 	stored_jump *= stored_jump_multiplier
 	var wingbeat_force = 0.0
@@ -456,11 +485,12 @@ func wingbeat():
 			wingbeat_afterburner *= 0.5
 		#print("Speed-reduced Wingbeat Force: ", wingbeat_force)
 		current_speed += wingbeat_force
-	
+	#print("Wingbeat - current speed: ", current_speed)
 	#if current_speed > GlobalData.terminal_velocity:
 	#	current_speed = GlobalData.terminal_velocity
 	
 	#on_wingbeat_cooldown = true
+	#print("WINGBEAT END ===============================================================================================")
 	
 ## SUPER IMPORTANT!
 		## Here, we're actually dividing our current speed among our new directions.

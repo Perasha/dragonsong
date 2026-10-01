@@ -45,7 +45,10 @@ func _process(delta: float) -> void:
 	prev_pos = current_pos
 	current_pos = position
 	#print(zoom_multipler())
+	#print(dragon_node.current_speed)
 	var distance_lag = snappedf(dragon_node.current_speed / zoom_multipler(),0.01)
+	if is_inf(distance_lag) or is_nan(distance_lag):
+		distance_lag = 1.0
 	#print("Distance Lag: ", distance_lag)
 	#snappedf(3.14159, 0.01)
 	if is_constrained:
@@ -65,6 +68,12 @@ func _process(delta: float) -> void:
 	#	new_position = Vector2(0,0)
 	#	print("Exception caught")
 	#else:
+	#print("Variables from Dragon Node:")
+	#print("Flight Direction: ", dragon_node.flight_direction)
+	#print("fd_dampen: ", dragon_node.fd_dampen)
+	#print("-------")
+	#print("Current Position: ", position)
+	#print("-------")
 	new_position = dragon_node.flight_direction * distance_lag
 	#weight = 0.008
 	weight = dragon_node.fd_dampen + (.008 - dragon_node.fd_dampen)

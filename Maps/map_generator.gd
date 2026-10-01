@@ -3,7 +3,10 @@ extends Node2D
 @export var chunk_img_test : Image
 var chunk_size = Vector2(128,64)
 
+var loaded_chunks = []
+
 @onready var tilemap_terrain = get_node("Tiles")
+@onready var object_node = get_node("objects")
 
 var test = 0
 
@@ -31,7 +34,8 @@ func generate_terrain(chunk_img):
 		for y in chunk_img.get_height():
 			#test += 1
 			if chunk_img.get_pixel(x,y) == rock_terrain_key:
+				#print("Found")
 				rock_terrain.append(Vector2i(x,y))
-	
+	#print(rock_terrain)
 	tilemap_terrain.set_cells_terrain_connect(rock_terrain, 0, 0, false)
 	

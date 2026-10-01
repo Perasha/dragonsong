@@ -111,9 +111,9 @@ anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 27.0
-offset_top = -161.0
+offset_top = -80.0
 offset_right = 150.0
-offset_bottom = -138.0
+offset_bottom = -57.0
 grow_vertical = 0
 size_flags_horizontal = 6
 size_flags_vertical = 0
@@ -126,13 +126,28 @@ anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 27.0
-offset_top = -89.0
+offset_top = -49.0
 offset_right = 150.0
-offset_bottom = -66.0
+offset_bottom = -26.0
 grow_vertical = 0
 size_flags_horizontal = 6
 size_flags_vertical = 0
 text = "Glide Toggle:"
+label_settings = SubResource("LabelSettings_darle")
+
+[node name="HealthBracket" type="Label" parent="." unique_id=1243173190]
+modulate = Color(0.5972951, 0.7833097, 1, 1)
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 27.0
+offset_top = -116.0
+offset_right = 150.0
+offset_bottom = -93.0
+grow_vertical = 0
+size_flags_horizontal = 6
+size_flags_vertical = 0
+text = "Health Bracket:"
 label_settings = SubResource("LabelSettings_darle")
 
 [node name="Flight Direction Dampen" type="Label" parent="." unique_id=1487209059]

@@ -180,14 +180,11 @@ contact_monitor = true
 max_contacts_reported = 1
 script = ExtResource("1_urtjn")
 speed = 50.0
-wingbeat_strength = 100.0
 stored_jump_multiplier = 0.1
-jump_strength_base = 3.0
-max_jump_strength = 6.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2117568773]
 position = Vector2(-12, -19)
-rotation = 1.5708
+rotation = 1.5707964
 scale = Vector2(4.135, 4.13)
 shape = SubResource("CapsuleShape2D_cvsob")
 
