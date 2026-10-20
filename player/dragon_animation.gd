@@ -6,13 +6,13 @@ extends Sprite2D
 @onready var BiteAnimNode = get_parent().get_node("Bite")
 @onready var ClimbDetector = get_parent().get_node("ClimbDetector")
 
-@onready var wing_folded_sprite = preload("res://Sprites/wings_folded.png")
-@onready var wing_glide_sprite = preload("res://Sprites/wings_glide.png")
-@onready var wing_up_sprite = preload("res://Sprites/wings_up.png")
-@onready var wing_down_sprite = preload("res://Sprites/wings_down.png")
+@onready var wing_folded_sprite = preload("res://player/Sprites/wings_folded.png")
+@onready var wing_glide_sprite = preload("res://player/Sprites/wings_glide.png")
+@onready var wing_up_sprite = preload("res://player/Sprites/wings_up.png")
+@onready var wing_down_sprite = preload("res://player/Sprites/wings_down.png")
 
-@onready var main_sprite = preload("res://Sprites/DragonWingless.png")
-@onready var mid_flight_sprite = preload("res://Sprites/dragon_midflight.png")
+@onready var main_sprite = preload("res://player/Sprites/DragonWingless.png")
+@onready var mid_flight_sprite = preload("res://player/Sprites/dragon_midflight.png")
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	pass # Replace with function body.

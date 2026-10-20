@@ -21,7 +21,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-GlobalData="*res://scripts/global_data.gd"
+GlobalData="*res://global_data.gd"
 EntityBehavior="*res://Entities/entity_behavior.gd"
 
 [editor]

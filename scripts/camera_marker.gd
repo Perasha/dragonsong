@@ -63,6 +63,7 @@ func _process(delta: float) -> void:
 	## But keep it proportional to 
 	## This allows us to see more of the ground while flying
 	if raycast_anchor.is_colliding() and dragon_node.is_flying:
+		#print(camera_node.zoom)
 		new_position.y = 500 - to_global(dragon_node.position).y#position.distance_to(to_local(raycast_anchor.get_collision_point()))
 		#to_global(position)
 		#print(to_global(position).distance_to(raycast_anchor.get_collision_point()))
