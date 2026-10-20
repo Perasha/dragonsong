@@ -133,8 +133,8 @@ func _physics_process(delta: float) -> void:
 		#print("Just jumped: ", just_jumped)
 		#if not is_slowing:
 		#	double_jump_clock.start()
-		if is_flying:
-			pass
+		#if is_flying:
+		#	pass
 			#double_jump_counter += 1
 		if GlobalData.hover_unlocked == false:
 			is_hovering = false
@@ -145,7 +145,7 @@ func _physics_process(delta: float) -> void:
 		#	stop_slowing()
 	direction_x = Input.get_axis("move_left", "move_right")
 	direction_y = Input.get_axis("move_up", "move_down")
-	if Input.is_action_pressed("Sprint"):
+	if Input.is_action_pressed("Sprint") and resources.stamina > 0:
 		is_running = true
 	
 	if not GlobalData.hover_unlocked and is_hovering:
@@ -263,23 +263,26 @@ func _physics_process(delta: float) -> void:
 	
 	## And here's the same thing for Hovering
 	#if GlobalData.hover_unlocked:
-	if Input.is_action_just_pressed("Hover"):
-		## If hovering isn't unlocked, then we need to exceed the Slow Speed in order to initiate Hovering to slow down.
-		if GlobalData.hover_unlocked or current_speed >= slow_speed:
-			if not GlobalData.option_hold_to_hover:
-				if is_hovering == true:
-					is_hovering = false
-				else:
+	if resources.stamina > 0:
+		if Input.is_action_just_pressed("Hover"):
+			## If hovering isn't unlocked, then we need to exceed the Slow Speed in order to initiate Hovering to slow down.
+			if GlobalData.hover_unlocked or current_speed >= slow_speed:
+				if not GlobalData.option_hold_to_hover:
+					if is_hovering == true:
+						is_hovering = false
+					else:
+						is_hovering = true
+						is_gliding = false
+		if GlobalData.hover_unlocked:
+			if Input.is_action_pressed("Hover"):
+				if GlobalData.option_hold_to_hover:
 					is_hovering = true
 					is_gliding = false
-	if GlobalData.hover_unlocked:
-		if Input.is_action_pressed("Hover"):
-			if GlobalData.option_hold_to_hover:
-				is_hovering = true
-				is_gliding = false
-		if Input.is_action_just_released("Hover"):
-			if GlobalData.option_hold_to_hover:
-				is_hovering = false
+			if Input.is_action_just_released("Hover"):
+				if GlobalData.option_hold_to_hover:
+					is_hovering = false
+	else:
+		is_hovering = false
 	
 	## Stop hovering if we don't have hovering unlocked *and* we're not going fast enough.
 	if not GlobalData.hover_unlocked and is_hovering:
@@ -432,6 +435,7 @@ func wingbeat():
 	#print("WINGBEAT ===============================================================================================")
 	#print("Flight Direction: ", flight_direction)
 	#print("Stored Jump: ", stored_jump)
+	resources.stamina_update(-(stored_jump / 3))
 	recent_jump_strength = stored_jump
 	## Lifting us up ever so slightly if we aren't directionally moving
 	if not direction_x and flight_direction.y < 0.4:
@@ -524,7 +528,7 @@ var slowdown_amount = 10.0
 
 func fly():
 	if just_jumped:
-		if wingbeat_afterburner < wingbeat_reset_num:# and not on_wingbeat_cooldown:
+		if wingbeat_afterburner < wingbeat_reset_num and resources.stamina > 0:# and not on_wingbeat_cooldown:
 			wingbeat()
 		#print("Continue")
 	

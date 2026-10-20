@@ -117,14 +117,14 @@ func _process(delta: float) -> void:
 		facing = LEFT
 		InteractNode.position.x = -100
 		ClimbDetector.position.x = -42
-		ClimbDetector.target_position.x = -65
+		ClimbDetector.target_position.x = -85
 		BiteAnimNode.position.x = -112
 		BiteAnimNode.flip_v = false
 	else:
 		facing = RIGHT
 		InteractNode.position.x = 100
 		ClimbDetector.position.x = 42
-		ClimbDetector.target_position.x = 65
+		ClimbDetector.target_position.x = 85
 		BiteAnimNode.position.x = 112
 		BiteAnimNode.flip_v = true
 	

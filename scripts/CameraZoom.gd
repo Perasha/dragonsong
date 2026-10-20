@@ -9,7 +9,8 @@ var zoomSpeed = 1.2
 
 @export var cam_marker : Node2D
 @onready var dragon_node = get_parent().get_node("dragon")
-
+#@onready var parallax_bg: Node2D = %ParallaxBG
+#var parallax_scale_factor = 1.0
 @export var camera_3d : Camera3D
 
 @export_category("Camera Smoothing")
@@ -79,7 +80,7 @@ var is_looking = false
 var screen_constraint = Vector2(0,0)
 
 @warning_ignore("unused_parameter")
-func _process(delta):
+func _physics_process(delta):
 	update_margin()
 	#print("Position: ", position)
 	#camera_3d.position.x = position.x
@@ -99,6 +100,8 @@ func _process(delta):
 	
 	
 	zoom = lerp(zoom, new_zoom, weight)
+	#if abs(new_zoom.x) - abs(zoom.x) < 0.01:
+	#	zoom = new_zoom
 	#print(zoom)
 	#margin_debug.shape.size = viewport_dimensions / new_zoom
 	
@@ -110,8 +113,8 @@ func _process(delta):
 	if smoothing_enabled:
 		smoothing_weight = (dragon_node.current_speed / GlobalData.terminal_velocity) * smoothing_weight_modifier#0.03#pow(log(1.2),2)
 		#print("Smoothing weight: ", smoothing_weight)
-		if smoothing_weight < 0.03: 
-			smoothing_weight = 0.03
+		if smoothing_weight < 0.05: 
+			smoothing_weight = 0.05
 		#print("Smoothing weight: ", smoothing_weight)
 		camera_position = lerp(global_position, camera_target, smoothing_weight)
 	else:
@@ -142,6 +145,12 @@ func _process(delta):
 		check_zoom()
 	##ZOOM CHANGING
 	new_zoom = set_zoom_level(defaultZoomLevel / zoom_levels[current_zoom_level])
+	
+	## Change our Parallax scale based on our zoom
+	## should be at 1.0 when Zoom is at 0.2
+	#parallax_scale_factor = 1.2 - zoom.x
+	#parallax_bg.scale = Vector2(parallax_scale_factor,parallax_scale_factor)
+	
 	#print((get_viewport().get_screen_transform() * get_viewport().get_canvas_transform()).affine_inverse())
 	#var viewport_conversion = (get_viewport().get_screen_transform() * get_viewport().get_canvas_transform()).affine_inverse()
 	#print(get_viewport().get_canvas_transform())

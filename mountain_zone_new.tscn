@@ -11,19 +11,22 @@
 [ext_resource type="Script" uid="uid://dbcx8lweqxchg" path="res://Maps/chunk_data.gd" id="9_vmrbf"]
 [ext_resource type="PackedScene" uid="uid://c2hwxc628wepk" path="res://objects/item.tscn" id="11_4t45h"]
 [ext_resource type="PackedScene" uid="uid://cpjik8ubhg7tk" path="res://Maps/TerrainPieces/snow_mountain_1.tscn" id="11_i5f8r"]
-[ext_resource type="PackedScene" uid="uid://chdtevsgx68jg" path="res://Maps/TerrainPieces/snow_hill_top_2.tscn" id="12_vnktb"]
-[ext_resource type="Script" uid="uid://bvxkyx0ds2l6i" path="res://scripts/health_bar.gd" id="13_vk4nd"]
-[ext_resource type="PackedScene" uid="uid://b7vmrut1ottd8" path="res://Maps/TerrainPieces/snowcap_1.tscn" id="13_vl68x"]
-[ext_resource type="PackedScene" uid="uid://t4lpjh5cfegf" path="res://Maps/TerrainPieces/snowcap_2.tscn" id="14_811vv"]
+[ext_resource type="PackedScene" uid="uid://bnmadpvei5gl2" path="res://Maps/TerrainPieces/MountainPiece_Left_Large.tscn" id="12_m1wfi"]
+[ext_resource type="PackedScene" uid="uid://cwbbwtpp4j4x3" path="res://Maps/TerrainPieces/mountain_piece_left_small.tscn" id="13_i5f8r"]
+[ext_resource type="Script" uid="uid://bvxkyx0ds2l6i" path="res://player/health_bar.gd" id="13_vk4nd"]
 [ext_resource type="Script" uid="uid://gjagu28rh2pe" path="res://ui/thought_animator.gd" id="14_j1pli"]
+[ext_resource type="PackedScene" uid="uid://q8d7oqnbjuf1" path="res://Maps/TerrainPieces/mountain_piece_right_large.tscn" id="14_vnktb"]
 [ext_resource type="Script" uid="uid://bfpmv7tl4iuxw" path="res://scripts/inventory.gd" id="15_joowa"]
-[ext_resource type="PackedScene" uid="uid://bm8gvhpt7v2nm" path="res://Maps/TerrainPieces/snow_mountain_top_3.tscn" id="15_nbe37"]
+[ext_resource type="PackedScene" uid="uid://ri4vtn154yl2" path="res://Maps/TerrainPieces/mountain_piece_right_small.tscn" id="15_vl68x"]
+[ext_resource type="PackedScene" uid="uid://ycu32scq3ycw" path="res://Maps/TerrainPieces/mountain_plataeu.tscn" id="16_811vv"]
 [ext_resource type="PackedScene" uid="uid://bks7gor6yrlx6" path="res://pause_menu.tscn" id="16_slimp"]
+[ext_resource type="Script" uid="uid://lvxd2xl7t76r" path="res://player/stamina_bar.gd" id="18_vnktb"]
 [ext_resource type="Texture2D" uid="uid://scg63yoxuewp" path="res://parallax_bg/bg_03.png" id="19_cg5qy"]
 [ext_resource type="Texture2D" uid="uid://dtot3646r74ci" path="res://parallax_bg/bg_04.png" id="20_4v65u"]
 [ext_resource type="Texture2D" uid="uid://cocb0lk531e7o" path="res://parallax_bg/bg_02.png" id="21_3nkfx"]
 [ext_resource type="Texture2D" uid="uid://dkjccrrxynst" path="res://parallax_bg/bg_01.png" id="22_cbhpq"]
 [ext_resource type="Texture2D" uid="uid://wtxah1ya6wgc" path="res://Sprites/Human.png" id="23_cx4oo"]
+[ext_resource type="Shader" uid="uid://ckquo6mqu0ifs" path="res://shaders/hex_pixelizer.gdshader" id="26_i5f8r"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_prg60"]
 radius = 47.93
@@ -37,6 +40,7 @@ radius = 19.990274
 radius = 32.37
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_k8o1j"]
+shader = ExtResource("26_i5f8r")
 
 [node name="Main" type="Node" unique_id=1867274348]
 
@@ -73,7 +77,7 @@ dragon_node = NodePath("../dragon")
 [node name="dragon" parent="." unique_id=657267410 instance=ExtResource("4_i5f8r")]
 unique_name_in_owner = true
 z_index = 1
-position = Vector2(16206, -10762)
+position = Vector2(16738, -11480)
 collision_layer = 4
 gravity_scale = 0.5
 speed = 25.0
@@ -101,7 +105,7 @@ texture = ExtResource("5_vnktb")
 position = Vector2(-21, -47)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="dragon/Ground" unique_id=1391521483]
-scale = Vector2(14.06, 14.06)
+scale = Vector2(6.75, 6.75)
 shape = SubResource("CircleShape2D_pejub")
 debug_color = Color(0.95686275, 0, 0.5411765, 0.16862746)
 
@@ -114,9 +118,6 @@ scale = Vector2(82.68, 82.68)
 shape = SubResource("CircleShape2D_pejub")
 debug_color = Color(0.95686275, 0, 0.5411765, 0.16862746)
 
-[node name="RayCastAnchor" type="RayCast2D" parent="dragon" unique_id=575900801]
-target_position = Vector2(0, 10000)
-
 [node name="Camera_Marker" type="Node2D" parent="dragon" unique_id=700303303 node_paths=PackedStringArray("look_marker")]
 script = ExtResource("6_vl68x")
 look_marker = NodePath("../LookMarker")
@@ -125,6 +126,10 @@ look_marker = NodePath("../LookMarker")
 shape = SubResource("CircleShape2D_7ekg2")
 disabled = true
 debug_color = Color(0.78039217, 0.1254902, 1, 0.21176471)
+
+[node name="RayCastAnchor" type="RayCast2D" parent="dragon/Camera_Marker" unique_id=575900801]
+unique_name_in_owner = true
+target_position = Vector2(0, 2500)
 
 [node name="ObjectManager" type="Node" parent="." unique_id=837280812]
 script = ExtResource("7_811vv")
@@ -136,6 +141,7 @@ scale = Vector2(4, 4)
 script = ExtResource("8_nbe37")
 
 [node name="chunk" type="Node2D" parent="Map" unique_id=1039938790]
+position = Vector2(600.25, -851.75)
 script = ExtResource("9_vmrbf")
 
 [node name="objects" type="Node" parent="Map/chunk" unique_id=375692476]
@@ -144,35 +150,89 @@ script = ExtResource("9_vmrbf")
 position = Vector2(-1925, 1563)
 size = 6
 
-[node name="Mountain_1" parent="Map/chunk" unique_id=1707666357 instance=ExtResource("11_i5f8r")]
-position = Vector2(1950.5, 7.75)
+[node name="Mountain_1" parent="Map/chunk" unique_id=1966414918 instance=ExtResource("11_i5f8r")]
+position = Vector2(2614.5, -170)
 scale = Vector2(2.891932, 2.891932)
 
-[node name="SnowcapHill" parent="Map/chunk" unique_id=109961558 instance=ExtResource("12_vnktb")]
-position = Vector2(2727.5, 300)
-scale = Vector2(2.891932, 2.891932)
+[node name="MountainPiece_Left_Large" parent="Map/chunk/Mountain_1" unique_id=1413109061 instance=ExtResource("12_m1wfi")]
+position = Vector2(-228.30756, 27.57669)
+scale = Vector2(0.5186844, 0.5186844)
 
-[node name="Snowcap" parent="Map/chunk" unique_id=1567359643 instance=ExtResource("13_vl68x")]
-position = Vector2(2339.5002, 718.25)
-scale = Vector2(2.891932, 2.891932)
+[node name="MountainPiece_Left_Large2" parent="Map/chunk/Mountain_1" unique_id=2110823906 instance=ExtResource("12_m1wfi")]
+position = Vector2(-382.8755, 332.39023)
+scale = Vector2(0.5186844, 0.5186844)
 
-[node name="Snowcap_2" parent="Map/chunk" unique_id=313367981 instance=ExtResource("14_811vv")]
-position = Vector2(1485.5, 282.24988)
-scale = Vector2(1.9086728, 1.9086728)
+[node name="MountainPiece_Left_Large3" parent="Map/chunk/Mountain_1" unique_id=216170691 instance=ExtResource("12_m1wfi")]
+position = Vector2(-577.2092, 120.33476)
+scale = Vector2(0.5186844, 0.5186844)
 
-[node name="SnowcapHill_2" parent="Map/chunk" unique_id=1940945170 instance=ExtResource("15_nbe37")]
-position = Vector2(-558.4999, 745.75)
-scale = Vector2(3.3449993, 3.3449993)
+[node name="MountainPiece_Left_Large4" parent="Map/chunk/Mountain_1" unique_id=1811075409 instance=ExtResource("12_m1wfi")]
+position = Vector2(-943.83264, 451.6012)
+scale = Vector2(0.5186844, 0.5186844)
 
-[node name="SnowcapHill_3" parent="Map/chunk" unique_id=1774211695 instance=ExtResource("15_nbe37")]
-position = Vector2(371.49988, 619.75)
-scale = Vector2(1.9954284, 1.9954284)
+[node name="MountainPiece_Left_Small" parent="Map/chunk/Mountain_1" unique_id=1994165966 instance=ExtResource("13_i5f8r")]
+position = Vector2(-201.76819, -191.04874)
+scale = Vector2(0.5186844, 0.5186844)
+
+[node name="MountainPiece_Right_Large" parent="Map/chunk/Mountain_1" unique_id=997438106 instance=ExtResource("14_vnktb")]
+position = Vector2(608.7626, 202.02754)
+scale = Vector2(0.5186844, 0.5186844)
+
+[node name="MountainPiece_Right_Large3" parent="Map/chunk/Mountain_1" unique_id=222608266 instance=ExtResource("14_vnktb")]
+position = Vector2(239.97803, -336.88553)
+scale = Vector2(0.5186844, 0.5186844)
+
+[node name="MountainPiece_Right_Large2" parent="Map/chunk/Mountain_1" unique_id=1786146796 instance=ExtResource("14_vnktb")]
+position = Vector2(412.18115, -56.36371)
+scale = Vector2(0.5186844, 0.5186844)
+
+[node name="MountainPiece_Right_Small" parent="Map/chunk/Mountain_1" unique_id=1350724346 instance=ExtResource("15_vl68x")]
+position = Vector2(418.83765, 303.60324)
+scale = Vector2(0.5186844, 0.5186844)
+
+[node name="MountainPiece_Right_Small2" parent="Map/chunk/Mountain_1" unique_id=1496937579 instance=ExtResource("15_vl68x")]
+position = Vector2(273.0874, 80.56897)
+scale = Vector2(0.5186844, 0.5186844)
+
+[node name="Mountain_Plataeu8" parent="Map/chunk" unique_id=1707666357 instance=ExtResource("16_811vv")]
+position = Vector2(5860.75, 1753.25)
+scale = Vector2(3.6999993, 3.6999993)
+
+[node name="Mountain_Plataeu10" parent="Map/chunk" unique_id=1965327746 instance=ExtResource("16_811vv")]
+position = Vector2(-4919.25, 1686.75)
+scale = Vector2(3.6999993, 3.6999993)
+
+[node name="Mountain_Plataeu9" parent="Map/chunk" unique_id=840746841 instance=ExtResource("16_811vv")]
+position = Vector2(-2381.5, 1722.25)
+scale = Vector2(3.6999993, 3.6999993)
+
+[node name="Mountain_Plataeu" parent="Map/chunk" unique_id=1361618213 instance=ExtResource("16_811vv")]
+position = Vector2(4675.25, 1480)
+
+[node name="Mountain_Plataeu2" parent="Map/chunk" unique_id=1150379354 instance=ExtResource("16_811vv")]
+position = Vector2(3596, 1480)
+
+[node name="Mountain_Plataeu3" parent="Map/chunk" unique_id=636049104 instance=ExtResource("16_811vv")]
+position = Vector2(2555, 1473.5)
+
+[node name="Mountain_Plataeu4" parent="Map/chunk" unique_id=1104285447 instance=ExtResource("16_811vv")]
+position = Vector2(1526.75, 1480)
+
+[node name="Mountain_Plataeu5" parent="Map/chunk" unique_id=1210547646 instance=ExtResource("16_811vv")]
+position = Vector2(485.75, 1473.5)
+
+[node name="Mountain_Plataeu6" parent="Map/chunk" unique_id=257119223 instance=ExtResource("16_811vv")]
+position = Vector2(-446.75, 1473.5)
+
+[node name="Mountain_Plataeu7" parent="Map/chunk" unique_id=1548437128 instance=ExtResource("16_811vv")]
+position = Vector2(-1487.75, 1467)
 
 [node name="HUD" type="Node" parent="." unique_id=1438885450]
 
 [node name="PlayerStats" type="CanvasLayer" parent="HUD" unique_id=398924730]
 
 [node name="Health" type="ProgressBar" parent="HUD/PlayerStats" unique_id=1904802754]
+modulate = Color(1, 0, 0.29411766, 1)
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
@@ -202,6 +262,38 @@ offset_bottom = 11.5
 grow_horizontal = 2
 grow_vertical = 2
 text = "Health"
+
+[node name="Stamina" type="ProgressBar" parent="HUD/PlayerStats" unique_id=983896657]
+modulate = Color(1, 0.99607843, 0.29411766, 1)
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -294.0
+offset_top = -34.0
+offset_right = -27.0
+offset_bottom = -7.0
+grow_horizontal = 0
+grow_vertical = 0
+step = 0.1
+show_percentage = false
+script = ExtResource("18_vnktb")
+
+[node name="Label" type="Label" parent="HUD/PlayerStats/Stamina" unique_id=1726692969]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Stamina"
 
 [node name="Injure" type="Button" parent="HUD/PlayerStats" unique_id=98298887]
 anchors_preset = 3
@@ -306,6 +398,7 @@ z_index = -51
 color = Color(0.19690534, 0.37443095, 0.6834349, 1)
 
 [node name="ParallaxBG" type="Node2D" parent="." unique_id=883243348]
+unique_name_in_owner = true
 z_index = -2
 z_as_relative = false
 
@@ -321,7 +414,7 @@ scale = Vector2(500, 824.128)
 polygon = PackedVector2Array(-1, -1, -1, 1, 5, 1, 5, -1)
 
 [node name="HorizonFar_0" type="Parallax2D" parent="ParallaxBG" unique_id=305814663]
-modulate = Color(0.89058965, 0.89059013, 0.8905901, 1)
+modulate = Color(0.8117647, 0.8352941, 0.84705883, 1)
 scroll_scale = Vector2(0.2, 0.05)
 scroll_offset = Vector2(0, 412)
 repeat_size = Vector2(5000, 0)
@@ -332,7 +425,7 @@ polygon = PackedVector2Array(-4727.986, -0.027123809, 272.00015, 0.0056875087, 2
 uv = PackedVector2Array(-288, -96, 176, -80, 152, 80, -312, 48)
 
 [node name="Far_0" type="Parallax2D" parent="ParallaxBG" unique_id=353512881]
-modulate = Color(0.89058965, 0.89059013, 0.8905901, 1)
+modulate = Color(0.81403315, 0.8339144, 0.8488814, 1)
 scroll_scale = Vector2(0.2, 0.05)
 scroll_offset = Vector2(0, 296)
 repeat_times = 10
@@ -358,7 +451,7 @@ polygon = PackedVector2Array(1298, -821, 358, -799, -42, -999, -412, -1450, -104
 uv = PackedVector2Array(-88, -48, -176, 24, -8, 24)
 
 [node name="HorizonFar_1" type="Parallax2D" parent="ParallaxBG" unique_id=107445446]
-modulate = Color(0.8047431, 0.80474246, 0.8047426, 1)
+modulate = Color(0.67058825, 0.7019608, 0.7254902, 1)
 scroll_scale = Vector2(0.25, 0.07)
 scroll_offset = Vector2(0, 410)
 repeat_size = Vector2(5000, 0)
@@ -369,7 +462,7 @@ polygon = PackedVector2Array(-4727.986, -0.027123809, 272.00015, 0.0056875087, 2
 uv = PackedVector2Array(-288, -96, 176, -80, 152, 80, -312, 48)
 
 [node name="Far_1" type="Parallax2D" parent="ParallaxBG" unique_id=574179506]
-modulate = Color(0.8047431, 0.80474246, 0.8047426, 1)
+modulate = Color(0.67062026, 0.70041084, 0.7264961, 1)
 scroll_scale = Vector2(0.25, 0.07)
 scroll_offset = Vector2(0, 410)
 repeat_times = 10
@@ -379,7 +472,7 @@ polygon = PackedVector2Array(-11, -420, 266, -386, 394, -493, 577, -545, 822, -7
 uv = PackedVector2Array(-288, -96, 176, -80, 152, 80, -312, 48)
 
 [node name="Middle_0" type="Parallax2D" parent="ParallaxBG" unique_id=1457456355]
-modulate = Color(0.7204674, 0.72046757, 0.7204672, 1)
+modulate = Color(0.6378377, 0.67166907, 0.70552427, 1)
 scroll_scale = Vector2(0.3, 0.1)
 scroll_offset = Vector2(-437, 236)
 repeat_size = Vector2(568, 0)
@@ -396,7 +489,7 @@ scale = Vector2(5, 5)
 texture = ExtResource("19_cg5qy")
 
 [node name="Middle_1" type="Parallax2D" parent="ParallaxBG" unique_id=2106115937]
-modulate = Color(0.601223, 0.601223, 0.6012228, 1)
+modulate = Color(0.6045698, 0.638467, 0.6761675, 1)
 scroll_scale = Vector2(0.35, 0.15)
 scroll_offset = Vector2(-437, 345)
 repeat_size = Vector2(568, 0)
@@ -414,7 +507,7 @@ scale = Vector2(5, 5)
 texture = ExtResource("20_4v65u")
 
 [node name="Middle_2" type="Parallax2D" parent="ParallaxBG" unique_id=1000696206]
-modulate = Color(0.54497427, 0.5449743, 0.5449741, 1)
+modulate = Color(0.5466899, 0.5818418, 0.62091625, 1)
 scroll_scale = Vector2(0.38, 0.18)
 scroll_offset = Vector2(-437, 350)
 repeat_size = Vector2(1950, 0)
@@ -431,7 +524,7 @@ scale = Vector2(5, 5)
 texture = ExtResource("21_3nkfx")
 
 [node name="Close_0_Mountains" type="Parallax2D" parent="ParallaxBG" unique_id=1508232738]
-modulate = Color(0.44291106, 0.4429107, 0.4429106, 1)
+modulate = Color(0.5177436, 0.5538957, 0.5940975, 1)
 scroll_scale = Vector2(0.4, 0.2)
 scroll_offset = Vector2(-437, 350)
 repeat_times = 50
@@ -447,7 +540,7 @@ scale = Vector2(500, 2500)
 polygon = PackedVector2Array(-15.054001, -1.3996, -17.678, -1.4228001, -20.192001, -0.7956, -21.29, 1, 18.910002, 0.9999995, 32.264, 0.5220001, 31.800003, -1.1416, 28.251999, -1.5468, 21.283997, -1.9184, 14.949997, -1.7752, 10.727997, -1.8764, 7.0960007, -1.4372001, 2.7800002, -1.2304001, -0.9260025, -1.5384, -4.9379997, -2.138, -10.724003, -1.8848001)
 
 [node name="Close_1_Mountains2" type="Parallax2D" parent="ParallaxBG" unique_id=1040871844]
-modulate = Color(0.35906908, 0.35906908, 0.35906908, 1)
+modulate = Color(0.45417106, 0.49109834, 0.52804524, 1)
 scroll_scale = Vector2(0.5, 0.3)
 scroll_offset = Vector2(-437, 350)
 repeat_times = 50
@@ -459,7 +552,7 @@ polygon = PackedVector2Array(13.194, -1.5816001, 10.966001, -1.9492, 9.478001, -
 uv = PackedVector2Array(10.734543, -3.801808, 9.359135, -2.7129464, 11.364937, -2.139861)
 
 [node name="Close_2_Horizon" type="Parallax2D" parent="ParallaxBG" unique_id=842592406]
-modulate = Color(0.24115619, 0.24115598, 0.2411561, 1)
+modulate = Color(0.40784314, 0.44313726, 0.47843137, 1)
 scroll_scale = Vector2(0.6, 0.4)
 scroll_offset = Vector2(-437, 663)
 repeat_size = Vector2(1912, 0)
@@ -477,7 +570,7 @@ scale = Vector2(5, 5)
 texture = ExtResource("22_cbhpq")
 
 [node name="Close_2_Unique" type="Parallax2D" parent="ParallaxBG" unique_id=1731464656]
-modulate = Color(0.24115619, 0.24115598, 0.2411561, 1)
+modulate = Color(0.40719202, 0.44493526, 0.4785022, 1)
 scroll_scale = Vector2(0.6, 0.4)
 scroll_offset = Vector2(-437, 619)
 repeat_times = 50
@@ -489,7 +582,7 @@ polygon = PackedVector2Array(-33.344, -1.0296001, -1, 1, 185.286, 1, 159.8, -0.2
 
 [node name="Close_3_Unique" type="Parallax2D" parent="ParallaxBG" unique_id=237745589]
 visible = false
-modulate = Color(0.18717614, 0.18717614, 0.18717614, 1)
+modulate = Color(0.3591569, 0.39477766, 0.4268086, 1)
 scroll_scale = Vector2(0.8, 0.6)
 scroll_offset = Vector2(-437, 619)
 repeat_times = 50
@@ -506,27 +599,26 @@ polygon = PackedVector2Array(-95.75, 58.5, -92.75, -26, -89.5, -231.75, 120.25, 
 uv = PackedVector2Array(-277, 28, -280, -38, -179, -28, -192, 36)
 
 [node name="Foreground" type="Parallax2D" parent="ParallaxBG" unique_id=1559682654]
-visible = false
-modulate = Color(0.21176471, 0.09019608, 0.105882354, 1)
+modulate = Color(0.4627451, 0.5568628, 0.61960787, 1)
 z_index = 10
 scroll_scale = Vector2(1.3, 1.1)
 scroll_offset = Vector2(-437, 619)
 repeat_times = 50
 
 [node name="Polygon2D" type="Polygon2D" parent="ParallaxBG/Foreground" unique_id=1779645078]
-position = Vector2(0, 2964)
+position = Vector2(0, 3289)
 scale = Vector2(500, 2500)
 color = Color(0.38170326, 0.38170323, 0.38170323, 1)
-polygon = PackedVector2Array(-80.628006, 1.7120001, -140.77202, 1.3868, -169.89601, 1.1087999, -169.44801, -0.8540001, -130.05002, -1.0952001, -106.504005, -1.0696001, -72.742004, -0.79640007, -65.666, -0.9772001, -54.414, -0.9296001, -43.52, -0.7520001, -34.188, -0.8028001, -25.49, -0.91240007, -22.028, -0.9980001, -20.954, -0.8764001, -19.594, -0.8156001, -17.14, -0.8260001, -15.116001, -0.7904001, -12.574001, -0.7940001, -10.944001, -0.8012001, -9.2960005, -0.7652001, -6.8780003, -0.70080006, -3.3640003, -0.6748001, -1.368, -0.70080006, 1.792, -0.7780001, 6.1600003, -0.8252001, 8.112, -0.8584001, 9.518, -0.9048001, 11.482, -1.0204, 13.348001, -1.2208002, 17.614002, -1.2208002, 21.634, -1.3196001, 45.004, -0.9984001, 55.142002, -1.0724001, 61.510002, -0.8004001, 64.726, -0.7384001, 91.496, -0.29360008, 113.188, 0.024799943, 115.106, 1.5339999, 36.878002, 1.4088001)
+polygon = PackedVector2Array(-80.628006, 1.7120001, -140.77202, 1.3868, -169.89601, 1.1087999, -169.44801, -0.8540001, -130.05002, -1.0952001, -106.504005, -1.0696001, -72.742004, -0.79640007, -65.666, -0.9772001, -54.414, -0.9296001, -43.52, -0.7520001, -34.188, -0.8028001, -25.49, -0.91240007, -22.992, -0.7980001, -20.954, -0.8764001, -19.594, -0.8156001, -17.14, -0.8260001, -15.116001, -0.7904001, -12.574001, -0.7940001, -10.944001, -0.8012001, -9.2960005, -0.7652001, -6.8780003, -0.70080006, -3.3640003, -0.6748001, -1.368, -0.70080006, 1.792, -0.7780001, 6.1600003, -0.8252001, 8.112, -0.8584001, 9.518, -0.9048001, 12.268001, -0.80640006, 15.014, -0.78120005, 22.666002, -0.7384001, 31.530003, -0.8292001, 35.300003, -0.7244001, 45.728004, -0.6740001, 56.538002, -0.6740001, 65.068, -0.49640012, 91.496, -0.29360008, 113.188, 0.024799943, 115.106, 1.5339999, 36.878002, 1.4088001)
 uv = PackedVector2Array(27.136448, -5.942839, 30.492664, -6.7818933, 32.842014, -5.271596, 28.89846, -2.8383389)
 
 [node name="Trees" type="Node2D" parent="ParallaxBG/Foreground" unique_id=1999447453]
 z_index = -1
-position = Vector2(1231, -4733)
+position = Vector2(1231, -4408)
 scale = Vector2(12, 12)
 
 [node name="Trunk13" type="Polygon2D" parent="ParallaxBG/Foreground/Trees" unique_id=1553678603]
-position = Vector2(180.25, 470.75)
+position = Vector2(97.333336, 485.16666)
 scale = Vector2(1.2, 1.2)
 color = Color(0.29073554, 0.105198465, 0.10054665, 1)
 polygon = PackedVector2Array(1, -24.75, 9, -24.75, 9, -0.75, 1, -0.75)
@@ -552,7 +644,7 @@ polygon = PackedVector2Array(4, -88, 10, -46, 14, 4, -6, 4, -2, -46)
 uv = PackedVector2Array(-152, -48.000004, -144, -48.000004, -144, -24.000004, -152, -24.000004)
 
 [node name="Trunk17" type="Polygon2D" parent="ParallaxBG/Foreground/Trees" unique_id=1441708687]
-position = Vector2(-219.5, 512.0833)
+position = Vector2(-300, 516.9166)
 scale = Vector2(1.2, 1.2)
 color = Color(0.29073554, 0.105198465, 0.10054665, 1)
 polygon = PackedVector2Array(1, -24.75, 9, -24.75, 9, -0.75, 1, -0.75)
@@ -578,7 +670,7 @@ polygon = PackedVector2Array(4, -88, 10, -46, 14, 4, -6, 4, -2, -46)
 uv = PackedVector2Array(-152, -48.000004, -144, -48.000004, -144, -24.000004, -152, -24.000004)
 
 [node name="Trunk19" type="Polygon2D" parent="ParallaxBG/Foreground/Trees" unique_id=1861690255]
-position = Vector2(-418.25, 530.25)
+position = Vector2(-236.75002, 523.00006)
 scale = Vector2(1.2, 1.2)
 color = Color(0.29073554, 0.105198465, 0.10054665, 1)
 polygon = PackedVector2Array(1, -24.75, 9, -24.75, 9, -0.75, 1, -0.75)
@@ -650,6 +742,141 @@ polygon = PackedVector2Array(1, -24.75, 9, -24.75, 9, -0.75, 1, -0.75)
 uv = PackedVector2Array(-152, -48.000004, -144, -48.000004, -144, -24.000004, -152, -24.000004)
 
 [node name="Leaves" type="Polygon2D" parent="ParallaxBG/Foreground/Trees/Trunk5" unique_id=299921209]
+position = Vector2(1, -24.75)
+color = Color(0.28549832, 0.29586053, 0.18437877, 1)
+polygon = PackedVector2Array(4, -88, 10, -46, 14, 4, -6, 4, -2, -46)
+uv = PackedVector2Array(-152, -48.000004, -144, -48.000004, -144, -24.000004, -152, -24.000004)
+
+[node name="Trees2" type="Node2D" parent="ParallaxBG/Foreground" unique_id=1026895315]
+z_index = -1
+position = Vector2(9909, -5147)
+scale = Vector2(12, 12)
+
+[node name="Trunk13" type="Polygon2D" parent="ParallaxBG/Foreground/Trees2" unique_id=477010785]
+position = Vector2(185.5, 560.5)
+scale = Vector2(1.2, 1.2)
+color = Color(0.29073554, 0.105198465, 0.10054665, 1)
+polygon = PackedVector2Array(1, -24.75, 9, -24.75, 9, -0.75, 1, -0.75)
+uv = PackedVector2Array(-152, -48.000004, -144, -48.000004, -144, -24.000004, -152, -24.000004)
+
+[node name="Leaves" type="Polygon2D" parent="ParallaxBG/Foreground/Trees2/Trunk13" unique_id=923426573]
+position = Vector2(1, -24.75)
+color = Color(0.28549832, 0.29586053, 0.18437877, 1)
+polygon = PackedVector2Array(4, -88, 10, -46, 14, 4, -6, 4, -2, -46)
+uv = PackedVector2Array(-152, -48.000004, -144, -48.000004, -144, -24.000004, -152, -24.000004)
+
+[node name="Trunk15" type="Polygon2D" parent="ParallaxBG/Foreground/Trees2" unique_id=1088134995]
+position = Vector2(5.250004, 569.3334)
+scale = Vector2(1.2, 1.2)
+color = Color(0.29073554, 0.105198465, 0.10054665, 1)
+polygon = PackedVector2Array(1, -24.75, 9, -24.75, 9, -0.75, 1, -0.75)
+uv = PackedVector2Array(-152, -48.000004, -144, -48.000004, -144, -24.000004, -152, -24.000004)
+
+[node name="Leaves" type="Polygon2D" parent="ParallaxBG/Foreground/Trees2/Trunk15" unique_id=1660456279]
+position = Vector2(1, -24.75)
+color = Color(0.28549832, 0.29586053, 0.18437877, 1)
+polygon = PackedVector2Array(4, -88, 10, -46, 14, 4, -6, 4, -2, -46)
+uv = PackedVector2Array(-152, -48.000004, -144, -48.000004, -144, -24.000004, -152, -24.000004)
+
+[node name="Trunk17" type="Polygon2D" parent="ParallaxBG/Foreground/Trees2" unique_id=1287389694]
+position = Vector2(-210.66667, 561.3333)
+scale = Vector2(1.2, 1.2)
+color = Color(0.29073554, 0.105198465, 0.10054665, 1)
+polygon = PackedVector2Array(1, -24.75, 9, -24.75, 9, -0.75, 1, -0.75)
+uv = PackedVector2Array(-152, -48.000004, -144, -48.000004, -144, -24.000004, -152, -24.000004)
+
+[node name="Leaves" type="Polygon2D" parent="ParallaxBG/Foreground/Trees2/Trunk17" unique_id=1378096123]
+position = Vector2(1, -24.75)
+color = Color(0.28549832, 0.29586053, 0.18437877, 1)
+polygon = PackedVector2Array(4, -88, 10, -46, 14, 4, -6, 4, -2, -46)
+uv = PackedVector2Array(-152, -48.000004, -144, -48.000004, -144, -24.000004, -152, -24.000004)
+
+[node name="Trunk18" type="Polygon2D" parent="ParallaxBG/Foreground/Trees2" unique_id=1384117165]
+position = Vector2(-443.16666, 539.91675)
+scale = Vector2(1.2, 1.2)
+color = Color(0.29073554, 0.105198465, 0.10054665, 1)
+polygon = PackedVector2Array(1, -24.75, 9, -24.75, 9, -0.75, 1, -0.75)
+uv = PackedVector2Array(-152, -48.000004, -144, -48.000004, -144, -24.000004, -152, -24.000004)
+
+[node name="Leaves" type="Polygon2D" parent="ParallaxBG/Foreground/Trees2/Trunk18" unique_id=960062002]
+position = Vector2(1, -24.75)
+color = Color(0.28549832, 0.29586053, 0.18437877, 1)
+polygon = PackedVector2Array(4, -88, 10, -46, 14, 4, -6, 4, -2, -46)
+uv = PackedVector2Array(-152, -48.000004, -144, -48.000004, -144, -24.000004, -152, -24.000004)
+
+[node name="Trunk19" type="Polygon2D" parent="ParallaxBG/Foreground/Trees2" unique_id=1077359967]
+position = Vector2(-418.25, 530.25)
+scale = Vector2(1.2, 1.2)
+color = Color(0.29073554, 0.105198465, 0.10054665, 1)
+polygon = PackedVector2Array(1, -24.75, 9, -24.75, 9, -0.75, 1, -0.75)
+uv = PackedVector2Array(-152, -48.000004, -144, -48.000004, -144, -24.000004, -152, -24.000004)
+
+[node name="Leaves" type="Polygon2D" parent="ParallaxBG/Foreground/Trees2/Trunk19" unique_id=253629222]
+position = Vector2(1, -24.75)
+color = Color(0.28549832, 0.29586053, 0.18437877, 1)
+polygon = PackedVector2Array(4, -88, 10, -46, 14, 4, -6, 4, -2, -46)
+uv = PackedVector2Array(-152, -48.000004, -144, -48.000004, -144, -24.000004, -152, -24.000004)
+
+[node name="Trunk26" type="Polygon2D" parent="ParallaxBG/Foreground/Trees2" unique_id=1331405702]
+position = Vector2(-127.08331, 561)
+scale = Vector2(1.2, 1.2)
+color = Color(0.29073554, 0.105198465, 0.10054665, 1)
+polygon = PackedVector2Array(1, -24.75, 9, -24.75, 9, -0.75, 1, -0.75)
+uv = PackedVector2Array(-152, -48.000004, -144, -48.000004, -144, -24.000004, -152, -24.000004)
+
+[node name="Leaves" type="Polygon2D" parent="ParallaxBG/Foreground/Trees2/Trunk26" unique_id=296436144]
+position = Vector2(1, -24.75)
+color = Color(0.28549832, 0.29586053, 0.18437877, 1)
+polygon = PackedVector2Array(4, -88, 10, -46, 14, 4, -6, 4, -2, -46)
+uv = PackedVector2Array(-152, -48.000004, -144, -48.000004, -144, -24.000004, -152, -24.000004)
+
+[node name="Trunk2" type="Polygon2D" parent="ParallaxBG/Foreground/Trees2" unique_id=687967810]
+position = Vector2(150.83334, 569.75)
+scale = Vector2(1.5, 1.5)
+color = Color(0.29073554, 0.105198465, 0.10054665, 1)
+polygon = PackedVector2Array(1, -24.75, 9, -24.75, 9, -0.75, 1, -0.75)
+uv = PackedVector2Array(-152, -48.000004, -144, -48.000004, -144, -24.000004, -152, -24.000004)
+
+[node name="Leaves" type="Polygon2D" parent="ParallaxBG/Foreground/Trees2/Trunk2" unique_id=1305127452]
+position = Vector2(1, -24.75)
+color = Color(0.28549832, 0.29586053, 0.18437877, 1)
+polygon = PackedVector2Array(4, -88, 10, -46, 14, 4, -6, 4, -2, -46)
+uv = PackedVector2Array(-152, -48.000004, -144, -48.000004, -144, -24.000004, -152, -24.000004)
+
+[node name="Trunk3" type="Polygon2D" parent="ParallaxBG/Foreground/Trees2" unique_id=800039067]
+position = Vector2(116.25, 572.25)
+scale = Vector2(1.5, 1.5)
+color = Color(0.29073554, 0.105198465, 0.10054665, 1)
+polygon = PackedVector2Array(1, -24.75, 9, -24.75, 9, -0.75, 1, -0.75)
+uv = PackedVector2Array(-152, -48.000004, -144, -48.000004, -144, -24.000004, -152, -24.000004)
+
+[node name="Leaves" type="Polygon2D" parent="ParallaxBG/Foreground/Trees2/Trunk3" unique_id=586701341]
+position = Vector2(1, -24.75)
+color = Color(0.28549832, 0.29586053, 0.18437877, 1)
+polygon = PackedVector2Array(4, -88, 10, -46, 14, 4, -6, 4, -2, -46)
+uv = PackedVector2Array(-152, -48.000004, -144, -48.000004, -144, -24.000004, -152, -24.000004)
+
+[node name="Trunk4" type="Polygon2D" parent="ParallaxBG/Foreground/Trees2" unique_id=2069901969]
+position = Vector2(-102.083336, 567.75006)
+scale = Vector2(1.5, 1.5)
+color = Color(0.29073554, 0.105198465, 0.10054665, 1)
+polygon = PackedVector2Array(1, -24.75, 9, -24.75, 9, -0.75, 1, -0.75)
+uv = PackedVector2Array(-152, -48.000004, -144, -48.000004, -144, -24.000004, -152, -24.000004)
+
+[node name="Leaves" type="Polygon2D" parent="ParallaxBG/Foreground/Trees2/Trunk4" unique_id=482997302]
+position = Vector2(1, -24.75)
+color = Color(0.28549832, 0.29586053, 0.18437877, 1)
+polygon = PackedVector2Array(4, -88, 10, -46, 14, 4, -6, 4, -2, -46)
+uv = PackedVector2Array(-152, -48.000004, -144, -48.000004, -144, -24.000004, -152, -24.000004)
+
+[node name="Trunk5" type="Polygon2D" parent="ParallaxBG/Foreground/Trees2" unique_id=396090012]
+position = Vector2(-191.41666, 563.0833)
+scale = Vector2(1.5, 1.5)
+color = Color(0.29073554, 0.105198465, 0.10054665, 1)
+polygon = PackedVector2Array(1, -24.75, 9, -24.75, 9, -0.75, 1, -0.75)
+uv = PackedVector2Array(-152, -48.000004, -144, -48.000004, -144, -24.000004, -152, -24.000004)
+
+[node name="Leaves" type="Polygon2D" parent="ParallaxBG/Foreground/Trees2/Trunk5" unique_id=2116721157]
 position = Vector2(1, -24.75)
 color = Color(0.28549832, 0.29586053, 0.18437877, 1)
 polygon = PackedVector2Array(4, -88, 10, -46, 14, 4, -6, 4, -2, -46)

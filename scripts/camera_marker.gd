@@ -4,7 +4,7 @@ extends Node2D
 @onready var dragon_node = get_parent()
 #@onready var dragon_resources = get_parent().get_node("Resources")
 @onready var camera_node = get_parent().get_parent().get_node("Camera2D")
-#@onready var raycast_anchor = get_parent().get_node("RayCastAnchor")
+@onready var raycast_anchor : RayCast2D = %RayCastAnchor
 @onready var viewport_dimensions: Vector2 = get_viewport().get_visible_rect().size
 @export var screen_margin_multiplier = 1.0
 @onready var screen_constraint = Vector2(viewport_dimensions.x,viewport_dimensions.y)
@@ -57,24 +57,15 @@ func _process(delta: float) -> void:
 	## We can also draw a line from the center of our camera to the dragon_node
 	## Then, we can test to see if the position of dragon_node is within our screen_inset_rectangle
 	## Or, rather, if not the actual position of the dragon, just the result of the vector we chose.
+	new_position = (dragon_node.flight_direction * distance_lag)
 	
-	#print("Current Distance Lag: ", distance_lag)
-	#print("Maximum Distance Lag: ", max_distance_lag)
-	#print("Flight direction: ", dragon_node.flight_direction)
-	
-	#screen_constraint = (Vector2(viewport_dimensions.x,viewport_dimensions.y) / zoom_multipler()) * screen_margin_multiplier
-	#screen_constraint += Vector2(viewport_dimensions.x,viewport_dimensions.y)
-	#if (dragon_node.flight_direction.x + dragon_node.flight_direction.y > 2) or (dragon_node.flight_direction.x + dragon_node.flight_direction.y < 2):
-	#	new_position = Vector2(0,0)
-	#	print("Exception caught")
-	#else:
-	#print("Variables from Dragon Node:")
-	#print("Flight Direction: ", dragon_node.flight_direction)
-	#print("fd_dampen: ", dragon_node.fd_dampen)
-	#print("-------")
-	#print("Current Position: ", position)
-	#print("-------")
-	new_position = dragon_node.flight_direction * distance_lag
+	## If there's terrain below us, push the camera down so that our dragon is visually up
+	## But keep it proportional to 
+	## This allows us to see more of the ground while flying
+	if raycast_anchor.is_colliding() and dragon_node.is_flying:
+		new_position.y = 500 - to_global(dragon_node.position).y#position.distance_to(to_local(raycast_anchor.get_collision_point()))
+		#to_global(position)
+		#print(to_global(position).distance_to(raycast_anchor.get_collision_point()))
 	#weight = 0.008
 	weight = dragon_node.fd_dampen + (.008 - dragon_node.fd_dampen)
 	if not dragon_node.is_flying:

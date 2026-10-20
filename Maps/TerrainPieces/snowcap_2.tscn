@@ -5,7 +5,7 @@
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_bee4v"]
 rough = true
 
-[node name="SnowMountainTop_1" type="StaticBody2D" unique_id=1707666357]
+[node name="Snowcap_2" type="StaticBody2D" unique_id=1707666357]
 scale = Vector2(1.5, 1.5)
 physics_material_override = SubResource("PhysicsMaterial_bee4v")
 

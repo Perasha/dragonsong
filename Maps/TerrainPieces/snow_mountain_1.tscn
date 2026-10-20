@@ -1,20 +1,18 @@
 [gd_scene format=3 uid="uid://cpjik8ubhg7tk"]
 
-[ext_resource type="Texture2D" uid="uid://bfnq568twoox" path="res://Sprites/terrain_Pieces/TallMountain_1.png" id="1_78gud"]
-
-[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_bee4v"]
-rough = true
+[ext_resource type="Texture2D" uid="uid://db8gd3tr2syyk" path="res://Maps/TerrainPieces/sprites/TallMountain@6x.png" id="1_78gud"]
+[ext_resource type="PhysicsMaterial" uid="uid://bpemdlmgvt4pm" path="res://Maps/rock_material.tres" id="1_v0ckk"]
 
 [node name="SnowMountainTop_1" type="StaticBody2D" unique_id=1707666357]
 scale = Vector2(1.5, 1.5)
-physics_material_override = SubResource("PhysicsMaterial_bee4v")
+physics_material_override = ExtResource("1_v0ckk")
 
 [node name="MountainBody" type="Sprite2D" parent="." unique_id=1729038480]
 position = Vector2(116, -24)
 texture = ExtResource("1_78gud")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." unique_id=136909923]
-position = Vector2(124, -406)
-polygon = PackedVector2Array(-10.666672, 6, 94.66667, 30, 112.66667, 50, -37.33333, 18)
+position = Vector2(147.33333, -592)
+polygon = PackedVector2Array(14.6666565, 12, 122, 37.333313, 152, 68, 158.66666, 88.66666, 80.66666, 40.666626, -44.66667, 12.666626, -83.33334, 24, -85.33334, 22.666626, -86.00001, 20.666626, -45.333344, 6)
 one_way_collision = true
 one_way_collision_margin = 47.6

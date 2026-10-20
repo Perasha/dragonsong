@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://q8d7oqnbjuf1"]
+
+[ext_resource type="Texture2D" uid="uid://bntam6n73dcb0" path="res://Maps/TerrainPieces/sprites/mountain_piece_right_small@6x.png" id="1_kka5i"]
+[ext_resource type="PhysicsMaterial" uid="uid://bpemdlmgvt4pm" path="res://Maps/rock_material.tres" id="1_tj5gy"]
+
+[node name="MountainPiece_Right_Large" type="StaticBody2D" unique_id=1707666357]
+scale = Vector2(1.5, 1.5)
+physics_material_override = ExtResource("1_tj5gy")
+
+[node name="MountainBody" type="Sprite2D" parent="." unique_id=1729038480]
+position = Vector2(116, -24)
+texture = ExtResource("1_kka5i")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." unique_id=136909923]
+position = Vector2(24.666672, -205.33334)
+scale = Vector2(0.70666504, 0.70666504)
+polygon = PackedVector2Array(23.584953, 2.8301697, 162.26451, 18.86795, 160.37772, 34.90573, 24.52835, 25.47174, -112.26441, 40.566116, -116.98141, 28.30194)
+one_way_collision = true
+one_way_collision_margin = 47.6
