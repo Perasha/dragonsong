@@ -15,7 +15,7 @@ var option_hover_leave = false
 
 var option_hold_to_look = false
 
-@export var terminal_velocity = 2250.00
+@export var terminal_velocity = 2300.00
 
 var first_hovered_item = false
 var first_full_inventory = false

@@ -202,6 +202,7 @@ radius = 100.0
 
 [node name="dragon" type="RigidBody2D" unique_id=539998597 groups=["player"]]
 collision_layer = 2
+collision_mask = 17
 mass = 0.001
 physics_material_override = SubResource("PhysicsMaterial_0ucct")
 gravity_scale = 2.0
@@ -221,6 +222,7 @@ shape = SubResource("CapsuleShape2D_cvsob")
 [node name="FloorCheck" type="RayCast2D" parent="." unique_id=1557629680]
 position = Vector2(73, 45)
 target_position = Vector2(-170, 0)
+collision_mask = 17
 hit_from_inside = true
 
 [node name="Direction Pointer" type="Area2D" parent="." unique_id=474065640]
@@ -242,6 +244,7 @@ one_shot = true
 position = Vector2(-42, 0)
 scale = Vector2(0.99999994, 0.99999994)
 target_position = Vector2(-85, 0)
+collision_mask = 17
 
 [node name="InteractArea" type="Area2D" parent="." unique_id=436593249]
 scale = Vector2(1.5199994, 0.8400002)
@@ -309,6 +312,7 @@ offset_bottom = -110.0
 position = Vector2(-50, 0)
 rotation = -3.1415925
 target_position = Vector2(0, 0)
+collision_mask = 17
 script = ExtResource("8_cvsob")
 color = Color(0.9999997, 0.95953256, 0.8464568, 1)
 

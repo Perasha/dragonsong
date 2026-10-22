@@ -4,7 +4,7 @@ extends RigidBody2D
 #@export var jump_height = -400.00
 @export var max_walk_speed = 200.00
 @export var max_run_speed = 400.00
-@export var max_fly_speed_base = 1200#GlobalData.terminal_velocity / 2.5#1.5
+@export var max_fly_speed_base = 1600#GlobalData.terminal_velocity / 2.5#1.5
 #@export var max_fly_speed_run_base = 1800
 var max_fly_speed = max_fly_speed_base
 #var GlobalData.terminal_velocity = 2000.00
@@ -39,6 +39,7 @@ var is_climbing = false
 var is_flap_held = false
 
 var is_grounded = false
+#var is_flying_through = false
 # Option to change from glide being a toggle, to being held
 #var option_hold_to_glide = false
 #var option_hold_to_hover = false
@@ -97,6 +98,7 @@ func _physics_process(delta: float) -> void:
 	just_jumped = false
 	is_running = false
 	is_climbing = false
+	
 	#is_grounded = false
 	is_grounded = floor_check.is_colliding()
 	previous_position = current_position
@@ -130,12 +132,6 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_released("flap"):
 		just_jumped = true
 		is_flap_held = false
-		#print("Just jumped: ", just_jumped)
-		#if not is_slowing:
-		#	double_jump_clock.start()
-		#if is_flying:
-		#	pass
-			#double_jump_counter += 1
 		if GlobalData.hover_unlocked == false:
 			is_hovering = false
 		#is_flap_held = false
@@ -148,56 +144,36 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_pressed("Sprint") and resources.stamina > 0:
 		is_running = true
 	
-	if not GlobalData.hover_unlocked and is_hovering:
-		direction_x = 0
-		direction_y = 0
+	#if not GlobalData.hover_unlocked and is_hovering:
+	#	direction_x = 0
+	#	direction_y = 0
 	#print(direction_x, " ", direction_y)
 	if direction_x != 0.0 and flight_direction.y > 0: #current_speed < 1000 and 
 		flight_direction.y -= 0.008
 	
 	## If option_hold_to_glide is on, then you need to hold to fold in wings. Otherwise, it's a toggle.
 	## Some players might prefer one way or the other so it's a good option to have.
-	if is_flying:
-		#if is_gliding:
-		#	speed_range = slow_speed_gliding
-		#else:
-		#	speed_range = slow_speed
-			#if is_flying:
-			#	direction_x = 0
-		#speed_range = 1000 #Maximum minus minimum speed. Yes we could just put 1600, fuck you
-		
+	if is_flying:		
 		## We're going to map our speed, inversely and exponentially, to our dampening value.
 		## Ideally, this means that as we gain speed, we'll smooth out our flight
 		## And as we slow down, we'll get closer to stalling.
 		
 		## So first, normalize our current speed by dividing it over our slow_speed.
-		#print("Current Speed: ", current_speed)
 		fd_dampen = current_speed / GlobalData.terminal_velocity #slow_speed
 		if fd_dampen > 1.0:
 			fd_dampen = 0.99
 		if fd_dampen <= 0.0:
 			fd_dampen = 0.01
-		#print("-----------------------------------------------------")
-		#print("Normalized Speed: ", fd_dampen)
 		## Then we invert the value,
 		fd_dampen = (fd_dampen * -1) + 1
-		#print("Inverted: ", fd_dampen)
 		## Now we exponentially map it between 0 and 1
 		fd_dampen = pow(fd_dampen,3)
-		#print("Squared: ", fd_dampen)
 		## And finally we convert it to our dampening range.
 		fd_dampen *= (maximum_damp - minimum_damp) + minimum_damp
-		#fd_dampen *= 0.025
-		#print("Converted Dampen Value: ", fd_dampen)
-		
 		
 		## Here, we essentially map our current speed to our dampening value, inversely and linearly.
 		## So, as our speed goes up, the dampening value goes down.
 		dampen_range = maximum_damp - minimum_damp
-		#fd_dampen = ((((current_speed * dampen_range) / speed_range) + minimum_damp) * -1) + maximum_damp
-		#print(fd_dampen)
-		#fd_dampen = pow(fd_dampen,3)
-		#fd_dampen = dampen_base
 		if is_gliding:
 		#	fd_dampen = dampen_glide
 			fd_dampen *= 0.15
@@ -209,26 +185,11 @@ func _physics_process(delta: float) -> void:
 		if fd_dampen > maximum_damp:# or fd_dampen == INF:
 			fd_dampen = maximum_damp
 		
-		#print("Dampen: ", fd_dampen)
-		#print("Flight Direction A1: ", flight_direction)
 		flight_direction.y += fd_dampen
-		
-		#if is_inf(flight_direction.x) or is_nan(flight_direction.x):
-		#	print("OH")
-		#	flight_direction.x = 0.0
-		#if is_inf(flight_direction.y) or is_nan(flight_direction.y):
-		#	print("OH")
-		#	flight_direction.y = -1.0
-		#print(1 / 0)
-		#if flight_direction.y == inf or 
-		#print("Flight Direction modified: ", flight_direction)
-		#print(flight_direction.y + flight_direction.x)
-		#print("Flight Direction X, Modified:", direction_x * (76 / distance_moved))
-		#flight_direction = flight_direction.normalized()
 		
 		## Allowing a bit of flapping if our player is merely holding directional keys.
 		if is_running:
-			max_fly_speed *= 1.8
+			max_fly_speed = max_fly_speed_base + max_run_speed
 		else:
 			max_fly_speed = max_fly_speed_base
 		if current_speed <= max_fly_speed and is_gliding:
@@ -383,6 +344,8 @@ func _physics_process(delta: float) -> void:
 	if not is_flying or hover_speed == 0:
 		is_hovering = false
 	
+	
+	
 	## MOVEMENT
 	if is_flying and not is_hovering:
 		fly()
@@ -393,14 +356,16 @@ func _physics_process(delta: float) -> void:
 		climb()
 	else:
 		walk()
-	#if is_flying or is_hovering:
-	#	## This is just to make sure our speed never exceeds what we determine as Terminal Velocity. Otherwise... bad things
-	#	linear_velocity = linear_velocity.clamp(Vector2(-GlobalData.terminal_velocity,-GlobalData.terminal_velocity),Vector2(GlobalData.terminal_velocity,GlobalData.terminal_velocity))
 	## Oh and finally, we calculate our distance moved!
 	distance_moved = previous_position.distance_to(current_position)
 	if just_jumped:
 		jump_strength = jump_strength_base
-		
+	
+	
+	#if (direction_y != 0 or direction_x != 0) and current_speed > 600:
+		#disable_collision(true)
+	#else:
+		#disable_collision(false)
 		#linear_velocity -= linear_velocity.direction_to(Vector2(0,0)) * 50
 	
 	if resources.health == 0:
@@ -455,18 +420,6 @@ func wingbeat():
 			wingbeat_direction.y = direction_y
 			
 		wingbeat_direction = wingbeat_direction.normalized()
-		#print("wingbeat_direction: ", wingbeat_direction)
-		#apply_force(Vector2(direction_x,direction_y).normalized()*10)
-		##Converting our Stored Jump into wingbeat_slow
-		#print("stored_jump: ", stored_jump)
-		#print("wingbeat_slow_min: ", wingbeat_slow_min)
-		#print("wingbeat_slow_max: ", wingbeat_slow_max)
-		#print("max_jump_strength: ", max_jump_strength)
-		#print("jump_strength_base: ", jump_strength_base)
-		#print("--- Slowdown Calculation --")
-		#print("A: ", (stored_jump - wingbeat_slow_min))
-		#print("B: ", (wingbeat_slow_max - wingbeat_slow_min))
-		#print("C: ", (max_jump_strength - jump_strength_base))
 		wingbeat_slow_amount = (((stored_jump - wingbeat_slow_min) * (wingbeat_slow_max - wingbeat_slow_min)) / (max_jump_strength - jump_strength_base)) + wingbeat_slow_min
 		#print("Slowdown amount: ", wingbeat_slow_amount)
 		
@@ -520,6 +473,16 @@ func apply_momentum():
 			gravity_scale = grav_scale_default * 1.5
 	pass
 
+	## Layers 1 and 5 = 17
+	## Layer 5 = 16
+	## Layer 1 = 1
+func disable_collision(is_toggled):
+	if is_toggled == true:
+		collision_mask = 1
+		floor_check.collision_mask = 1
+	else:
+		collision_mask = 17
+		floor_check.collision_mask = 17
 
 ## Flying
 var directional_force = Vector2(0,0)
