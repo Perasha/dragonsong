@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://2absxauv5538" path="res://scripts/CameraZoom.gd" id="2_y0c85"]
 [ext_resource type="PackedScene" uid="uid://uap2fumrw2bw" path="res://noodle_body.tscn" id="3_m1wfi"]
 [ext_resource type="PackedScene" uid="uid://b0n2m1kv2cdx1" path="res://dragon_player.tscn" id="4_i5f8r"]
+[ext_resource type="Script" uid="uid://0uehdhf3haei" path="res://scripts/camera_marker_anchor.gd" id="4_vnktb"]
 [ext_resource type="Texture2D" uid="uid://bi6mddcerkp4c" path="res://Sprites/looking_marker.png" id="5_vnktb"]
 [ext_resource type="Script" uid="uid://djpubhctp6wmu" path="res://scripts/camera_marker.gd" id="6_vl68x"]
 [ext_resource type="Script" uid="uid://g0binnspch07" path="res://objects/object_manager.gd" id="7_811vv"]
@@ -32,11 +33,11 @@ radius = 47.93
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4e6kc"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_pejub"]
-radius = 19.990274
-
 [sub_resource type="CircleShape2D" id="CircleShape2D_7ekg2"]
 radius = 32.37
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_pejub"]
+radius = 19.990274
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vnktb"]
 
@@ -50,7 +51,8 @@ visible = false
 camera_node = NodePath("../Camera2D")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=640085947 node_paths=PackedStringArray("cam_marker")]
-position = Vector2(8987, 533)
+unique_name_in_owner = true
+position = Vector2(8987, 277)
 zoom = Vector2(0.5, 0.5)
 script = ExtResource("2_y0c85")
 cam_marker = NodePath("../dragon/Camera_Marker")
@@ -75,11 +77,21 @@ debug_color = Color(0, 0.6, 0.69803923, 0.05490196)
 z_index = 1
 dragon_node = NodePath("../dragon")
 
+[node name="CameraMarker_Anchor" type="Node2D" parent="." unique_id=80317171]
+position = Vector2(9250, 328)
+script = ExtResource("4_vnktb")
+
+[node name="Marker" type="CollisionShape2D" parent="CameraMarker_Anchor" unique_id=2061142011]
+z_index = 10
+shape = SubResource("CircleShape2D_7ekg2")
+disabled = true
+debug_color = Color(0.39380783, 0.0012870163, 0.598686, 1)
+
 [node name="dragon" parent="." unique_id=657267410 instance=ExtResource("4_i5f8r")]
 unique_name_in_owner = true
 z_index = 1
 z_as_relative = false
-position = Vector2(8954, 604)
+position = Vector2(8954, 348)
 collision_layer = 4
 gravity_scale = 0.5
 speed = 25.0
@@ -122,10 +134,6 @@ scale = Vector2(82.68, 82.68)
 shape = SubResource("CircleShape2D_pejub")
 debug_color = Color(0.95686275, 0, 0.5411765, 0.16862746)
 
-[node name="RayCastAnchor" type="RayCast2D" parent="dragon" unique_id=575900801]
-unique_name_in_owner = true
-target_position = Vector2(0, 1500)
-
 [node name="Camera_Marker" type="Node2D" parent="dragon" unique_id=700303303 node_paths=PackedStringArray("look_marker")]
 script = ExtResource("6_vl68x")
 look_marker = NodePath("../LookMarker")
@@ -135,12 +143,16 @@ shape = SubResource("CircleShape2D_7ekg2")
 disabled = true
 debug_color = Color(0.78039217, 0.1254902, 1, 0.21176471)
 
+[node name="RayCastAnchor" type="RayCast2D" parent="dragon" unique_id=575900801]
+unique_name_in_owner = true
+target_position = Vector2(0, 1500)
+
 [node name="ObjectManager" type="Node" parent="." unique_id=837280812]
 script = ExtResource("7_811vv")
 
 [node name="Map" type="Node2D" parent="." unique_id=1639938341]
 unique_name_in_owner = true
-position = Vector2(1652, -571)
+position = Vector2(1652, -827)
 scale = Vector2(4, 4)
 script = ExtResource("8_nbe37")
 
@@ -419,6 +431,7 @@ color = Color(0.19690534, 0.37443095, 0.6834349, 1)
 unique_name_in_owner = true
 z_index = -2
 z_as_relative = false
+position = Vector2(0, -256)
 
 [node name="Sky" type="Parallax2D" parent="ParallaxBG" unique_id=1065365649]
 scroll_scale = Vector2(0.2, 0.05)
@@ -901,7 +914,7 @@ polygon = PackedVector2Array(4, -88, 10, -46, 14, 4, -6, 4, -2, -46)
 uv = PackedVector2Array(-152, -48.000004, -144, -48.000004, -144, -24.000004, -152, -24.000004)
 
 [node name="Human" type="Sprite2D" parent="." unique_id=1253411692]
-position = Vector2(-1327, 1185)
+position = Vector2(-1327, 929)
 scale = Vector2(4, 4)
 texture = ExtResource("23_cx4oo")
 
