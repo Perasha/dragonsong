@@ -49,7 +49,7 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	## Rate starts off negative to heal/rest
-	exhaustion_rate = -exhaustion_rate_base * 2
+	exhaustion_rate = -exhaustion_rate_base * 4
 	## If we're flying, we're not resting
 	if dragon_node.is_flying:
 		exhaustion_rate = 0

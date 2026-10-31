@@ -26,6 +26,8 @@ var tween: Tween = null
 @onready var damage_area = get_node("DamageArea")
 
 @onready var dragon_node = get_parent()
+@onready var dragon_visuals = get_parent().get_node("DragonVisuals")
+@onready var head_sprite = dragon_visuals.get_node("Head")
 
 var mouse_pos
 
@@ -66,6 +68,7 @@ var laser_end_position
 @onready var laser_start_position := beam.points[1]
 
 func _physics_process(delta: float) -> void:
+	position = (head_sprite.position * dragon_visuals.scale) + dragon_visuals.position
 	#print("Oh look at that physics process is going -_-")
 	rotation = dragon_node.position.angle_to_point(get_global_mouse_position())
 	rotation_degrees += 180

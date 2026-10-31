@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://b0n2m1kv2cdx1"]
+[gd_scene format=4 uid="uid://b0n2m1kv2cdx1"]
 
 [ext_resource type="Script" uid="uid://cqu0w22jdjbs4" path="res://player/dragon_controller.gd" id="1_urtjn"]
 [ext_resource type="Script" uid="uid://csdttjcujdw6f" path="res://scripts/debug_direction_pointer.gd" id="5_vgkb3"]
@@ -10,7 +10,21 @@
 [ext_resource type="Texture2D" uid="uid://cbj5kmqjsr7ck" path="res://player/sprites/DragonWingless.png" id="10_1tael"]
 [ext_resource type="Script" uid="uid://ct4lehwag4jqw" path="res://player/dragon_animation.gd" id="10_cvsob"]
 [ext_resource type="Texture2D" uid="uid://frsjfsenfj72" path="res://player/sprites/wings_up.png" id="11_p6rrk"]
+[ext_resource type="Texture2D" uid="uid://degwlim2txvdt" path="res://player/sprites/Geometric_Body/Tail.png" id="12_hilqx"]
 [ext_resource type="PackedScene" uid="uid://dco7srxofagfv" path="res://ParticleEffects/fire_mote.tscn" id="12_p6rrk"]
+[ext_resource type="Script" uid="uid://b5mfcabp70u0c" path="res://player/dragon_geometric_animation.gd" id="12_xn5uy"]
+[ext_resource type="Texture2D" uid="uid://bsowxqkn22axf" path="res://player/sprites/Geometric_Body/HornBack.png" id="13_xn5uy"]
+[ext_resource type="Texture2D" uid="uid://c4in7ylhqwk07" path="res://player/sprites/Geometric_Body/LegBack.png" id="14_saevs"]
+[ext_resource type="Texture2D" uid="uid://c8gheyyog6adx" path="res://player/sprites/Geometric_Body/ArmBack.png" id="15_eyloi"]
+[ext_resource type="Texture2D" uid="uid://dsruynhvqdolw" path="res://player/sprites/Geometric_Body/WingBack_Up.png" id="16_5kpal"]
+[ext_resource type="Texture2D" uid="uid://im34jvsfcttl" path="res://player/sprites/Geometric_Body/Neck.png" id="17_1yut4"]
+[ext_resource type="Texture2D" uid="uid://bg6dmgy1hhplr" path="res://player/sprites/Geometric_Body/Torso.png" id="18_5pnfm"]
+[ext_resource type="Texture2D" uid="uid://cmfmixv0c3itl" path="res://player/sprites/Geometric_Body/Head.png" id="19_iha44"]
+[ext_resource type="Texture2D" uid="uid://c8ousn77hgwp5" path="res://player/sprites/Geometric_Body/HornFront.png" id="20_sld85"]
+[ext_resource type="Texture2D" uid="uid://t0yk2cm4l57s" path="res://player/sprites/Geometric_Body/Eye.png" id="21_4nuwi"]
+[ext_resource type="Texture2D" uid="uid://dtxmek7bwwmaq" path="res://player/sprites/Geometric_Body/LegFront.png" id="22_v4j5v"]
+[ext_resource type="Texture2D" uid="uid://b8rhr6lhly1vg" path="res://player/sprites/Geometric_Body/ArmFront.png" id="23_122iw"]
+[ext_resource type="Texture2D" uid="uid://dmkjxwksbepoc" path="res://player/sprites/Geometric_Body/WingFront_Up.png" id="24_2jfwy"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_0ucct"]
 friction = 0.5
@@ -200,6 +214,20 @@ turbulence_enabled = true
 [sub_resource type="CircleShape2D" id="CircleShape2D_cvsob"]
 radius = 100.0
 
+[sub_resource type="ArrayMesh" id="ArrayMesh_xn5uy"]
+_surfaces = [{
+"2d": true,
+"aabb": AABB(-1304, -1754, 0, 2608, 3508, 0),
+"attribute_data": PackedByteArray("n6lcPwAAAADa1lQ/AAAAAMAkTT94dJU67eVMP3h0lToYW9I+IdAzPnPd0T4h0DM+HyQDPuMO4T4/eQI+4w7hPlImmj22miY/+yCZPbaaJj/7IJk9oX4nPxG4qj2gMS4/sDCrPaAxLj+Y1ag9GXdIP5jVqD1sa1A/5MUWPZwEcT/kxRY9UTNxPxXToDi5Q3g/AAAAAGZufT/aB8k5AACAPzmlLjwAAIA/BjZsPVFSfj/Xu3Y9UVJ+P/ffeT1FGn4/q7N8PUUafj/wbX49uXl7P/Btfj1yf3k/aFuDPrlDeD/UM4U+uUN4P647Lj/+2Uo/90FCP4UvUj/3QUI/E0RSP2kfRD+o11I/aR9EP1fqUj8uVEQ/5P5SPyKsRD/s01I/2tZEP+zTUj9+8kQ/FqdSP7MaNT+9b0Y/sxo1P6piRj+dtG8/k/LlPp20bz95yeU+J7x/P0D+3T4AAIA/QP7dPgAAgD/ghNw+KYBwPz/I2j4ZUG8/P8jaPhlQbz/ioto+6spuP+Ki2j7JsW4/Vp3ZPqKTbj9Wndk+/UZKPzNSAD2HTko/RrX/PEgGXD+0LuA6FEBcP7Qu4DqfqVw/bIIGOg=="),
+"format": 34393296913,
+"index_count": 162,
+"index_data": PackedByteArray("AAA3ADYAMgAxADAAMAAvAC4ALgAtACwALAArACoAKQAoACcAJgAlACQAIwAiACEAIAAfAB4AHQAcABsAGgAZABgAFwAWABUAFQAUABMAEwASABEAEAAPAA4ADgANAAwADAALAAoACgAJAAgACAAHAAYABgAFAAQABAADAAIAAgABAAAAAAA2ADUALgAsACoAJgAkACMAIwAhACAAIAAeAB0AHQAbABoAGgAYABcAFwAVABMAEwARABAADAAKAAgACAAGAAQABAACAAAAAAA1ADQALgAqACkAJgAjACAAGgAXABMADAAIAAQABAAAADQAMAAuACkAJgAgAB0AGgATABAADgAMAAQABAA0ADMAMgAwACkAJwAmAB0AHQAaABAAEAAOAAQABAAzADIAMgApACcAJwAdABAAEAAEADIAMgAnABAA"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 56,
+"vertex_data": PackedByteArray("AABsRABA28Q0E1hEAEDbxJh5REQAwNrEmNlDRADA2sQAgGjDAECOxAAAa8MAQI7EAIByxAAAVMPN7HLEAABUw2Z2isQAQAREAKCKxABABEQAoIrEzEwHRDPTh8QAQB5EAMCHxABAHkQAIIjEAEB4RAAgiMQAwIlEAACXxGaWwUQAAJfEZubBRJr5osQAAM5EAACjxJrZ1kQA4KLEAEDbRGaGn8QAQNtEMzOQxABg2ETNXI/EAGDYRM0cj8QAANhEM+OOxAAA2EQAwI7EAIDTRADAjsTMHNBEmrkexAAAzkQAYBzEAADORACA60NmNoBEAMAoRGbGjEQAwChEmumMRACALURm5o1EAIAtRGYGjkRmBi5EmimORGbmLkQA4I1ENFMvRADgjUSamS9ENJONRABAB0TMTHFEAEAHRAAgcUQAQI5EAIAywwBAjkSYmTPDmqmiRAAAacMAAKNEAABpwwAAo0SYGXPDNEOPRAAAf8MAwI1EAAB/wwDAjUQAAIDDZhaNRAAAgMNm9oxEAICDwwDQjEQAgIPDzCw9RDODzcQAQD1EAJDNxABgakQAgNrENPNqRACA2sQAAGxEZgbbxA==")
+}]
+
 [node name="dragon" type="RigidBody2D" unique_id=539998597 groups=["player"]]
 collision_layer = 2
 collision_mask = 17
@@ -309,7 +337,6 @@ offset_right = 74.0
 offset_bottom = -110.0
 
 [node name="BreathWeapon" type="RayCast2D" parent="." unique_id=1071953964]
-position = Vector2(-50, 0)
 rotation = -3.1415925
 target_position = Vector2(0, 0)
 collision_mask = 17
@@ -352,6 +379,7 @@ shape = SubResource("CircleShape2D_cvsob")
 debug_color = Color(0.9732967, 0, 0.43835706, 0.41960785)
 
 [node name="DragonBodySprite" type="Sprite2D" parent="." unique_id=621255774]
+visible = false
 position = Vector2(6, -107)
 scale = Vector2(6, 6)
 texture = ExtResource("10_1tael")
@@ -360,6 +388,70 @@ script = ExtResource("10_cvsob")
 [node name="Wings" type="Sprite2D" parent="DragonBodySprite" unique_id=740202078]
 position = Vector2(-1, 0)
 texture = ExtResource("11_p6rrk")
+
+[node name="DragonVisuals" type="Node2D" parent="." unique_id=760661792]
+position = Vector2(-50, -9)
+scale = Vector2(0.165, 0.165)
+script = ExtResource("12_xn5uy")
+
+[node name="Tail" type="Sprite2D" parent="DragonVisuals" unique_id=1612530893]
+position = Vector2(1570, -103)
+texture = ExtResource("12_hilqx")
+
+[node name="LegBack" type="Sprite2D" parent="DragonVisuals" unique_id=1065178940]
+position = Vector2(429, 22)
+texture = ExtResource("14_saevs")
+
+[node name="ArmBack" type="Sprite2D" parent="DragonVisuals" unique_id=1863730307]
+position = Vector2(-92, 86)
+texture = ExtResource("15_eyloi")
+
+[node name="WingBack" type="Sprite2D" parent="DragonVisuals" unique_id=2091488981]
+position = Vector2(392.27502, -1206.8999)
+scale = Vector2(0.65, 0.65)
+texture = ExtResource("16_5kpal")
+
+[node name="Neck" type="Sprite2D" parent="DragonVisuals" unique_id=454499636]
+position = Vector2(-568, -113)
+texture = ExtResource("17_1yut4")
+
+[node name="Torso" type="Sprite2D" parent="DragonVisuals" unique_id=1002900306]
+position = Vector2(64, -47)
+texture = ExtResource("18_5pnfm")
+
+[node name="Head" type="Sprite2D" parent="DragonVisuals" unique_id=745912073]
+position = Vector2(-883, -198)
+texture = ExtResource("19_iha44")
+
+[node name="Eye" type="Sprite2D" parent="DragonVisuals/Head" unique_id=897485958]
+position = Vector2(-20, 6)
+scale = Vector2(0.99999994, 0.99999994)
+texture = ExtResource("21_4nuwi")
+
+[node name="HornFront" type="Sprite2D" parent="DragonVisuals/Head" unique_id=439626483]
+position = Vector2(149, -93)
+scale = Vector2(0.99999994, 0.99999994)
+texture = ExtResource("20_sld85")
+
+[node name="HornBack" type="Sprite2D" parent="DragonVisuals/Head" unique_id=1088740774]
+z_index = -1
+position = Vector2(129, -92)
+scale = Vector2(0.99999994, 0.99999994)
+texture = ExtResource("13_xn5uy")
+
+[node name="LegFront" type="Sprite2D" parent="DragonVisuals" unique_id=1774642441]
+position = Vector2(459, 40)
+texture = ExtResource("22_v4j5v")
+
+[node name="ArmFront" type="Sprite2D" parent="DragonVisuals" unique_id=1918773466]
+position = Vector2(-59, 85)
+texture = ExtResource("23_122iw")
+
+[node name="WingFront" type="MeshInstance2D" parent="DragonVisuals" unique_id=1803805834]
+position = Vector2(546.2751, -1219.8999)
+scale = Vector2(0.65, 0.65)
+mesh = SubResource("ArrayMesh_xn5uy")
+texture = ExtResource("24_2jfwy")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_entered" from="Direction Pointer" to="." method="_on_direction_pointer_body_entered"]

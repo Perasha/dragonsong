@@ -1,14 +1,29 @@
-[gd_scene format=3 uid="uid://cwbbwtpp4j4x3"]
+[gd_scene format=4 uid="uid://cwbbwtpp4j4x3"]
 
 [ext_resource type="PhysicsMaterial" uid="uid://bpemdlmgvt4pm" path="res://Maps/rock_material.tres" id="1_5r08h"]
 [ext_resource type="Texture2D" uid="uid://d32mbbjs5c1e3" path="res://Maps/TerrainPieces/sprites/mountain_piece_left_small@6x.png" id="1_52m08"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_5r08h"]
+_surfaces = [{
+"2d": true,
+"aabb": AABB(-169.5, -137, 0, 339, 274, 0),
+"attribute_data": PackedByteArray("Xo0oPwAAAACiMAI/AAAAAPiq7D63Lu87s73oPrcu7zulxFY+Opm+PguKUj46mb4+AAAAAO3vdj8AAAAAAACAPyMNtz0AAIA/Dh4nP7XnZD+u/Ck/tedkP/61VT9rzwk//rVVP7lQCD8Cxn8/Iv64PgAAgD+gSQc+t/p8P2mt8D23+nw/OHflPdEJYT/NzEw90QlhPx3fNz0="),
+"format": 34393296913,
+"index_count": 51,
+"index_data": PackedByteArray("AAASABEAEQAQAA8ADwAOAA0ADAALAAoACQAIAAcABwAGAAUABAADAAIAAgABAAAAAAARAA8ADwANAAwADAAKAAkACQAHAAUABAACAAAAAAAPAAwADAAJAAUABAAAAAwADAAFAAQA"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 19,
+"vertex_data": PackedByteArray("zMxWQgAACcOAmTlAAAAJw9DMTMEAAAfDYGZ2wQAAB8PNzMTCAAAMwpqZx8IAAAzCAIApw5iZ/kIAgCnDAAAJQzMzC8MAAAlDNDNPQgAA2EJoZl5CAADYQgAA40IAAChBAADjQmBmDkE0MylDAAAYwgCAKUOamcnCAIAlQ5qZ0cIAgCVDmpnUwgCAAEOamfbCAIAAQ2Zm+cI=")
+}]
 
 [node name="MountainPiece_Left_Small" type="StaticBody2D" unique_id=1707666357]
 scale = Vector2(1.5, 1.5)
 physics_material_override = ExtResource("1_5r08h")
 
-[node name="MountainBody" type="Sprite2D" parent="." unique_id=1729038480]
+[node name="MountainBody" type="MeshInstance2D" parent="." unique_id=1192390492]
 position = Vector2(116, -24)
+mesh = SubResource("ArrayMesh_5r08h")
 texture = ExtResource("1_52m08")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." unique_id=136909923]
