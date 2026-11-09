@@ -69,7 +69,9 @@ var dampen_base = 0.01
 @export var takeoff_speed = 1.0
 
 var flight_direction = Vector2(0.0,0.0)
-var max_glide_height = 0.0
+var flight_jitter = 0.0
+var flight_jitter_max = 5.0
+#var max_glide_height = 0.0
 var flap_hold_timer = 0
 #var slow_force = Vector2(0,0)
 # Base = 150
@@ -91,6 +93,7 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	#print(delta)
 	#print("DRAGON PHYSICS PROCESS START ---------------------------")
 	#print("Flight Direction: ", flight_direction)
 	is_flap_held = false

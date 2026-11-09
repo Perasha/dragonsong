@@ -6,7 +6,7 @@ extends Node
 var health = max_health
 #var health_to_int = 0
 
-@export var max_stamina = 20.0
+@export var max_stamina = 10.0
 var stamina = max_stamina
 
 @export var attack_speed = 10
@@ -35,7 +35,7 @@ var health_brackets = {
 }
 
 var injury_multiplier = 1.0
-var exhaustion_rate_base = 0.005
+var exhaustion_rate_base = 0.02
 var exhaustion_rate = exhaustion_rate_base
 
 func _ready() -> void:
@@ -49,14 +49,14 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	## Rate starts off negative to heal/rest
-	exhaustion_rate = -exhaustion_rate_base * 4
+	exhaustion_rate = -exhaustion_rate_base
 	## If we're flying, we're not resting
 	if dragon_node.is_flying:
-		exhaustion_rate = 0
+		exhaustion_rate += exhaustion_rate_base / 2
 	if dragon_node.is_hovering:
-		exhaustion_rate += exhaustion_rate_base * 5
+		exhaustion_rate += exhaustion_rate_base
 	if dragon_node.is_running:
-		exhaustion_rate += exhaustion_rate_base * 1.5
+		exhaustion_rate += exhaustion_rate_base
 	stamina_update(-exhaustion_rate)
 	
 	#if exhaustion_rate == 0 and stamina < max_stamina:
@@ -73,6 +73,8 @@ func inventory_update(value):
 
 func stamina_update(value):
 	stamina += value
+	if value < 0:
+		pass
 	if stamina > max_stamina:
 		stamina = max_stamina
 	if stamina < 0:

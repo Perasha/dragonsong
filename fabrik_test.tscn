@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://cct1g4ey0yesm"]
+
+[ext_resource type="Script" uid="uid://bag6cpy3dtcm2" path="res://fabrik_test.gd" id="1_ssr7o"]
+
+[node name="FabrikTest" type="Node2D" unique_id=34395454]
+
+[node name="NoodleBody" type="Node2D" parent="." unique_id=558493180]
+z_index = 1
+position = Vector2(23, 27)
+script = ExtResource("1_ssr7o")
+anchor = Vector2(600, 300)

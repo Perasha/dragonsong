@@ -198,6 +198,8 @@ func check_zoom() -> void:
 	##ZOOM CHANGING
 	if dragon_node.get_node("Ground").get_overlapping_bodies().size() > 0:
 		current_zoom_level = GROUND
-	else:
+	elif dragon_node.get_node("Near").get_overlapping_bodies().size() > 0:
 		current_zoom_level = FAR
+	else:
+		current_zoom_level = MAX
 	new_zoom = set_zoom_level(defaultZoomLevel / zoom_levels[current_zoom_level])
