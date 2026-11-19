@@ -65,7 +65,7 @@ func _physics_process(delta: float) -> void:
 			#distance_lag.y = margin_constraint.y
 	#print("Distance lag: ", distance_lag)
 	#print((prev_flight_direction + Vector2(1,1)) - (dragon_node.flight_direction + Vector2(1,1)))
-	print(prev_flight_direction - dragon_node.flight_direction)
+	#print(prev_flight_direction - dragon_node.flight_direction)
 	#print(dragon_node.flight_direction + Vector2(1,1))
 	#weight = dragon_node.fd_dampen# + (.004 - dragon_node.fd_dampen)# + (abs(camera_node.zoom.x - prev_zoom) * 40)
 	weight = .008

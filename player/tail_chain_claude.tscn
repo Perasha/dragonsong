@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://cqrpfd7nlmcbn"]
+
+[ext_resource type="Script" uid="uid://cdcr5d0glcp20" path="res://player/tail_chain_claude.gd" id="1_yq7xi"]
+
+[sub_resource type="Curve" id="Curve_saevs"]
+_data = [Vector2(0.05990784, 0.9101124), 0.0, 0.0, 0, 0, Vector2(0.54377884, 0.6629214), 0.0, 0.0, 0, 0, Vector2(1, 0.26966298), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[node name="TailChain_Claude" type="Node2D" unique_id=1120436443]
+script = ExtResource("1_yq7xi")
+segment_length = 37.85
+gravity = Vector2(0, 2)
+stiffness = 0.22
+iterations = 8
+
+[node name="Tail_Line" type="Line2D" parent="." unique_id=150168363]
+unique_name_in_owner = true
+width = 200.0
+width_curve = SubResource("Curve_saevs")
+default_color = Color(1, 0, 0.21960784, 1)
+
+[node name="TailAnchor" type="Node2D" parent="." unique_id=2027142319]
+unique_name_in_owner = true

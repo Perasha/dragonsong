@@ -1,4 +1,4 @@
-extends Node2D
+extends Line2D
 
 @export var dragon_node : Node2D
 @onready var flight_direction_node = dragon_node.get_node("Direction Pointer")
@@ -24,7 +24,7 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	line_distance = dragon_node.distance_moved * 1.5
+	#line_distance = dragon_node.distance_moved * 1.5
 	#Set the first link's position to be at the Flight Direction.
 	point_array[0] = dragon_node.global_position
 	for i in (point_array.size() - 1):
@@ -38,9 +38,9 @@ func _draw() -> void:
 	for i in (point_array.size()-1):
 		# For the Alpha channel, we're actually gonna pass in our Distance Moved (divided by 20) to change the visibility
 		# as we fly. This essentially creates streaks as we fly faster! And lets us know if we're going too fast to boost.
-		var opacity = 0.0
-		opacity += (dragon_node.distance_moved / 20) - 1.0
-		draw_line(point_array[i],point_array[i+1],Color(1,0,0,opacity),((point_array.size()-i) + (20 / (i + 1))),true)
+		var opacity = 1.0
+		#opacity += (dragon_node.distance_moved / 20) - 1.0
+		draw_line(point_array[i],point_array[i+1],Color(1,1,1,opacity),((point_array.size()-i) + (20 / (i + 1))),true)
 		#print(i)
 		#print("Starting point:", point_array[i])
 		#print("Ending point:", point_array[i+1])

@@ -509,7 +509,7 @@ func fly():
 		
 		if is_slowing:
 			slowdown_amount = pow(current_speed,slowdown_factor)
-			print(slowdown_amount)
+			#print(slowdown_amount)
 			current_speed -= slowdown_amount
 	
 	## Adding our afterburner force. This'll slowly go down long after we do the wingbeat, but it's to push us further for a bit longer.

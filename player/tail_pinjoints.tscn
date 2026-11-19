@@ -1,0 +1,46 @@
+[gd_scene format=3 uid="uid://b8cnk42keu5hk"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_vl68x"]
+
+[node name="Tail" type="Node2D" unique_id=1734838050]
+z_index = 11
+
+[node name="Joint" type="PinJoint2D" parent="." unique_id=1118010691]
+position = Vector2(1, 1)
+rotation = 2.6912978
+node_a = NodePath("../Hip")
+node_b = NodePath("../Seg1")
+angular_limit_enabled = true
+angular_limit_lower = 0.89709926
+
+[node name="Joint2" type="PinJoint2D" parent="." unique_id=490790020]
+position = Vector2(-8, 76)
+node_a = NodePath("../Seg1")
+node_b = NodePath("../Seg2")
+angular_limit_enabled = true
+angular_limit_lower = -0.89884454
+angular_limit_upper = 0.93375117
+
+[node name="Hip" type="RigidBody2D" parent="." unique_id=1421927429]
+position = Vector2(-1.5258789e-05, 2.0000153)
+rotation = 3.3667402
+collision_layer = 0
+freeze = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hip" unique_id=743572120]
+shape = SubResource("CircleShape2D_vl68x")
+
+[node name="Seg1" type="RigidBody2D" parent="." unique_id=755364237]
+position = Vector2(-8.398045, 75.858086)
+rotation = -0.22514747
+collision_layer = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Seg1" unique_id=1357261311]
+shape = SubResource("CircleShape2D_vl68x")
+
+[node name="Seg2" type="RigidBody2D" parent="." unique_id=1242914632]
+position = Vector2(-24.997242, 162.56726)
+collision_layer = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Seg2" unique_id=1311809425]
+shape = SubResource("CircleShape2D_vl68x")
