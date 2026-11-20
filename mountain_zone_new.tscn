@@ -90,6 +90,7 @@ debug_color = Color(0, 0.6, 0.69803923, 0.05490196)
 [node name="DragonPointer" type="RayCast2D" parent="Camera2D" unique_id=1132813340]
 
 [node name="DragonMotionDrag" parent="." unique_id=187037717 node_paths=PackedStringArray("dragon_node") instance=ExtResource("3_m1wfi")]
+unique_name_in_owner = true
 z_index = 1
 dragon_node = NodePath("../dragon")
 

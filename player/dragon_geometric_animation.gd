@@ -1,8 +1,9 @@
 extends Node2D
-
+@onready var tail_drag = %DragonMotionDrag
 @onready var dragon_node = get_parent()
 @onready var head_node = get_node("Head")
 @onready var wing_node = [get_node("WingFront"),get_node("WingBack")]
+@onready var tail_target = get_node("TailTarget")
 enum {FRONT, BACK}
 
 @onready var arm_node = [get_node("ArmFront"),get_node("ArmBack")]
@@ -16,11 +17,13 @@ var direction = [LEFT,NEUTRAL]
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	print(tail_drag)
 	pass # Replace with function body.
 
 
 func _physics_process(delta: float) -> void:
 	face_direction()
+	rotate_tail()
 	
 func face_direction():
 	if dragon_node.is_flying:
@@ -41,3 +44,13 @@ func face_direction():
 	#print("Direction: ", direction)
 	scale.x = -direction[0] * scale_base
 	scale.y = direction[1] * scale_base
+	
+	#if direction[0] == LEFT:
+	#	tail_target.position.x = 3000
+	#else:
+	#	tail_target.position.x = -3000
+
+func rotate_tail():
+	#tail_target.position 
+	tail_target.position.y = dragon_node.flight_direction.y * 100
+	pass
